@@ -1,0 +1,243 @@
+﻿@inherits LayoutComponentBase
+
+@inject NavigationManager navigationManager;
+@inject IDialogService DialogService
+@inject IJSRuntime _jsRuntime
+@inject IAgenteService agenteService
+@inject AuthenticationStateProvider authenticationStateProvider
+@inject ProtectedSessionStorage _sessionStorage
+
+<CascadingValue Value="this">
+    <ErrorBoundary @ref="ErrorBoundary">
+        <ChildContent>
+            <MudThemeProvider @ref="@_mudThemeProvider" Theme="theme" />
+            <MudDialogProvider />
+            <MudSnackbarProvider />
+            <RadzenDialog />
+
+            <MudLayout title="Offerte Web">
+                <AuthorizeView>
+                    <NotAuthorized>
+                        <div class="backdiv" style="display: flex; flex-direction: column; justify-content: center; align-items: center; justify-items: center;
+                                    height: 100vh; top: 0; left: 0; width: 100vw; height: 100vh; position: absolute;
+                                    background-size: 100vw 100vh; background-image: linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)), url(images/background.jpg); ">
+                            <img src="/images/logo.png" style="max-width: 420px;"/>
+                            <div class="login">
+                                <div class="form-group">
+                                    <label> Username </label>
+                                    <MudTextField Variant="Variant.Outlined" T="string" @bind-Value="Username"></MudTextField>
+                                </div>
+                                <div class="form-group">
+                                    <label>password</label>
+                                    <MudTextField Variant="Variant.Outlined" T="string" InputType="InputType.Password" @bind-Value="Password"></MudTextField>
+                                </div>
+                                <div>
+                                    <hr/>
+                                </div>
+                                <MudButton Color="Color.Primary" OnClick="HandleLogin" Class="font-weight-bold" EndIcon="@Icons.Material.Filled.Login">Sign In</MudButton>
+                            </div>
+                        </div>
+                        <div class="fixed-bottom text-center">
+                            <img class="m-auto" alt="Techboard" src="https://www.techboardgroup.com/images/logo_tb_catena.png" style="max-width: 200px;">
+                        </div>
+                    </NotAuthorized>
+                    <Authorized>
+                        <StateInitializer InitialAppState="@InitialAppState"></StateInitializer>
+                        <MudAppBar Elevation="0" Style="z-index:1000 !important">
+                            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())"/>
+                            <BackButton MethodForNavigationCheck="BackNavigation"></BackButton>
+                            <MudSpacer/>
+                            <MudButton Variant="Variant.Text" Color="Color.Transparent" @onclick="(() => OpenDialogForUserEdit())">
+                                <LoginViewer @ref="loginViewer" User="agente"></LoginViewer>
+                            </MudButton>
+                        </MudAppBar>
+                        <MudDrawer @bind-Open="_drawerOpen" Elevation="1">
+                            <MudDrawerHeader>
+                                <img src="/images/logo_layout.png" height="60px"/>
+                            </MudDrawerHeader>
+                            <NavMenu Role="@Role.ADMIN" MethodForNavigationCheck="((e)=> NavigationChecking(e, false))" />
+                        </MudDrawer>
+                        <MudMainContent>
+                            <div style="margin-left:5px; margin-right:5px">
+                                @Body
+                            </div>
+                        </MudMainContent>
+                    </Authorized>
+                </AuthorizeView>
+            </MudLayout>
+        </ChildContent>
+        <ErrorContent>
+            <AuthorizeView Context="authContext">
+                <NotAuthorized>
+                    <Error403></Error403>
+                </NotAuthorized>
+                <Authorized>
+                    <MudMainContent>
+                        <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="d-flex justify-center pt-16">
+                            <ErrorDispatcher Exception="context" RecoverRequest="() => ErrorBoundary?.Recover()"/>
+                        </MudContainer>
+                    </MudMainContent>
+                </Authorized>
+            </AuthorizeView>
+        </ErrorContent>
+    </ErrorBoundary>
+</CascadingValue>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationState { get; set; }
+    //private AuthenticationState authState;
+    public InitialApplicationState InitialAppState { get; set; }
+
+    protected string Username { get; set; }
+    protected string Password { get; set; }
+    
+    private Agente agente = new Agente();
+
+    bool _drawerOpen = true;
+    private MudThemeProvider? _mudThemeProvider;
+    public bool IsClicked = false;
+    private LoginViewer loginViewer;
+
+    private ErrorBoundary? ErrorBoundary;
+
+    MudTheme theme = new MudTheme()
+    {
+        LayoutProperties = new LayoutProperties()
+        {
+            DrawerWidthLeft = "200px",
+        },
+        Palette = new Palette()
+        {
+            Primary = "#006F98",
+            Secondary = "#0B2E4F",
+            AppbarBackground = "#0B2E4F",
+        },
+        Typography = new Typography()
+        {
+            Default = new Default()
+            {
+                FontSize = "0.75rem"
+            },
+            Body1 = new Body1()
+            {
+                FontSize = "0.85rem"
+            },
+            Body2 = new Body2()
+            {
+                FontSize = "0.8rem"
+            },
+            Button = new Button()
+            {
+                FontSize = "0.8rem"
+            }
+        }
+    };
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    protected override async void OnAfterRender(bool firstRender)
+    {
+        var userSession = await _sessionStorage.GetAsync<UserSession>("UserSession");
+        if (userSession.Value != null)
+        {
+            agente.RagioneSociale = (userSession.Value as UserSession)?.RaqioneSociale;
+            agente.Username = (userSession.Value as UserSession)?.Username;
+            agente.Id = (userSession.Value as UserSession).Id;
+            StateHasChanged();
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    async Task<bool> HandleLogin()
+    {
+        Console.WriteLine("Login to do");
+        agente = agenteService.Authenticate(Username, Password);
+        if (agente == null)
+        {
+            //await Js.InvokeVoidAsync("alert", "Invalid user name or passowrd");
+            return false;
+        }
+        //localStorage set user
+        var customAuthStateProvider = (CustomAuthenticationStateProvider)authenticationStateProvider;
+        await customAuthStateProvider.UpdateUserAuthenticated(new UserSession
+        {
+            Id = agente.Id,
+            Username = agente.Username,
+            Role = agente.Role,
+            Mail = agente.Mail != null ? agente.Mail : "",
+            RaqioneSociale = agente?.RagioneSociale
+        });
+        navigationManager.NavigateTo("/");
+        return true;
+    }
+    
+    private async Task OpenDialogForUserEdit()
+    {
+        // var parameter = new DialogParameters { ["User"] = authState.User };
+
+        // var dialog = DialogService.Show<DialogUserEdit>($"Utente {authState.User?.Identity.Name}", parameter, new DialogOptions() { FullWidth = false, MaxWidth = MaxWidth.Small });
+        // var result = await dialog.Result;
+        // if (!result.Cancelled)
+        // {
+        //     await loginViewer.LoadAvatar();
+        // }
+    }
+
+    public void GoBack()
+    {
+        _jsRuntime.InvokeVoidAsync("history.go", -1);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            StateHasChanged();
+        }
+    }
+
+    private void BackNavigation()
+    {
+        NavigationChecking("", true);
+    }
+
+    private async Task NavigationChecking(string indirizzo, bool backButtonClick = false)
+    {
+        var currentLocation = navigationManager.Uri;
+        if (currentLocation.Contains("/edit") || currentLocation.Contains("/new"))
+        {
+            var parameters = new DialogParameters();
+            parameters.Add("Text", "Eventuali modifiche non salvate andranno perse");
+            var dialog = DialogService.Show<DialogConfirm>("Sicuro di voler uscire?", parameters);
+            var result = await dialog.Result;
+            if (result.Cancelled)
+            {
+                return;
+            }
+
+        }
+        if (backButtonClick)
+        {
+            GoBack();
+        }
+        else
+        {
+            navigationManager.NavigateTo(indirizzo, true);
+        }
+        StateHasChanged();
+    }
+}

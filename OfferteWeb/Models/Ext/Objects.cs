@@ -1,0 +1,22 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace OfferteWeb.Models
+{
+    public class Role
+    {
+        public const string ADMIN = "ADMIN";    //Amministratore
+        public const string MANAGER = "MANAGER";    //Capogruppo della Company
+        public const string OPERATOR = "OPERATOR";  //Centralino
+        public const string CUSTOMER = "CUSTOMER";  //Cliente che vede i suoi ordini
+    }
+
+    public class NotificationTypes
+    {
+        public const string MAIL = "M";
+        public const string APP_MESSAGE = "A";
+    }
+}

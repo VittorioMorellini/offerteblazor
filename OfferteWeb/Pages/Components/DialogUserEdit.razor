@@ -1,0 +1,119 @@
+﻿@using OfferteWeb.Services;
+@using OfferteWeb.Models
+@using OfferteWeb.Services
+@using OfferteWeb.Shared
+@using System.Text;
+@using Microsoft.IdentityModel.Tokens
+@inject HttpClient Http
+
+@inject AgenteService _agenteService;
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <DialogContent>
+        <InputFile id="fileInput" OnChange="UploadFile" hidden multiple />
+        <MudGrid Spacing="1">
+            @if (User != null)
+            {
+                <MudItem xs="12">
+                    @if (loadingAvatar)
+                    {
+                        <MudProgressCircular Indeterminate></MudProgressCircular>
+                    }
+                    else
+                    {
+                        <MudTooltip Text="Clicca per cambiare immagine">
+                            <MudButton Style="margin:auto" HtmlTag="label"
+                               Color="Color.Transparent"
+                               Variant="Variant.Text"
+                               for="fileInput">
+                                <MudAvatar Size="Size.Large" Image="@imageJpgDataURL" />
+                            </MudButton>
+                        </MudTooltip>
+                    }
+                </MudItem>
+                <MudItem xs="12">
+                    <MudText>@($"{User?.Username}")</MudText>
+                    </MudItem>
+                <MudItem xs="12">
+                    <MudText>@($"{User?.Nome} {User?.Cognome}")</MudText>
+                    </MudItem>
+                <MudItem xs="12">
+                    <MudText>@($"{User?.Mail}")</MudText>
+                    </MudItem>
+                <MudItem xs="12">
+                    <MudText>@($"{User?.Role}")</MudText>
+                    </MudItem>
+            }
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Class="font-weight-bold" Href="/logout" Color="Color.Primary">Logout</MudButton>
+        <MudDivider></MudDivider>
+        <MudButton OnClick="Submit">Chiudi</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter]
+    public Agente User { get; set; }
+
+    //public Validators _validator = new Validators();
+    string? imageJpgDataURL;
+    bool loadingAvatar = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        GetJpegImage();
+    }
+
+    private async Task UploadFile(InputFileChangeEventArgs e)
+    {
+        @if (User != null)
+        {
+            byte[] fileContent;
+            var estensioneFile = e.File.ContentType;
+            var grandezzaFile = e.File.Size;
+            if (grandezzaFile < 2097152)
+            {
+                if (estensioneFile == "image/jpeg" || estensioneFile == "image/jpg")
+                {
+                    loadingAvatar = true;
+                    var stream = e.File.OpenReadStream(Int64.MaxValue);
+                    MemoryStream ms = new MemoryStream();
+                    await stream.CopyToAsync(ms);
+                    stream.Close();
+                    fileContent = ms.ToArray();
+                    User.Avatar = fileContent;
+
+                    GetJpegImage();
+                    _agenteService.Update(User);
+                    loadingAvatar = false;
+                    Snackbar.Add("Immagine profilo modificata", Severity.Info);
+                }
+
+                else
+                {
+                    Snackbar.Add("Inserire solo immagini con estensione JPEG", Severity.Warning);
+                }
+            }
+            else
+            {
+                Snackbar.Add("Inserire immagine con dimensione inferiore a 2 MegaByte", Severity.Warning);
+            }
+        }
+    }
+
+    void GetJpegImage()
+    {
+        if (User?.Avatar != null)
+        {
+            var imageSrc = Convert.ToBase64String(User.Avatar);
+            imageJpgDataURL = string.Format("data:image/jpeg;base64,{0}", imageSrc);
+        }
+    }
+
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+}

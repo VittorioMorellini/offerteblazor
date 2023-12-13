@@ -1,0 +1,50 @@
+﻿@* @page "/login" *@
+@inject IJSRuntime Js
+@inject AgenteService agenteService
+@inject NavigationManager navigationManager
+
+<div class="login">
+    <div class="form-group">
+        <label> Username </label>
+        <MudTextField Variant="Variant.Outlined" T="string" @bind-Value="Username"></MudTextField>
+    </div>
+    <div class="form-group">
+        <label>password</label>
+        <MudTextField Variant="Variant.Outlined" T="string" InputType="InputType.Password" @bind-Value="Password"></MudTextField>
+    </div>
+    <div>
+        <hr/>
+    </div>
+    <MudButton Color="Color.Primary" OnClick="HandleLogin" Class="font-weight-bold" EndIcon="@Icons.Material.Filled.Login">Sign In</MudButton>
+</div>
+
+@code {
+    protected string Username { get; set; }
+    protected string Password { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        return base.OnInitializedAsync();
+    }
+
+    async Task<bool> HandleLogin()
+    {
+        Console.WriteLine("Login to do");
+
+        Agente user = agenteService.Authenticate(Username, Password);
+        if (user == null)
+        {
+            await Js.InvokeVoidAsync("alert", "Invalid user name or passowrd");
+            return false;
+        }
+        //localStorage set user
+        // var customAuthStateProvider = (CustomAuthenticationStateProvider)authenticationStateProvider;
+        // customAuthStateProvider.UpdateUserAuthenticated(new UserSession
+        // {
+        //     Username = user.Username,
+        //     Role = user.Role
+        // });
+        navigationManager.NavigateTo("/");
+        return true;
+    }
+}
