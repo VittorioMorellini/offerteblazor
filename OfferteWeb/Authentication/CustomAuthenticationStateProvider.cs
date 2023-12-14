@@ -1,7 +1,8 @@
 ﻿using System.Security.Claims;
-using Blazored.SessionStorage;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using OfferteWeb.State;
 
 namespace OfferteWeb.Authentication;
 public class CustomAuthenticationStateProvider : AuthenticationStateProvider
@@ -9,7 +10,7 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
     private readonly ProtectedSessionStorage _sessionStorage;
     private ClaimsPrincipal _anonymous = new ClaimsPrincipal(new ClaimsIdentity());
 
-    public CustomAuthenticationStateProvider(ProtectedSessionStorage sessionStorage)
+    public CustomAuthenticationStateProvider(ProtectedSessionStorage sessionStorage, NavigationManager navManager)
     {
         _sessionStorage = sessionStorage;
     }
@@ -18,15 +19,14 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
     {
         try
         {
-            var userSessionStorageResult = await _sessionStorage.GetAsync<UserSession>("UserSession");
-            //var emailAddress = await _sessionStorageService.GetItemAsync<string>("emailAddress");
-            var userSession = userSessionStorageResult.Success ? userSessionStorageResult.Value : null;
-            if (userSession == null)
+            var userSessionStorageResult = await _sessionStorage.GetAsync<AuthData>("authData");
+            var authData = userSessionStorageResult.Success ? userSessionStorageResult.Value : null;
+            if (authData == null)
                 return await Task.FromResult(new AuthenticationState(_anonymous));
             var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
             {
-                new Claim(ClaimTypes.Name, userSession.Username),
-                new Claim(ClaimTypes.Role, userSession.Role),
+                new Claim(ClaimTypes.Name, authData.Username),
+                new Claim(ClaimTypes.Role, authData.Role),
             }, "CustomAuth"));
 
             return await Task.FromResult(new AuthenticationState(claimsPrincipal));
@@ -37,21 +37,21 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
         }
     }
 
-    public async Task UpdateUserAuthenticated(UserSession userSession)
+    public async Task UpdateUserAuthenticated(AuthData authData)
     {
         ClaimsPrincipal claimsPrincipal;
-        if (userSession != null)
+        if (authData != null)
         {
-            await _sessionStorage.SetAsync("UserSession", userSession);
+            await _sessionStorage.SetAsync("authData", authData);
             claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
             {
-                new Claim(ClaimTypes.Name, userSession.Username),
-                new Claim(ClaimTypes.Role, userSession.Role),
+                new Claim(ClaimTypes.Name, authData.Username),
+                new Claim(ClaimTypes.Role, authData.Role),
             }, "CustomAuth"));
         }
         else
         {
-            await _sessionStorage.DeleteAsync("UserSession");
+            await _sessionStorage.DeleteAsync("authData");
             claimsPrincipal = _anonymous;
         }
         NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
@@ -59,9 +59,11 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 
     public void UserLoggedOut()
     {
-        _sessionStorage.DeleteAsync("UserSession");
-        var identity = new ClaimsIdentity();
-        var user = new ClaimsPrincipal(identity);
-        NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
+        _sessionStorage.DeleteAsync("authData");
+        //var identity = new ClaimsIdentity();
+        //var user = new ClaimsPrincipal(identity);
+        ClaimsPrincipal claimsPrincipal = _anonymous;
+        NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
+
     }
 }

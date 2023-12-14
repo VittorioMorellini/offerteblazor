@@ -6,6 +6,7 @@
 @inject IAgenteService agenteService
 @inject AuthenticationStateProvider authenticationStateProvider
 @inject ProtectedSessionStorage _sessionStorage
+@inject AppState state
 
 <CascadingValue Value="this">
     <ErrorBoundary @ref="ErrorBoundary">
@@ -22,6 +23,8 @@
                                     height: 100vh; top: 0; left: 0; width: 100vw; height: 100vh; position: absolute;
                                     background-size: 100vw 100vh; background-image: linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)), url(images/background.jpg); ">
                             <img src="/images/logo.png" style="max-width: 420px;"/>
+                            <MudButton Class="font-weight-bold" EndIcon="@Icons.Filled.Login" Variant="Variant.Filled" Href="/Login" Color="Color.Primary">Accedi</MudButton>
+                            @*
                             <div class="login">
                                 <div class="form-group">
                                     <label> Username </label>
@@ -36,13 +39,14 @@
                                 </div>
                                 <MudButton Color="Color.Primary" OnClick="HandleLogin" Class="font-weight-bold" EndIcon="@Icons.Material.Filled.Login">Sign In</MudButton>
                             </div>
+                            *@
                         </div>
                         <div class="fixed-bottom text-center">
-                            <img class="m-auto" alt="Techboard" src="https://www.techboardgroup.com/images/logo_tb_catena.png" style="max-width: 200px;">
+                            <img class="m-auto" alt="Techboard" src="https://www.techboardgroup.com/images/logo_tb_catena.png" style="max-width: 150px;">
                         </div>
                     </NotAuthorized>
                     <Authorized>
-                        <StateInitializer InitialAppState="@InitialAppState"></StateInitializer>
+                        @* <StateInitializer InitialAppState="@InitialAppState"></StateInitializer> *@
                         <MudAppBar Elevation="0" Style="z-index:1000 !important">
                             <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())"/>
                             <BackButton MethodForNavigationCheck="BackNavigation"></BackButton>
@@ -86,8 +90,8 @@
 @code {
     [CascadingParameter]
     private Task<AuthenticationState> authenticationState { get; set; }
-    //private AuthenticationState authState;
-    public InitialApplicationState InitialAppState { get; set; }
+    // [CascadingParameter]
+    // public InitialApplicationState InitialAppState { get; set; }
 
     protected string Username { get; set; }
     protected string Password { get; set; }
@@ -151,20 +155,20 @@
 
     protected override async void OnAfterRender(bool firstRender)
     {
-        var userSession = await _sessionStorage.GetAsync<UserSession>("UserSession");
-        if (userSession.Value != null)
-        {
-            agente.RagioneSociale = (userSession.Value as UserSession)?.RaqioneSociale;
-            agente.Username = (userSession.Value as UserSession)?.Username;
-            agente.Id = (userSession.Value as UserSession).Id;
-            StateHasChanged();
-        }
+        // var userSession = await _sessionStorage.GetAsync<UserSession>("UserSession");
+        // if (userSession.Value != null)
+        // {
+        //     agente.RagioneSociale = (userSession.Value as UserSession)?.RaqioneSociale;
+        //     agente.Username = (userSession.Value as UserSession)?.Username;
+        //     agente.Id = (userSession.Value as UserSession).Id;
+        //     StateHasChanged();
+        // }
         await base.OnAfterRenderAsync(firstRender);
     }
 
     async Task<bool> HandleLogin()
     {
-        Console.WriteLine("Login to do");
+        //Console.WriteLine("Login to do");
         agente = agenteService.Authenticate(Username, Password);
         if (agente == null)
         {
@@ -172,29 +176,34 @@
             return false;
         }
         //localStorage set user
-        var customAuthStateProvider = (CustomAuthenticationStateProvider)authenticationStateProvider;
-        await customAuthStateProvider.UpdateUserAuthenticated(new UserSession
+        AuthData authData = new AuthData
         {
-            Id = agente.Id,
+            Id = agente.Id.ToString(),
             Username = agente.Username,
             Role = agente.Role,
             Mail = agente.Mail != null ? agente.Mail : "",
-            RaqioneSociale = agente?.RagioneSociale
-        });
+            RagioneSociale = agente?.RagioneSociale,
+            Token = agente.Token
+        };
+        var customAuthStateProvider = (CustomAuthenticationStateProvider)authenticationStateProvider;
+        await customAuthStateProvider.UpdateUserAuthenticated(authData);
+        // InitialAppState ??= new();
+        // InitialAppState.AuthData = authData;
+
         navigationManager.NavigateTo("/");
         return true;
     }
     
     private async Task OpenDialogForUserEdit()
     {
-        // var parameter = new DialogParameters { ["User"] = authState.User };
+        var parameter = new DialogParameters { ["User"] = agente};
 
-        // var dialog = DialogService.Show<DialogUserEdit>($"Utente {authState.User?.Identity.Name}", parameter, new DialogOptions() { FullWidth = false, MaxWidth = MaxWidth.Small });
-        // var result = await dialog.Result;
-        // if (!result.Cancelled)
-        // {
-        //     await loginViewer.LoadAvatar();
-        // }
+        var dialog = DialogService.Show<DialogUserEdit>($"Utente {agente?.RagioneSociale}", parameter, new DialogOptions() { FullWidth = false, MaxWidth = MaxWidth.Small });
+        var result = await dialog.Result;
+        if (!result.Cancelled)
+        {
+            await loginViewer.LoadAvatar();
+        }
     }
 
     public void GoBack()

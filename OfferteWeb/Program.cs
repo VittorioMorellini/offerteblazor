@@ -77,7 +77,7 @@ namespace OfferteWeb
             });
 
             builder.Services.AddScoped<DialogService>();
-            //builder.Services.AddScoped<AppState>();
+            builder.Services.AddScoped<AppState>();
 
             var app = builder.Build();
 

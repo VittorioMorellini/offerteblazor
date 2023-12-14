@@ -1,14 +1,6 @@
-﻿@using OfferteWeb.Services;
-@using OfferteWeb.Models
-@using OfferteWeb.Services
-@using OfferteWeb.Shared
-@using System.Text;
-@using Microsoft.IdentityModel.Tokens
-@inject HttpClient Http
-
-@inject AgenteService _agenteService;
+﻿@inject IAgenteService _agenteService;
 @inject ISnackbar Snackbar
-
+@inject NavigationManager navigationManager
 <MudDialog>
     <DialogContent>
         <InputFile id="fileInput" OnChange="UploadFile" hidden multiple />
@@ -48,12 +40,14 @@
         </MudGrid>
     </DialogContent>
     <DialogActions>
-        <MudButton Class="font-weight-bold" Href="/logout" Color="Color.Primary">Logout</MudButton>
-        <MudDivider></MudDivider>
-        <MudButton OnClick="Submit">Chiudi</MudButton>
+        <MudButton OnClick="Close">Chiudi</MudButton>
+        <MudButton ButtonType="ButtonType.Button" OnClick="Logout" Color="Color.Primary">Logout</MudButton>
+        @*         <MudDivider></MudDivider>*@
     </DialogActions>
 </MudDialog>
 @code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationState { get; set; }
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     [Parameter]
     public Agente User { get; set; }
@@ -115,5 +109,12 @@
     }
 
 
-    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    void Close() => MudDialog.Close(DialogResult.Ok(true));
+
+    async Task Logout()
+    {
+        var authState = await authenticationState;
+        authState = null;
+        navigationManager.NavigateTo("/Logout", true);
+    } 
 }
