@@ -91,9 +91,6 @@
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
 
-    protected string Username { get; set; }
-    protected string Password { get; set; }
-
     private Agente agente = new Agente();
 
     bool _drawerOpen = true;
@@ -162,11 +159,6 @@
             //StateHasChanged();
         }
         await base.OnInitializedAsync();
-    }
-
-    protected override async void OnAfterRender(bool firstRender)
-    {
-        await base.OnAfterRenderAsync(firstRender);
     }
 
     // async Task<bool> HandleLogin()
