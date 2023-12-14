@@ -43,15 +43,12 @@
     <DialogActions>
         <MudButton OnClick="Close">Chiudi</MudButton>
 @*         <MudDivider></MudDivider>
- *@        <MudButton ButtonType="ButtonType.Button" Href="/Logout" Color="Color.Primary">Logout</MudButton>
+ *@        <MudButton ButtonType="ButtonType.Button" Href="/Identity/Logout" Color="Color.Primary">Logout</MudButton>
     </DialogActions>
 </MudDialog>
 @code {
-    [CascadingParameter]
-    private Task<AuthenticationState> authenticationState { get; set; }
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-    [Parameter]
-    public Agente User { get; set; }
+    [Parameter] public Agente User { get; set; }
 
     //public Validators _validator = new Validators();
     string? imageJpgDataURL;

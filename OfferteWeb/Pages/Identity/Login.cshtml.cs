@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 
-namespace OfferteWeb.Pages
+namespace OfferteWeb.Pages.Identity
 {
     [AllowAnonymous]
     public class LoginModel : PageModel
@@ -96,7 +96,7 @@ namespace OfferteWeb.Pages
                     // redirect response value.
                 };
 
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, 
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                     new ClaimsPrincipal(claimsIdentity),
                     authProperties);
 
@@ -129,7 +129,7 @@ namespace OfferteWeb.Pages
             [Required]
             //[Username]
             public string Username { get; set; }
-            
+
             [Required]
             public string Password { get; set; }
         }

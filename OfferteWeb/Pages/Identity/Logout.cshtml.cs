@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc;
 
-namespace OfferteWeb.Pages
+namespace OfferteWeb.Pages.Identity
 {
     public class LogoutModel : PageModel
     {
@@ -29,7 +29,7 @@ namespace OfferteWeb.Pages
         }
 
         public IActionResult OnPost()
-        { 
+        {
             return Redirect("~/");
             //return LocalRedirect(Url.Content("~/"));
         }
