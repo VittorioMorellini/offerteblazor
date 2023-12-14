@@ -1,10 +1,10 @@
-﻿@inherits LayoutComponentBase
+﻿@using System.Security.Claims
+@inherits LayoutComponentBase
 
 @inject NavigationManager navigationManager;
 @inject IDialogService DialogService
 @inject IJSRuntime _jsRuntime
 @inject IAgenteService agenteService
-@inject AuthenticationStateProvider authenticationStateProvider
 @inject ProtectedSessionStorage _sessionStorage
 @inject AppState state
 
@@ -89,13 +89,11 @@
 
 @code {
     [CascadingParameter]
-    private Task<AuthenticationState> authenticationState { get; set; }
-    // [CascadingParameter]
-    // public InitialApplicationState InitialAppState { get; set; }
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
 
     protected string Username { get; set; }
     protected string Password { get; set; }
-    
+
     private Agente agente = new Agente();
 
     bool _drawerOpen = true;
@@ -150,49 +148,30 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var auth = await authenticationStateTask;
+        if (auth != null)
+        {
+            var identity = auth.User.Identity as ClaimsIdentity; ;
+            agente.RagioneSociale = identity.FindFirst("FullName")?.Value;
+            agente.Username = identity.FindFirst("Username")?.Value;
+            agente.Id = Convert.ToInt64(identity.FindFirst("Id")?.Value);
+            agente.Nome = identity.FindFirst(ClaimTypes.Name)?.Value;
+            agente.Cognome = identity.FindFirst(ClaimTypes.Surname)?.Value;
+            agente.Role = identity.FindFirst(ClaimTypes.Role)?.Value;
+            agente.Mail = identity.FindFirst(ClaimTypes.Email)?.Value;
+            //StateHasChanged();
+        }
         await base.OnInitializedAsync();
     }
 
     protected override async void OnAfterRender(bool firstRender)
     {
-        // var userSession = await _sessionStorage.GetAsync<UserSession>("UserSession");
-        // if (userSession.Value != null)
-        // {
-        //     agente.RagioneSociale = (userSession.Value as UserSession)?.RaqioneSociale;
-        //     agente.Username = (userSession.Value as UserSession)?.Username;
-        //     agente.Id = (userSession.Value as UserSession).Id;
-        //     StateHasChanged();
-        // }
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    async Task<bool> HandleLogin()
-    {
-        //Console.WriteLine("Login to do");
-        agente = agenteService.Authenticate(Username, Password);
-        if (agente == null)
-        {
-            //await Js.InvokeVoidAsync("alert", "Invalid user name or passowrd");
-            return false;
-        }
-        //localStorage set user
-        AuthData authData = new AuthData
-        {
-            Id = agente.Id.ToString(),
-            Username = agente.Username,
-            Role = agente.Role,
-            Mail = agente.Mail != null ? agente.Mail : "",
-            RagioneSociale = agente?.RagioneSociale,
-            Token = agente.Token
-        };
-        var customAuthStateProvider = (CustomAuthenticationStateProvider)authenticationStateProvider;
-        await customAuthStateProvider.UpdateUserAuthenticated(authData);
-        // InitialAppState ??= new();
-        // InitialAppState.AuthData = authData;
-
-        navigationManager.NavigateTo("/");
-        return true;
-    }
+    // async Task<bool> HandleLogin()
+    // {
+    // }
     
     private async Task OpenDialogForUserEdit()
     {

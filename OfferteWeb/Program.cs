@@ -1,4 +1,5 @@
 using Blazored.SessionStorage;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
@@ -39,8 +40,7 @@ namespace OfferteWeb
                 ServiceLifetime.Transient
             );
             
-            builder.Services.AddRazorPages()
-                .AddRazorRuntimeCompilation();
+            builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
             builder.Services.AddServerSideBlazor();
             //builder.Services.AddCascadingAuthenticationState();
 
@@ -50,15 +50,16 @@ namespace OfferteWeb
             //    options.DefaultScheme = "CustomScheme";
             //})
             //.AddScheme<CustomAuthenticationHandlerOptions, CustomAuthenticationHandler>("CustomScheme", null);
-            //builder.Services.AddAuthenticationCore();
             builder.Services.AddSingleton(new AuthContext()
             {
                 JWTSecretKey = builder.Configuration["Auth:JWTSecretKey"],
                 JWTLifespan = builder.Configuration["Auth:JWTLifespan"],
             });
-            builder.Services.AddScoped<ProtectedSessionStorage>();
-            builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
-            //builder.Services.AddBlazoredSessionStorage();
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+            //builder.Services.AddHttpContextAccessor();
+            
+            //builder.Services.AddScoped<ProtectedSessionStorage>();
+            //builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
             builder.Services.AddScoped<IAgenteService, AgenteService>();
             builder.Services.AddScoped<IAgenteGruppoService, AgenteGruppoService>();
 
