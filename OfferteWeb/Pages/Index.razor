@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/home"
 @inject IJSRuntime Js
 
 <PageTitle>Index</PageTitle>
@@ -8,16 +8,10 @@
         <h1>Hello, @context.User.Identity?.Name!</h1>
     </Authorized>
 </AuthorizeView>
-Welcome to your new app.
+Welcome to your offers app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
 
-<AuthorizeView>
-    <Authorized>
-        <br />
-        <button class="btn btn-outline-primary" @onclick="DispalyGreetingAlert">Display Greeting alert</button>
-    </Authorized>
-</AuthorizeView>
 @code
 {
     [CascadingParameter]

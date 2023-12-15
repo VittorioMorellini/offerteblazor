@@ -1,0 +1,127 @@
+﻿@using OfferteWeb.Data
+@using OfferteWeb.Models
+@using OfferteWeb.Services
+@using OfferteWeb.Utils
+@using static OfferteWeb.Services.TipoProdottoService
+
+@inject IDialogService dialogService;
+@inject IOffertaService offertaService
+@inject ITipoProdottoService tipoProdottoService;
+@inject IAgenteService agenteService;
+
+@if (OffertaSearchModel != null)
+{
+    <MudExpansionPanel>
+        <TitleContent>
+            <div class="d-flex">
+                <MudIcon Icon="@Icons.Material.Filled.Search" class="mr-3"></MudIcon>
+                <MudText><strong>Filtri ricerca</strong></MudText>
+            </div>
+        </TitleContent>
+        <ChildContent>
+            <MudGrid class="px-2">
+                <MudItem xs=12 sm=6 md=1>
+                    <MudTextField Variant="Variant.Outlined" @bind-Value="OffertaSearchModel.Id" Label="Id"></MudTextField>
+                </MudItem>
+                <MudItem xs=12 sm=6 md=2>
+                    <MudTextField Variant="Variant.Outlined" @bind-Value="OffertaSearchModel.CodiceInterno" Label="Codice Interno"></MudTextField>
+                </MudItem>
+                <MudItem xs=12 sm=6 md=2>
+                    <div style="display:flex; flex-direction:row;align-items: center;">
+                        <MudAutocomplete @ref="autocompleteTipiProdotto" T="TipoProdotto" Clearable
+                                         MinCharacters="3"
+                                         MaxItems="10"
+                                         Immediate="false" Label="Tipo prodotto"
+                                         Value="@SelectedTipoProdotto"
+                                         ValueChanged="TipoProdottoChanged"
+                                         SearchFunc="SearchTipoProdotto"
+                                         Variant="Variant.Outlined" ShowProgressIndicator="true"
+                                         ToStringFunc="@(e=> e==null?null : e.Descrizione)"
+                                         OnClearButtonClick="@ClearSearchTipoProdotto">
+                            <NoItemsTemplate>
+                                <MudText Align="Align.Center" Class="px-4 py-1">
+                                    Nessun elemento trovato
+                                </MudText>
+                            </NoItemsTemplate>
+                        </MudAutocomplete>
+                    </div>
+                </MudItem>
+                <MudItem xs=12 sm=6 md=2>
+                    <MudDatePicker Clearable="true" Variant="Variant.Outlined" @bind-Date="OffertaSearchModel.DateFrom" Label="Data - Da"></MudDatePicker>
+                </MudItem>
+                <MudItem xs=12 sm=6 md=2>
+                    <MudDatePicker Clearable="true" Variant="Variant.Outlined" @bind-Date="OffertaSearchModel.DateTo" Label="Data - A"></MudDatePicker>
+                </MudItem>
+            </MudGrid>
+        </ChildContent>
+    </MudExpansionPanel>
+    <MudGrid Class="px-2 mt-1">
+        <MudItem xs=12 sm=12 md=12 Class="m-1 py-0">
+            <MudButton StartIcon="@Icons.Filled.Search" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" Class="m-1" OnClick="@Search">Cerca</MudButton>
+            <MudButton StartIcon="@Icons.Material.Outlined.Add" Variant="Variant.Filled" Style="margin-left:20px" Color="Color.Primary" Size="Size.Small" Class="m-1" OnClick="@((e) => NewItemClicked.Invoke())">Nuovo</MudButton>
+        </MudItem>
+    </MudGrid>
+}
+@code {
+
+    [Parameter]
+    public EventCallback<OffertaSearchModel> EventCallbackOffertaSearchModel { get; set; }
+    [Parameter]
+    public Action NewItemClicked { get; set; }
+    [Parameter]
+    public OffertaSearchModel OffertaSearchModel { get; set; }
+    //private IEnumerable<OffertaType> OffertaTypes { get; set; }
+    TipoProdotto? SelectedTipoProdotto;
+    MudAutocomplete<TipoProdotto>? autocompleteTipiProdotto;
+
+    protected override async Task OnInitializedAsync()
+    {
+        OffertaSearchModel = OffertaSearchModel ?? new();
+        if (OffertaSearchModel.IdTipoProdotto.HasValue)
+        {
+            SelectedTipoProdotto = tipoProdottoService.Find(OffertaSearchModel.IdTipoProdotto.GetValueOrDefault());
+        }
+        //OffertaTypes = postTypeService.SearchAll(true, null);
+        StateHasChanged();
+    }
+
+    public void Search()
+    {
+        EventCallbackOffertaSearchModel.InvokeAsync(OffertaSearchModel);
+    }
+
+    private void ClearSearchTipoProdotto(MouseEventArgs e)
+    {
+        OffertaSearchModel.IdTipoProdotto = null;
+    }
+
+    private async Task<IEnumerable<TipoProdotto>> SearchTipoProdotto(string value)
+    {
+        TipoProdottoSearchModel model = new();
+        model.Pager.Skip = 0;
+        model.Pager.Take = 10;
+        return tipoProdottoService.SearchByString(value, model, false);
+
+    }
+    private async Task TipoProdottoChanged(TipoProdotto? item)
+    {
+        SelectedTipoProdotto = item;
+        OffertaSearchModel.IdTipoProdotto = SelectedTipoProdotto?.Id;
+    }
+
+    // private async Task OpenCategoriesTree()
+    // {
+    //     var dialog = dialogService.Show<CategoriesTreeView>("Seleziona una categoria",
+    //     new DialogOptions() { MaxWidth = MaxWidth.ExtraLarge, DisableBackdropClick = true, CloseButton = true, Position = DialogPosition.Center });
+    //     var result = await dialog.Result;
+    //     if (!result.Cancelled)
+    //     {
+    //         var selectedCategory = result.Data as int?;
+    //         if (selectedCategory.HasValue)
+    //         {
+    //             SelectedCategory = categoriesService.Find(selectedCategory.Value);
+    //             OffertaSearchModel.Category = selectedCategory;
+    //         }
+    //     }
+    // }
+}

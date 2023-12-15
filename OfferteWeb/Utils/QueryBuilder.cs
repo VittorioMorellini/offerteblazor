@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Data.Common;
 using Microsoft.Data.SqlClient;
 using System.Linq;
+using OfferteWeb.Models;
+using MudBlazor;
 
 namespace OfferteWeb.Utils
 {
@@ -417,13 +419,12 @@ namespace OfferteWeb.Utils
         }
     }
 
-    public class QueryBuilderSearchModel
+    public class QueryBuilderSearchModel : BaseSearchModel
     {
         //public int? Skip { get; set; }
         //public int? Take { get; set; }        
         //public string OrderBy { get; set; }
-
-        public PagerModel Pager { get; set; } = new PagerModel();
+        public PagerModel Pager { get; set; }
     }
 
     public class PagerModel
@@ -432,6 +433,7 @@ namespace OfferteWeb.Utils
         public int? Take { get; set; }
         public string OrderBy { get; set; }
         public bool Ignore { get; set; }
+        public SortDirection Direction { get; set; }
     }
 
     public class JoinTables: Dictionary<string, ConditionTable>

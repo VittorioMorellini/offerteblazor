@@ -1,6 +1,6 @@
 ﻿using MudBlazor;
 
-namespace OfferteWeb
+namespace OfferteWeb.Models
 {
     public class PagerModel
     {

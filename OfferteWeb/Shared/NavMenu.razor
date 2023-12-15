@@ -6,19 +6,20 @@
 
 <MudNavMenu>
     <MudNavLink OnClick="(() => MethodForNavigationCheck.Invoke(home))" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+    <MudNavLink OnClick="(() => MethodForNavigationCheck.Invoke(offer))" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.LocalOffer">Offerte</MudNavLink>
     @if (IsAdmin())
     {
         <MudNavGroup Title="Admin" Expanded="true">
-            <MudNavLink OnClick="(() => MethodForNavigationCheck.Invoke(category))" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Category">Categorie</MudNavLink>
             <MudNavLink OnClick="(() => MethodForNavigationCheck.Invoke(user))" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Person">Utenti</MudNavLink>
+            <MudNavLink OnClick="(() => MethodForNavigationCheck.Invoke(grouping))" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Group">Gruppi</MudNavLink>
         </MudNavGroup>
     }
-    <MudNavGroup Title="Articoli" Expanded="true">
-        <MudNavLink OnClick="(() => MethodForNavigationCheck.Invoke(postNew))" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Article">Nuovo</MudNavLink>
-        <MudNavLink OnClick="(() => MethodForNavigationCheck.Invoke(post))" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.List">Elenco</MudNavLink>
+    <MudNavGroup Title="Circuiti" Expanded="true">
+        <MudNavLink OnClick="(() => MethodForNavigationCheck.Invoke(circuitNew))" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Article">Nuovo circuito</MudNavLink>
+        <MudNavLink OnClick="(() => MethodForNavigationCheck.Invoke(circuit))" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.List">Elenco</MudNavLink>
     </MudNavGroup>
-    <MudNavGroup Title="Template Email" Expanded="true">
-        <MudNavLink OnClick="(() => MethodForNavigationCheck.Invoke(emailList))" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.PersonPin">Elenco template Email</MudNavLink>
+    <MudNavGroup Title="Clienti" Expanded="true">
+        <MudNavLink OnClick="(() => MethodForNavigationCheck.Invoke(customer))" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Business">Clienti</MudNavLink>
     </MudNavGroup>
 </MudNavMenu>
 
@@ -31,14 +32,13 @@
     private bool collapseNavMenu = true;
 
     // private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-    string home = "/";
-    string category = "/category";
-    string user = "/user";
-    string tenant = "/tenant";
-    string postNew = "/post/new";
-    string post = "/post";
+    string home = "/home";
+    string user = "/agenti";
     string grouping = "/grouping";
-    string emailList = "/emailTemplate";
+    string customer = "/customer";
+    string circuitNew = "/circuit/new";
+    string circuit = "/circuit";
+    string offer = "/";
 
     private void ToggleNavMenu()
     {

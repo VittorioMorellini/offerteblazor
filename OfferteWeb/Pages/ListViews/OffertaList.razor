@@ -1,0 +1,202 @@
+﻿@page "/"
+@page "/mine/{IdAgente:long}"
+@using OfferteWeb.Models
+@using OfferteWeb.Services
+@using OfferteWeb.Components
+@using OfferteWeb.Components.SearchComponents;
+@using OfferteWeb.Pages
+
+@inject IOffertaService offertaService
+@inject NavigationManager navigationManager;
+@inherits BaseListPage<Offerta>;
+@inject SearchModelStore searchModelStore;
+<Loading IsLoading=@IsLoading></Loading>
+
+<div class="pt-2">
+    @if (!Autoload)
+    {
+        <PageTitle>@Title</PageTitle>
+        @if (!AsModal && !ReadOnly)
+        {
+            <OffertaSearchComponent OffertaSearchModel="searchModel" EventCallbackOffertaSearchModel="Search" NewItemClicked="NewItem"></OffertaSearchComponent>
+        }
+        else
+        {
+            <ListPageHeader EntityName=Articoli></ListPageHeader>
+            <OffertaSearchComponent OffertaSearchModel="searchModel" EventCallbackOffertaSearchModel="Search"></OffertaSearchComponent>
+        }
+    }
+    <MudTable class="mt-4 mx-2"
+              CustomHeader="true"
+              ReadOnly
+              @ref="table"
+              Dense
+              RowsPerPage=RowsPerPage
+              T="Offerta"
+              Loading="IsLoading"
+              ServerData="@(new Func<TableState, Task<TableData<Offerta>>>(ServerReload))"
+              Hover="true" Breakpoint="Breakpoint.Sm" HorizontalScrollbar="true">
+        <HeaderContent>
+            <MudTHeadRow IsCheckable="false">
+                @if (Selectable)
+                {
+                    <MudTh></MudTh>
+                }
+                <MudTh><MudTableSortLabel T="Offerta" SortLabel="Id">Id</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel T="Offerta" SortLabel="CodiceInterno">Codice interno</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel T="Offerta" SortLabel="TipoProdotto.Descrizione">TipoProdotto</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel T="Offerta" SortLabel="StatoOfferta">Stato</MudTableSortLabel></MudTh>
+                @if (!AsModal)
+                {
+                    <MudTh>Id agente</MudTh>
+                    <MudTh>Data offerta</MudTh>
+                    <MudTh>DataUltimaModifica</MudTh>
+                }
+                @if (!ReadOnly)
+                {
+                    <MudTh>Modifica</MudTh>
+                }
+            </MudTHeadRow>
+        </HeaderContent>
+        <RowTemplate>
+            @if (Selectable)
+            {
+                <MudTd>
+                    <MudButton Variant=Variant.Outlined Color="Color.Primary" OnClick="(() => selezionaArticolo(context))">Seleziona</MudButton>
+                </MudTd>
+            }
+            <MudTd>
+                <MudText>@context.Id</MudText>
+                </MudTd>
+            <MudTd>
+                    <MudText>@(AsModal && context.CodiceInterno != null ? $"{context.CodiceInterno?.Substring(0, Math.Min(context.CodiceInterno.Length, 50))} [...]" : context.CodiceInterno)</MudText>
+            </MudTd>
+            <MudTd>
+                <MudText>@context.IdTipoProdotto</MudText>
+            </MudTd>
+            <MudTd>
+                <MudText>@(context.StatoOfferta)</MudText>
+            </MudTd>
+            @if (!AsModal)
+            {
+                <MudTd>
+                    <MudText>@($"{context.IdAgente}")</MudText>
+                    </MudTd>
+                <MudTd>
+                    <MudText>@context.DataOfferta</MudText>
+                </MudTd>
+                <MudTd>
+                    <MudText>@context.DataUltimaModifica</MudText>
+                </MudTd>
+            }
+            @if (!ReadOnly)
+            {
+                <MudTd>
+                    <MudButton StartIcon="@Icons.Material.Outlined.Edit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" Class="m-1" OnClick="@((e) => EditItem(context.Id))">Modifica</MudButton>
+                </MudTd>
+            }
+        </RowTemplate>
+        <PagerContent>
+            @if (!Autoload)
+            {
+                <MudTablePager HideRowsPerPage=@AsModal PageSizeOptions="new int[]{15, 50, 100}" />
+            }
+        </PagerContent>
+        <NoRecordsContent>
+            Nessun elemento presente
+        </NoRecordsContent>
+    </MudTable>
+    @if (AsModal)
+    {
+        <div class="d-flex" style="justify-content: flex-end; gap:10px; margin:10px">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit">Conferma</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Cancel">Annulla</MudButton>
+        </div>
+    }
+</div>
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter]
+    public int RowsPerPage { get; set; } = 15;
+    [Parameter]
+    public bool Selectable { get; set; } = false;
+    [Parameter]
+    public bool AsModal { get; set; } = false;
+    [Parameter]
+    public bool ReadOnly { get; set; } = false;
+    [Parameter]
+    public string? UserUpd { get; set; } = null;
+    [Parameter]
+    public long? IdAgente { get; set; } = null;
+    [Parameter]
+    public bool Autoload { get; set; } = false;
+    [Parameter]
+    public int? AutoloadMaxRowCount { get; set; } = null;
+    [Parameter]
+    public string Title { get; set; } = "Articoli";
+
+    private HashSet<Offerta> selectedItems = new();
+    private MudTable<Offerta>? table;
+    private string searchString = String.Empty;
+    OffertaSearchModel searchModel;
+
+    protected override void OnInitialized()
+    {
+        searchService = offertaService;
+        searchModel = searchModelStore.GetModel<OffertaSearchModel>();
+        //searchModel.Data = UserUpd;
+        searchModel.IdAgente = IdAgente;
+        if (Autoload)
+        {
+            searchModel.Limit = AutoloadMaxRowCount;
+            table?.ReloadServerData();
+        }
+        if (IdAgente.HasValue)
+        {
+            Title = "I miei articoli";
+        }
+        base.OnInitialized();
+    }
+
+    public async Task Search(OffertaSearchModel offertaSearchModel)
+    {
+        await SetLoading(true);
+        offertaSearchModel.IdAgente = IdAgente;
+        searchModel = offertaSearchModel;
+        //State.SaveSearchModel(postSearchModel);
+        await table.ReloadServerData();
+        StateHasChanged();
+        await SetLoading(false);
+    }
+
+    private async Task<TableData<Offerta>> ServerReload(TableState state)
+    {
+        await SetLoading(true);
+        PagerModel pm = new();
+        pm.Take = state.PageSize;
+        pm.Skip = state.Page * state.PageSize;
+        pm.OrderBy = state.SortLabel;
+        pm.Direction = state.SortDirection;
+        var pagedInfo = offertaService.SearchPaged(searchModel, false);
+        var postPaged = pagedInfo.Item1;
+        var totalItems = pagedInfo.Item2;
+        await SetLoading(false);
+        return new TableData<Offerta>() { TotalItems = totalItems, Items = postPaged };
+    }
+
+    private void OnSearch(string text)
+    {
+        searchString = text;
+        table.ReloadServerData();
+    }
+    private void selezionaArticolo(Offerta element)
+    {
+        selectedItems.Add(element);
+        Submit();
+    }
+
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(selectedItems));
+    void Cancel() => MudDialog.Cancel();
+
+}

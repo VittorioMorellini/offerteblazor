@@ -140,5 +140,9 @@ public class AgenteService : BaseService<Agente, long, OfferteDbContext>, IAgent
 
 public class AgenteSearchModel : QueryBuilderSearchModel
 {
-
+    public string Username { get; set; }
+    public string Mail { get; set; }
+    public string Role { get; set; }
+    public string Cognome { get; set; }
+    public string Nome { get; set; }
 }

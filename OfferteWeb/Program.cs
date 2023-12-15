@@ -57,11 +57,14 @@ namespace OfferteWeb
             });
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
             //builder.Services.AddHttpContextAccessor();
-            
+
             //builder.Services.AddScoped<ProtectedSessionStorage>();
             //builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+            builder.Services.AddScoped<SearchModelStore>();
             builder.Services.AddScoped<IAgenteService, AgenteService>();
             builder.Services.AddScoped<IAgenteGruppoService, AgenteGruppoService>();
+            builder.Services.AddScoped<IOffertaService, OffertaService>();
+            builder.Services.AddScoped<ITipoProdottoService, TipoProdottoService>();
 
             builder.Services.AddMudServices(config =>
             {
