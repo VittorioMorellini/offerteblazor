@@ -13,6 +13,8 @@
 <Loading IsLoading=@IsLoading></Loading>
 
 <div class="pt-2">
+    <ListPageHeader EntityName=Offerte></ListPageHeader>
+
     @if (!Autoload)
     {
         <PageTitle>@Title</PageTitle>
@@ -133,7 +135,7 @@
     [Parameter]
     public int? AutoloadMaxRowCount { get; set; } = null;
     [Parameter]
-    public string Title { get; set; } = "Articoli";
+    public string Title { get; set; } = "Offerte";
 
     private HashSet<Offerta> selectedItems = new();
     private MudTable<Offerta>? table;

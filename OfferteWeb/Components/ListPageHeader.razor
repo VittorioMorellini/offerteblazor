@@ -1,0 +1,26 @@
+﻿<div style="display:flex; align-items:center; margin-top: 20px">
+    <div style="display:flex; align-items:center">
+        <MudText Style="margin-left:10px" Typo="Typo.h6">@EntityName</MudText>
+        @if (NewItemClicked != null)
+        {
+            <MudButton StartIcon="@Icons.Material.Outlined.Add" Variant="Variant.Filled" Style="margin-left:20px" Color="Color.Primary" Size="Size.Small" Class="m-1" OnClick="@((e) => NewItemClicked.Invoke())">Nuovo</MudButton>
+        }
+    </div>
+    <div style="display:flex; align-items:end">
+        @if (SearchAllClicked != null)
+        {
+            <MudButton StartIcon="@Icons.Filled.Search" Style="margin-left:20px" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" Class="m-1" OnClick="@(() => SearchAllClicked.Invoke())">Cerca tutti</MudButton>
+        }
+    </div>
+
+</div>
+
+@code {
+    [Parameter]
+    public string EntityName { get; set; }
+    [Parameter]
+    public Action SearchAllClicked { get; set; }
+    [Parameter]
+    public Action NewItemClicked { get; set; }
+
+}
