@@ -1,0 +1,31 @@
+﻿<div class="d-flex" style="justify-content: flex-end; gap:10px; position: fixed; bottom: 10px; right: 15px; left: 0px;z-index: calc(var(--mud-zindex-popover))"> 
+    @if (Modifica && UpdateClicked.HasDelegate)
+    {
+        <MudButton StartIcon="@Icons.Filled.Save" Variant="Variant.Filled" Color="Color.Primary" OnClick="ModificaClick">Salva modifiche</MudButton>
+    }
+    else if (AddClicked.HasDelegate)
+    {
+        <MudButton StartIcon="@Icons.Filled.Add" Variant="Variant.Filled" Color="Color.Secondary" OnClick="InserisciClick">Inserisci</MudButton>
+    }
+    @if (DeleteClicked.HasDelegate)
+    {
+        <MudButton StartIcon="@Icons.Filled.Delete" Variant="Variant.Filled" Color="Color.Secondary" OnClick="EliminaClick">@($"Elimina {Entita}")</MudButton>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public bool Modifica { get; set; }
+    [Parameter]
+    public string? Entita { get; set; }
+    [Parameter]
+    public EventCallback UpdateClicked { get; set; }
+    [Parameter]
+    public EventCallback AddClicked { get; set; }
+    [Parameter]
+    public EventCallback DeleteClicked { get; set; }
+
+    private async Task ModificaClick() { await UpdateClicked!.InvokeAsync(); }
+    private async Task InserisciClick() { await AddClicked!.InvokeAsync(); }
+    private async Task EliminaClick() { await DeleteClicked!.InvokeAsync(); }
+}

@@ -6,7 +6,6 @@
 @inject IJSRuntime _jsRuntime
 @inject IAgenteService agenteService
 @inject ProtectedSessionStorage _sessionStorage
-@inject AppState state
 
 <CascadingValue Value="this">
     <ErrorBoundary @ref="ErrorBoundary">
@@ -90,6 +89,8 @@
 @code {
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
+    // [CascadingParameter]
+    // public OfferteWeb.State.InitialApplicationState InitialAppState { get; set; }
 
     private Agente agente = new Agente();
 

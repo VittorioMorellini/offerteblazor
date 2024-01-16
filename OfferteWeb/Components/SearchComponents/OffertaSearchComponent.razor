@@ -57,7 +57,7 @@
     </MudExpansionPanel>
     <MudGrid Class="px-2 mt-1">
         <MudItem xs=12 sm=12 md=12 Class="m-1 py-0">
-            <MudButton StartIcon="@Icons.Filled.Search" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" Class="m-1" OnClick="@Search">Cerca</MudButton>
+            <MudButton StartIcon="@Icons.Filled.Search" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" Class="m-1" OnClick="@HandleSearch">Cerca</MudButton>
             <MudButton StartIcon="@Icons.Material.Outlined.Add" Variant="Variant.Filled" Style="margin-left:20px" Color="Color.Primary" Size="Size.Small" Class="m-1" OnClick="@((e) => NewItemClicked.Invoke())">Nuovo</MudButton>
         </MudItem>
     </MudGrid>
@@ -85,7 +85,7 @@
         StateHasChanged();
     }
 
-    public void Search()
+    public void HandleSearch()
     {
         EventCallbackOffertaSearchModel.InvokeAsync(OffertaSearchModel);
     }

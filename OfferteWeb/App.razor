@@ -1,10 +1,9 @@
-﻿<CascadingAuthenticationState>
+﻿@using Microsoft.AspNetCore.Http
+<CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
-            <CascadingValue Value="InitialState">
-                <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
-                <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
-            </CascadingValue>
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
+            <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
         </Found>
         <NotFound>
             <PageTitle>Not Found</PageTitle>
@@ -16,11 +15,6 @@
 </CascadingAuthenticationState>
 
 @code {
-    [Parameter]
-    public OfferteWeb.State.InitialApplicationState InitialState { get; set; }
-    
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-    }
+    // [Parameter]
+    // public OfferteWeb.State.InitialApplicationState InitialState { get; set; }
 }

@@ -5,10 +5,14 @@
 
 <AuthorizeView>
     <Authorized>
-        <h1>Hello, @context.User.Identity?.Name!</h1>
+        <h1>Welcome to your offers app.</h1>
+        <hr />
+        <h2>Hello by context, @context.User.Identity?.Name!</h2>
+        
+        <h2>Hello by authStatus, @authStatus?.User?.Identity?.Name!</h2>
     </Authorized>
 </AuthorizeView>
-Welcome to your offers app.
+
 
 <SurveyPrompt Title="How is Blazor working for you?" />
 
@@ -16,12 +20,18 @@ Welcome to your offers app.
 {
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
+    private AuthenticationState authStatus;
 
-    private async Task DispalyGreetingAlert()
+    protected override async Task OnInitializedAsync()
     {
-        var authState = await authenticationStateTask;
-        var message = $"Hello {authState.User.Identity.Name}";
-
-        await Js.InvokeVoidAsync("alert", message);
+        authStatus = await authenticationStateTask;
+        await base.OnInitializedAsync();
     }
+    // private async Task DispalyGreetingAlert()
+    // {
+    //     var authState = await authenticationStateTask;
+    //     var message = $"Hello {authState?.User.Identity?.Name}";
+
+    //     await Js.InvokeVoidAsync("alert", message);
+    // }
 }

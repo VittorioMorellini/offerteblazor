@@ -9,6 +9,7 @@ using MudBlazor;
 using MudBlazor.Services;
 using OfferteWeb.Authentication;
 using OfferteWeb.Data;
+using OfferteWeb.Handler;
 using OfferteWeb.Models;
 using OfferteWeb.Models.Auth;
 using OfferteWeb.Services;
@@ -44,27 +45,34 @@ namespace OfferteWeb
             builder.Services.AddServerSideBlazor();
             //builder.Services.AddCascadingAuthenticationState();
 
-            // Add services to the container.
-            //builder.Services.AddAuthentication(options =>
-            //{
-            //    options.DefaultScheme = "CustomScheme";
-            //})
-            //.AddScheme<CustomAuthenticationHandlerOptions, CustomAuthenticationHandler>("CustomScheme", null);
             builder.Services.AddSingleton(new AuthContext()
             {
                 JWTSecretKey = builder.Configuration["Auth:JWTSecretKey"],
                 JWTLifespan = builder.Configuration["Auth:JWTLifespan"],
             });
+            builder.Services.AddSingleton(new AppConfiguration()
+            {
+                BaseAddress = builder.Configuration["AppConfiguration:BaseAddress"],
+                B64key = builder.Configuration["AppConfiguration:B64key"],
+            });
+            builder.Services.AddSingleton(new EmailConfiguration()
+            {
+                SmtpServer = builder.Configuration["EmailConfiguration:SmtpServer"],
+                SmtpUser = builder.Configuration["EmailConfiguration:SmtpUser"],
+            });
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
-            //builder.Services.AddHttpContextAccessor();
+            //builder.Services.AddScoped<InitialApplicationStateHandler>();
 
             //builder.Services.AddScoped<ProtectedSessionStorage>();
             //builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+            builder.Services.AddHttpClient();
             builder.Services.AddScoped<SearchModelStore>();
             builder.Services.AddScoped<IAgenteService, AgenteService>();
             builder.Services.AddScoped<IAgenteGruppoService, AgenteGruppoService>();
             builder.Services.AddScoped<IOffertaService, OffertaService>();
             builder.Services.AddScoped<ITipoProdottoService, TipoProdottoService>();
+            builder.Services.AddScoped<IMailService, MailService>();
+            builder.Services.AddScoped<IFileService, FileService>();
 
             builder.Services.AddMudServices(config =>
             {
@@ -82,6 +90,7 @@ namespace OfferteWeb
 
             builder.Services.AddScoped<DialogService>();
             builder.Services.AddScoped<AppState>();
+            builder.Services.AddScoped<EntitiesFactory>();
 
             var app = builder.Build();
 

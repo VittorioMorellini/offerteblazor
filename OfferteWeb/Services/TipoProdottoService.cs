@@ -41,7 +41,6 @@ namespace OfferteWeb.Services
         {
             throw new NotImplementedException();
         }
-
     }
 
 }

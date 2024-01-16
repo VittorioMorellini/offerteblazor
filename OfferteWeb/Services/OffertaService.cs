@@ -102,6 +102,21 @@ namespace OfferteWeb.Services
         {
             return _search(model);
         }
+
+        //public Task<bool> Delete(Offerta? item)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public Task<long?> Add(Offerta? item)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public Task<bool> Update(Offerta? item)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 
     public class OffertaSearchModel : QueryBuilderSearchModel

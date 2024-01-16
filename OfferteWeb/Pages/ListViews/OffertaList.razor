@@ -71,7 +71,7 @@
                 <MudText>@context.Id</MudText>
                 </MudTd>
             <MudTd>
-                    <MudText>@(AsModal && context.CodiceInterno != null ? $"{context.CodiceInterno?.Substring(0, Math.Min(context.CodiceInterno.Length, 50))} [...]" : context.CodiceInterno)</MudText>
+                <MudText>@(AsModal && context.CodiceInterno != null ? $"{context.CodiceInterno?.Substring(0, Math.Min(context.CodiceInterno.Length, 50))} [...]" : context.CodiceInterno)</MudText>
             </MudTd>
             <MudTd>
                 <MudText>@context.IdTipoProdotto</MudText>
@@ -94,7 +94,7 @@
             @if (!ReadOnly)
             {
                 <MudTd>
-                    <MudButton StartIcon="@Icons.Material.Outlined.Edit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" Class="m-1" OnClick="@((e) => EditItem(context.Id))">Modifica</MudButton>
+                    <MudButton StartIcon="@Icons.Material.Outlined.Edit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" Class="m-1" OnClick="@((e) => EditItem(context.Id, "Offerta"))">Modifica</MudButton>
                 </MudTd>
             }
         </RowTemplate>
@@ -155,7 +155,7 @@
         }
         if (IdAgente.HasValue)
         {
-            Title = "I miei articoli";
+            Title = "Offerte agente";
         }
         base.OnInitialized();
     }

@@ -7,7 +7,7 @@ public partial class Agente
 {
     public long Id { get; set; }
 
-    public string? RagioneSociale { get; set; } = null!;
+    public string? RagioneSociale { get; set; }
 
     public string? Indirizzo { get; set; }
 

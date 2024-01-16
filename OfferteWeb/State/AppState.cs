@@ -1,12 +1,15 @@
 ﻿using OfferteWeb.Services;
 using OfferteWeb.Exceptions;
 using OfferteWeb.Models;
+using Microsoft.AspNetCore.Http;
+using System.Net.Http;
 
 namespace OfferteWeb.State;
 
 public class AppState
 {
     private bool Initialized = false;
+    public HttpContext httpContext { get; set; }
     private IAgenteService _agenteService;
     public Agente? User { get; set; }
     public AppState(IAgenteService agenteService)
@@ -26,6 +29,7 @@ public class AppState
         {
             throw new AuthorizeException(403);
         }
+        //Initialized = true;
     }
 
     public string? Username

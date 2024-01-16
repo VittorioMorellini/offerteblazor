@@ -1,0 +1,313 @@
+﻿@page "/offerta/edit/{Id:long}"
+@page "/offerta/new"
+
+@using OfferteWeb.Models
+@using OfferteWeb.Pages.ListViews;
+@using OfferteWeb.Services
+@using OfferteWeb.Shared
+@using System.Net;
+@using System.Net.Http.Headers;
+@using System.Text.RegularExpressions;
+@using System.Text;
+@using TinyMCE.Blazor;
+@using OfferteWeb.Components;
+
+@inherits BaseEditPage<Offerta>;
+@inject HttpClient httpClient
+@inject IDialogService dialogService;
+@inject IMailService mailService
+@inject IOffertaService offertaService
+@inject IAgenteService agenteService;
+@inject NavigationManager navigationManager;
+@inject ISnackbar snackbar;
+@inject EntitiesFactory factory;
+@inject IFileService fileService;
+@inject IJSRuntime jsRuntime;
+@inject AppConfiguration appConfiguration;
+
+<Loading IsLoading=@IsLoading></Loading>
+<InputFile id="fileInput" OnChange="UploadFiles" hidden multiple></InputFile>
+@if (Item != null)
+{
+    <OfferteWeb.Components.EditPageHeader Modifica="@InModifica" Entita="@UiEntityName"></OfferteWeb.Components.EditPageHeader>
+    <MudForm @ref="form" @bind-IsValid="@isValid" @bind-Errors="@errors">
+        <MudGrid Spacing="1">
+            <MudItem xs="12" sm="6" md="6">
+                <MudTextField Required Variant="Variant.Outlined" @bind-Value="Item.CodiceInterno" Label="Codice interno"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="6">
+                <MudSelect Clearable Required Variant="Variant.Outlined" @bind-Value="@Item.StatoOfferta" Label="Stato" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem T=byte? Value="@StatoOfferta.Inserita.Item1">@StatoOfferta.Inserita.Item2</MudSelectItem>
+                    <MudSelectItem T=byte? Value="@StatoOfferta.Accettata.Item1">@StatoOfferta.Accettata.Item2</MudSelectItem>
+                    <MudSelectItem T=byte? Value="@StatoOfferta.Rifiutata.Item1">@StatoOfferta.Rifiutata.Item2</MudSelectItem>
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="6">
+                <MudSelect Clearable Variant="Variant.Outlined" @bind-Value="Item.IdTipoProdotto" Label="Tipo">
+                    @if (TipoProdottos != null)
+                    {
+                        @foreach (var pt in TipoProdottos)
+                        {
+                            <MudSelectItem T="long?" Value="@pt.Id">@pt.Descrizione</MudSelectItem>
+                        }
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12" sm="6" md=6>
+                <MudDatePicker Variant="Variant.Outlined" @bind-Date="Item.DataOfferta" Label="Data Offerta"></MudDatePicker>
+            </MudItem>
+            <MudPaper Style="padding:10px; width:100%" Outlined="true" Elevation="1">
+                <MudItem xs="12">
+                    <div style="display:flex; margin-bottom:10px">
+                        <MudText Style="margin-right:10px" Typo="Typo.h5">Allegati (Gerber file)</MudText>
+                        @if (loadingFile)
+                        {
+                            <MudProgressCircular Indeterminate></MudProgressCircular>
+                        }
+                        else
+                        {
+                            <MudButton HtmlTag="label"
+                                       Disabled=@(Item?.Id == 0)
+                                       Size="Size.Small"
+                                       Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       StartIcon="@Icons.Filled.CloudUpload"
+                                       for="fileInput">
+                                Carica
+                            </MudButton>
+                        }
+                    </div>
+                </MudItem>
+            </MudPaper>
+            <MudPaper Style="padding:10px; width:100%" Outlined="true" Elevation="1">
+                <MudItem xs="12">
+                    <div style="display:flex; margin-bottom:10px;flex-direction:column">
+                        <div style="display:flex; flex-direction:row;align-items:center">
+                            <MudText Style="margin-right:10px" Typo="Typo.h5">Altri redattori (massimo 3)</MudText>
+                            <MudSelect Style="max-width: 300px;flex-grow:0" Clearable Variant=Variant.Outlined ToStringFunc="@(e=> e==null?null : $"{e.Nome} {e.Cognome}")" T="Agente" Label="Redattore" MultiSelection="false" Value="SelectedAgente" ValueChanged="RedattoreAddizionaleChanged">
+                                @foreach (var r in Redattori)
+                                {
+                                    <MudSelectItem T="Agente" Value="@r">@($"{r.Nome} {r.Cognome}")</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </div>
+                    </div>
+                </MudItem>
+            </MudPaper>
+            <MudPaper Style="padding:10px; width:100%" Outlined="true" Elevation="1">
+                <MudItem xs="12">
+                    <div style="display:flex; margin-bottom:10px">
+                        <MudText Style="margin-right:10px" Typo="Typo.h5">Righe offerta</MudText>
+                        <MudButton HtmlTag="label"
+                                   Disabled=@(Item?.Id == 0)
+                                   Size="Size.Small"
+                                   Variant="Variant.Filled"
+                                   Color="Color.Secondary"
+                                   StartIcon="@Icons.Filled.Link"
+                                   >
+                            Inserisci una riga
+                        </MudButton>
+                    </div>
+                    <MudTable @ref="tableRelated" T="Offerta" Dense ServerData="@(new Func<TableState, Task<TableData<Offerta>>>(ServerReload))" Hover="true" RowsPerPage="10" Bordered="true" Striped="true">
+                        <HeaderContent>
+                            <MudTh>Codice</MudTh>
+                            <MudTh>Tipo prodotto</MudTh>
+                            <MudTh>Stato</MudTh>
+                            <MudTh>Redattore</MudTh>
+                            <MudTh>Inserimento</MudTh>
+                            <MudTh>Modifica</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd>
+                                <MudText>@context.CodiceInterno</MudText>
+                            </MudTd>
+                            <MudTd>
+                                <MudText>@context.IdTipoProdotto</MudText>
+                            </MudTd>
+                            <MudTd>
+                                <MudText>@context.StatoOfferta</MudText>
+                            </MudTd>
+                            <MudTd>
+                                <MudText>@context.IdAgente</MudText>
+                            </MudTd>
+                            <MudTd>
+                                <MudButton StartIcon="@Icons.Material.Filled.OpenInNew" Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small" OnClick="(()=> OpenOfferta(0))">Inserisci</MudButton>
+                            </MudTd>
+                            <MudTd>
+                                <MudButton StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small" OnClick="(()=> OpenOfferta(context.Id))">Apri</MudButton>
+                            </MudTd>
+                        </RowTemplate>
+                        <PagerContent>
+                            <MudTablePager PageSizeOptions="new int[]{15, 50, 100}" />
+                        </PagerContent>
+                        <NoRecordsContent>
+                            Nessun elemento presente
+                        </NoRecordsContent>
+                    </MudTable>
+                </MudItem>
+            </MudPaper>
+        </MudGrid>
+@*         <MudGrid Style="height:100px; align-items:center" Spacing="1">
+            <MudItem xs=12 sm=6 md=6>
+                <MudCard Style="display: flex;
+                    height: 80px;
+                    flex-direction: row; align-items:center; padding:30px; background-color:lightgrey">
+                    <MudItem xs=12 sm=3 md=3>
+                        <MudCheckBox @bind-Checked="@Item.FineLine" Label="Fineline"></MudCheckBox>
+                    </MudItem>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+ *@        <MudItem xs=12 sm=6 md=6>
+            <div style="display:flex; justify-content:space-around; column-gap:5vh">
+                <MudCheckBox @bind-Checked="Item.FineLine" Label="Fineline"></MudCheckBox>
+                <MudCheckBox @bind-Checked="Item.Criticita" Label="Criticità"></MudCheckBox>
+                <MudCheckBox @bind-Checked="Item.FresaSi" Label="Fresa sì"></MudCheckBox>
+            </div>
+        </MudItem>
+        <MudGrid Style="padding-bottom:50px" Spacing="1">
+            <MudItem xs=12 sm=6 md=3>
+                <MudTextField Variant="Variant.Outlined" Disabled=true @bind-Value="Item.IdUtente" Label="Utente Inserimento"></MudTextField>
+            </MudItem>
+            <MudItem xs=12 sm=6 md=3>
+                <MudTextField Variant="Variant.Outlined" Disabled=true @bind-Value="Item.DataUltimaModifica" Label="Data ultima modifica"></MudTextField>
+            </MudItem>
+            </MudGrid>
+        <OfferteWeb.Components.EditPageFooter Modifica="@InModifica" Entita="@UiEntityName" DeleteClicked="DeleteItem" AddClicked="AddItem" UpdateClicked="UpdateOfferta"></OfferteWeb.Components.EditPageFooter>
+    </MudForm>
+
+}
+@code {
+    private readonly string UiEntityName = "Offerta";
+    private string? newTag;
+    private IEnumerable<TipoProdotto> TipoProdottos { get; set; }
+    private bool loadingFile = false;
+    //MudTextField<string>? tagAddTextField;
+    Agente? SelectedAgente;
+    MudTable<Offerta>? tableRelated;
+    IEnumerable<Agente> Redattori { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        httpClient.BaseAddress = new Uri(navigationManager.BaseUri);
+        searchService = offertaService;
+        //PostTypes = postTypeService.SearchAll(true, null);
+
+        if (InModifica == true)
+        {
+            Item = offertaService.Find(Id);
+            //SelectedCategory = Item.Category;
+        }
+        else
+        {
+            Item = CreateInstance();
+            Item.IdAgente = State.User != null ? State.User.Id : 0;
+            //Item.StatoOfferta = Offerta.ReferenceEquals;
+        }
+        //TagList.AddRange(Item.PostTag.Select(x => x.Tag.Name).ToList());
+        Redattori = agenteService.Search(new AgenteSearchModel());
+        await base.OnInitializedAsync();
+    }
+
+    private async Task<TableData<Offerta>> ServerReload(TableState state)
+    {
+        await SetLoading(true);
+        PagerModel pm = new();
+        pm.Take = state.PageSize;
+        pm.Skip = state.Page * state.PageSize;
+        OffertaSearchModel model = new();
+        model.Id = Item.Id;
+        var pagedInfo = offertaService.SearchPaged(model, false);
+        var categoriesPaged = pagedInfo.Item1;
+        var totalItems = pagedInfo.Item2;
+        await SetLoading(false);
+        return new TableData<Offerta>() { TotalItems = totalItems, Items = categoriesPaged };
+    }
+
+    private void OpenOfferta(long newId)
+    {
+        navigationManager.NavigateTo($"/offerta/edit/{newId}", true);
+    }
+
+    private async Task UploadFiles(InputFileChangeEventArgs e)
+    {
+        await SetLoading(true);
+        loadingFile = true;
+        try
+        {
+            //         foreach (var file in e.GetMultipleFiles())
+            //         {
+            //             PostAttachment? myDocument = factory.Create<PostAttachment>();
+            //             var extension = Path.GetExtension(file.Name);
+            //             var fileName = Regex.Replace(file.Name, @"[^\w\.@-]", "", RegexOptions.None, TimeSpan.FromSeconds(1.5)).Replace(" ", "_");
+            //             myDocument.Name = fileName;
+            //             myDocument.PostId = Item.Id;
+            //             var externalId = await postAttachmentService.Add(myDocument);
+
+            //             byte[] fileContent;
+            //             var stream = file.OpenReadStream(Int64.MaxValue);
+            //             MemoryStream ms = new MemoryStream();
+            //             await stream.CopyToAsync(ms);
+            //             stream.Close();
+            //             fileContent = ms.ToArray();
+
+            //             var result = await azureFileService.WriteFile(externalId, fileContent, extension);
+            //             if (result)
+            //             {
+            //                 Item!.PostAttachment.Add(myDocument);
+            //                 await UpdateOfferta();
+            //             }
+            //             else
+            //             {
+            //                 snackbar.Add("Errore caricamento file", Severity.Error);
+            //             }
+            //         }
+        }
+        finally
+        {
+            loadingFile = false;
+            await SetLoading(false);
+        }
+    }
+
+    protected async Task UpdateOfferta()
+    {
+        await SetLoading(true);
+        await UpdateItem();
+        await SetLoading(false);
+    }
+
+    public async Task RedattoreAddizionaleChanged(Agente agente)
+    {
+        await UpdateOfferta();        
+    }
+
+    protected async Task ExportPdf()
+    {
+        snackbar.Add("Sto generando il PDF, attendere prego", Severity.Info);
+        var requestMessage = new HttpRequestMessage(HttpMethod.Post, "api/pdf");
+
+        var html = BuildHtml(Item.CodiceInterno, Item.Note);
+        requestMessage.Content = new StringContent(html);
+        var response = await httpClient.SendAsync(requestMessage);
+        var url = await response.Content.ReadAsStringAsync();
+        await jsRuntime.InvokeAsync<object>("open", url, "_blank");
+    }
+
+    private string BuildHtml(string htmlTitle, string htmlContent)
+    {
+        string t = @"<!DOCTYPE html>
+<html>
+<body>
+<h2>
+    @title
+</h2>
+    <hr>
+    @body
+</body>
+</html>";
+        t = t.Replace("@title", htmlTitle);
+        return t.Replace("@body", htmlContent);
+    }
+
+}

@@ -1,0 +1,13 @@
+﻿<div style="padding-bottom:20px; padding-top:10px;  display: flex">
+    <MudText Style="padding-right:20px;" Typo="Typo.h5">@($"{(Testo != null ? Testo : Modifica ? "Modifica" : "Inserisci")} {Entita}")</MudText>
+    </div>
+
+@code {
+
+    [Parameter]
+    public bool Modifica { get; set; }
+    [Parameter]
+    public string? Entita { get; set; }
+    [Parameter]
+    public string? Testo { get; set; }
+}

@@ -18,6 +18,10 @@
     <link rel="icon" type="image/png" href="favicon.png"/>
 </head>
 <body>
+    @{
+        //var initialTokenState = await InitialApplicationStateHandler.InitializeStateAndProcessUserPresent(HttpContext);
+        // param-InitialState="initialTokenState"
+    }
     <component type="typeof(App)" render-mode="ServerPrerendered" />
     <script src="~/tinymce/tinymce-blazor.js"></script>
 

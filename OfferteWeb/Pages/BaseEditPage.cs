@@ -1,0 +1,172 @@
+﻿using Microsoft.AspNetCore.Components;
+using MudBlazor;
+using OfferteWeb.Data;
+using OfferteWeb.Models;
+using OfferteWeb.State;
+
+namespace OfferteWeb;
+
+public class BaseEditPage<T> : LayoutComponentBase
+{
+    [Parameter]
+    public long Id { get; set; }
+    [Inject]
+    NavigationManager? NavManager { get; set; }
+    [Inject]
+    ISnackbar Snackbar { get; set; }
+    [Inject]
+    EntitiesFactory EntitiesFactory { get; set; }
+    [Inject]
+    protected AppState State { get; set; }
+    public string EntityName { get { return typeof(T).Name.ToLower(); } }
+
+    protected bool isValid;
+    protected string[] errors = Array.Empty<string>();
+    protected MudForm? form;
+    public bool InModifica { get { return Id > 0; } }
+    public bool IsLoading { get; protected set; }
+
+    protected ISearchEntities<T>? searchService;
+    protected IUpdateEntities<T>? updateService;
+
+    protected T? Item { get; set; }
+    internal async Task SetLoading(bool loading)
+    {
+        this.IsLoading = loading;
+        await Task.Yield();
+    }
+    protected T? CreateInstance()
+    {
+        return EntitiesFactory.Create<T>();
+    }
+
+    protected void Find(long id)
+    {
+        if (searchService != null)
+        {
+            Item = searchService.Find(id);
+        }
+    }
+
+    protected async Task DeleteItem()
+    {
+        var result = await updateService.Delete(Item);
+        if (result)
+        {
+            Snackbar.Add("Elemento eliminato correttamente", Severity.Info);
+            if (NavManager != null)
+            {
+                NavManager.NavigateTo($"/{EntityName}");
+                Snackbar.Add("Elemento eliminato correttamente", Severity.Info);
+            }
+        }
+        else
+        {
+            Snackbar.Add($"Impossibile eliminare l'elemento, probabilmente l'oggetto che si vuole cancellare e' agganciato ad un'altra entita'", severity: Severity.Error);
+        }
+    }
+
+    protected async Task<long?> AddItem()
+    {
+        Id = (await AddItem(false)).GetValueOrDefault();
+        return Id;
+    }
+    protected async Task<long?> AddItem(bool navigate)
+    {
+        try
+        {
+            await form.Validate();
+
+            if (isValid == true || errors == null)
+            {
+
+                if (errors == null || errors.Length == 0)
+                {
+                    var result = await updateService.Add(Item);
+
+                    try
+                    {
+                        Item.GetType().GetProperty("Id")?.SetValue(Item, result);
+                    }
+                    catch (Exception) { }
+                    Snackbar.Add("Inserimento riuscito", severity: Severity.Info);
+                    if (result.HasValue)
+                    {
+                        Find(result.Value); //rileggo
+                        if (NavManager != null && navigate)
+                        {
+                            NavManager.NavigateTo($"/{EntityName}");
+                        }
+                        return result.Value;
+                    }
+                    else
+                    {
+                        Snackbar.Add($"Errore nell'inserimento", severity: Severity.Error);
+                    }
+                }
+
+                else
+                {
+                    Snackbar.Add("Impossibile salvare le modifica, verifica di aver compilato i campi obbligatori", Severity.Error);
+                }
+            }
+        }
+        catch (Exception)
+        {
+            Snackbar.Add("Salvataggio fallito", severity: Severity.Error);
+        }
+        return null;
+    }
+
+
+
+    protected async Task UpdateItem()
+    {
+        await UpdateItem(false);
+    }
+
+    protected async Task UpdateItem(bool navigate)
+    {
+        try
+        {
+            await form.Validate();
+
+            if (isValid == true || errors == null)
+            {
+
+                if (errors == null || errors.Length == 0)
+                {
+                    Item?.GetType().GetProperty("UpdateUser")?.SetValue(Item, State.Username);
+                    var result = await updateService.Update(Item);
+                    if (result)
+                    {
+                        Snackbar.Add("Salvataggio avvenuto correttamente", severity: Severity.Info);
+                        if (NavManager != null && navigate)
+                        {
+                            NavManager.NavigateTo($"/{EntityName}");
+                        }
+                    }
+                    else
+                    {
+                        Snackbar.Add($"Errore nel salvataggio", severity: Severity.Error);
+                    }
+                }
+
+                else
+                {
+                    //Errori <--- qui ho l'elenco di tutti gli errori di validazione del collaboratore
+                    string htmlErr = "";
+                    foreach (var errore in errors)
+                    {
+                        htmlErr += $"<li>{errore}</li>";
+                    }
+                    Snackbar.Add($"Errori di validazione, correggerli e riprovare: <br> <ul>{htmlErr}<ul>", severity: Severity.Error);
+                }
+            }
+        }
+        catch (Exception)
+        {
+            Snackbar.Add("Salvataggio fallito", severity: Severity.Error);
+        }
+    }
+}
