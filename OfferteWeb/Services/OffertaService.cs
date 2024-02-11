@@ -123,8 +123,6 @@ namespace OfferteWeb.Services
     {
         public string CodiceInterno { get; set; }
         public string Stato { get; set; }
-        public string Tag { get; set; }
-        public long? PostType { get; set; }
         public long? IdTipoProdotto { get; set; }
         public long? IdAgente { get; set; }
         public long? IdCliente { get; set; }

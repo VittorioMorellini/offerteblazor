@@ -70,6 +70,7 @@ namespace OfferteWeb
             builder.Services.AddScoped<IAgenteService, AgenteService>();
             builder.Services.AddScoped<IAgenteGruppoService, AgenteGruppoService>();
             builder.Services.AddScoped<IOffertaService, OffertaService>();
+            builder.Services.AddScoped<IOffertaRigaService, OffertaRigaService>();
             builder.Services.AddScoped<ITipoProdottoService, TipoProdottoService>();
             builder.Services.AddScoped<IMailService, MailService>();
             builder.Services.AddScoped<IFileService, FileService>();

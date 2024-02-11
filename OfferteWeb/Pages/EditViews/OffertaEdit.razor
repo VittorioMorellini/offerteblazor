@@ -17,6 +17,7 @@
 @inject IDialogService dialogService;
 @inject IMailService mailService
 @inject IOffertaService offertaService
+@inject IOffertaRigaService offertaRigaService
 @inject IAgenteService agenteService;
 @inject NavigationManager navigationManager;
 @inject ISnackbar snackbar;
@@ -104,37 +105,37 @@
                                    Variant="Variant.Filled"
                                    Color="Color.Secondary"
                                    StartIcon="@Icons.Filled.Link"
-                                   >
+                                   OnClick="(() => OpenRowOfferta(0))">
                             Inserisci una riga
                         </MudButton>
                     </div>
-                    <MudTable @ref="tableRelated" T="Offerta" Dense ServerData="@(new Func<TableState, Task<TableData<Offerta>>>(ServerReload))" Hover="true" RowsPerPage="10" Bordered="true" Striped="true">
+                    <MudTable @ref="tableRelated" T="OffertaRiga" Dense ServerData="@(new Func<TableState, Task<TableData<OffertaRiga>>>(RigaReload))" Hover="true" RowsPerPage="10" Bordered="true" Striped="true">
                         <HeaderContent>
-                            <MudTh>Codice</MudTh>
-                            <MudTh>Tipo prodotto</MudTh>
-                            <MudTh>Stato</MudTh>
-                            <MudTh>Redattore</MudTh>
-                            <MudTh>Inserimento</MudTh>
-                            <MudTh>Modifica</MudTh>
-                        </HeaderContent>
+                            <MudTh>Quantità</MudTh>
+                            <MudTh>Campione</MudTh>
+                            <MudTh>Giorni di consegna</MudTh>
+                            <MudTh>Data quotazione</MudTh>
+                            <MudTh></MudTh>
+                            <MudTh></MudTh>
+                         </HeaderContent>
                         <RowTemplate>
                             <MudTd>
-                                <MudText>@context.CodiceInterno</MudText>
+                                <MudText>@context.Quantita</MudText>
                             </MudTd>
                             <MudTd>
-                                <MudText>@context.IdTipoProdotto</MudText>
+                                <MudText>@context.Campione</MudText>
                             </MudTd>
                             <MudTd>
-                                <MudText>@context.StatoOfferta</MudText>
+                                <MudText>@context.GiorniDiConsegna</MudText>
                             </MudTd>
                             <MudTd>
-                                <MudText>@context.IdAgente</MudText>
+                                <MudText>@context.DataQuotazione</MudText>
                             </MudTd>
                             <MudTd>
-                                <MudButton StartIcon="@Icons.Material.Filled.OpenInNew" Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small" OnClick="(()=> OpenOfferta(0))">Inserisci</MudButton>
+                                    <MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small" OnClick="(() => DeleteRowOfferta(context.Id))">Elimina</MudButton>
                             </MudTd>
                             <MudTd>
-                                <MudButton StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small" OnClick="(()=> OpenOfferta(context.Id))">Apri</MudButton>
+                                <MudButton StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small" OnClick="(()=> OpenRowOfferta(context.Id))">Modifica</MudButton>
                             </MudTd>
                         </RowTemplate>
                         <PagerContent>
@@ -184,7 +185,7 @@
     private bool loadingFile = false;
     //MudTextField<string>? tagAddTextField;
     Agente? SelectedAgente;
-    MudTable<Offerta>? tableRelated;
+    MudTable<OffertaRiga>? tableRelated;
     IEnumerable<Agente> Redattori { get; set; }
 
     protected override async Task OnInitializedAsync()
@@ -222,6 +223,16 @@
         var totalItems = pagedInfo.Item2;
         await SetLoading(false);
         return new TableData<Offerta>() { TotalItems = totalItems, Items = categoriesPaged };
+    }
+
+    private async Task<TableData<OffertaRiga>> RigaReload(TableState state)
+    {
+        OffertaRigaSearchModel model = new();
+        model.IdOfferta = Item.Id;
+
+        var righe = offertaRigaService.SearchPaged(model, false);
+
+        return new TableData<OffertaRiga>() { TotalItems = righe.Item2, Items = righe.Item1 }; ;
     }
 
     private void OpenOfferta(long newId)
@@ -268,6 +279,39 @@
             loadingFile = false;
             await SetLoading(false);
         }
+    }
+
+    private async Task OpenRowOfferta(long idRow)
+    {
+        OffertaRiga riga = new OffertaRiga();
+        if (idRow != 0)
+        {
+            //riga = offertaRigaService.Find(idRow);
+        }
+        var parameters = new DialogParameters { ["Id"] = idRow };
+        var dialog = dialogService.Show<OffertaRigaEdit>("Inserisci riga offerta", parameters,
+            new DialogOptions() { MaxWidth = MaxWidth.ExtraExtraLarge, FullWidth = true, DisableBackdropClick = true, CloseButton = true, Position = DialogPosition.Center }
+        );
+        var result = await dialog.Result;
+        if (!result.Cancelled)
+        {
+            try
+            {
+                var selectedRelated = result.Data as HashSet<OffertaRiga>;
+                await UpdateItem();
+                //offertaRigaService.Add(Item.Id, selectedRelated?.Select(x => x.Id));
+                await tableRelated.ReloadServerData();
+            }
+            catch (Exception)
+            {
+                snackbar.Add("Errore durante l'inserimento della riga offerta", Severity.Error);
+            }
+        }
+    }
+    
+    private async Task DeleteRowOfferta(long idRow)
+    {
+
     }
 
     protected async Task UpdateOfferta()

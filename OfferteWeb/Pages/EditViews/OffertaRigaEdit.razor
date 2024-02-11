@@ -1,0 +1,50 @@
+﻿@* @page "/offertariga/edit/{Id:long}"
+@page "/offertariga/new"
+ *@
+@using OfferteWeb.Models
+@using OfferteWeb.Services
+@using OfferteWeb.Shared
+@using OfferteWeb.Components
+
+@inherits BaseEditPage<OffertaRiga>;
+
+@inject IOffertaRigaService offertaRigaService
+@inject NavigationManager navigationManager;
+@inject ISnackbar snackbar;
+
+<div class="pt-2">
+    <OfferteWeb.Components.EditPageHeader Modifica="@InModifica" Entita="Riga offerta"></OfferteWeb.Components.EditPageHeader>
+    <MudForm @ref="form" @bind-IsValid="@isValid" @bind-Errors="@errors">
+        <MudGrid Spacing="1">
+            <MudItem xs=12 sm=6 md=6>
+                <MudTextField Variant="Variant.Outlined" @bind-Value="Item.Quantita" Label="Quantita" Required></MudTextField>
+            </MudItem>
+            <MudItem xs=12 sm=6 md=6>
+                <MudCheckBox @bind-Checked="Item.Campione" Label="Campione"></MudCheckBox>
+            </MudItem>
+            <MudDivider DividerType="DividerType.FullWidth" />
+            <MudItem xs=12 sm=6 md=3>
+                <MudTextField Variant="Variant.Outlined" @bind-Value="Item.DataQuotazione" Label="Data Quotazione"></MudTextField>
+            </MudItem>
+        </MudGrid>
+    </MudForm>
+     <OfferteWeb.Components.EditPageFooter Entita="@UiEntityName" AddClicked="AddItem" UpdateClicked="UpdateItem" DeleteClicked="DeleteItem" Modifica="@InModifica"></OfferteWeb.Components.EditPageFooter>
+ </div>
+ @code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    private readonly string UiEntityName = "Riga offerta";
+
+    protected override async Task OnInitializedAsync()
+    {
+        searchService = offertaRigaService;
+        if (InModifica == true)
+        {
+            Find(Id);
+        }
+        else
+        {
+            Item = CreateInstance();
+        }
+    }
+
+}

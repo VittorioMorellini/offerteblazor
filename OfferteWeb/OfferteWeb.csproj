@@ -26,4 +26,10 @@
     <PackageReference Include="TinyMCE.Blazor" Version="1.0.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Pages\EditViews\OffertaRigaEdit.razor">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
