@@ -1,0 +1,139 @@
+﻿@using OfferteWeb.Dto;
+@using OfferteWeb.Models;
+@using OfferteWeb.Services;
+@inject IClienteService clienteService
+@inject ISnackbar snackBar
+@inject IJSRuntime jsRuntime
+
+<MudDialog>
+    <DialogContent>
+        <div style="display:flex; flex-direction:column">
+            <div style="display:flex; flex-direction:row;gap:10px;margin-left: 20px; justify-content:space-between; align-items: center">
+                <MudTextField HelperText="(almeno 3 caratteri)" Variant="Variant.Outlined" Placeholder="Cerca" T="string" Clearable DebounceInterval="2000" Text="@searchString" TextChanged="SearchStringChanged"></MudTextField>
+                <MudIconButton Icon="@Icons.Filled.ArrowLeft" Variant="Variant.Filled" Color="MudBlazor.Color.Secondary" OnClick="@ScrollToPrev"></MudIconButton>
+                <MudIconButton Icon="@Icons.Filled.ArrowRight" Variant="Variant.Filled" Color="MudBlazor.Color.Secondary" OnClick="@ScrollToNext"></MudIconButton>
+            </div>
+            <MudPaper Style="padding:10px; width:100%" Outlined="true" Elevation="1">
+                 <MudItem xs="12">
+                     <MudTable  T="CliCom" Dense Items="clienti" TotalItems="totalItems" Hover="true" RowsPerPage="10" Bordered="true" Striped="true">
+                         <HeaderContent>
+                             <MudTh>Id</MudTh>
+                             <MudTh>RagioneSociale</MudTh>
+                             <MudTh>Indirizzo</MudTh>
+                             <MudTh>Cap</MudTh>
+                             <MudTh></MudTh>
+                         </HeaderContent>
+                         <RowTemplate>
+                             <MudTd>
+                                 <MudText>@context.Id</MudText>
+                            </MudTd>
+                            <MudTd>
+                                <MudText>@context.RagioneSociale</MudText>
+                            </MudTd>
+                            <MudTd>
+                                <MudText>@context.Indirizzo</MudText>
+                            </MudTd>
+                            <MudTd>
+                                <MudText>@context.Cap</MudText>
+                            </MudTd>
+                            <MudTd>
+                                <MudButton StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small" OnClick="() => SelectCustomer(context.Id)">Seleziona</MudButton>
+                            </MudTd>
+                        </RowTemplate>
+                        <PagerContent>
+                            <MudTablePager PageSizeOptions="new int[]{15, 50, 100}" />
+                        </PagerContent>
+                        <NoRecordsContent>
+                            Nessun elemento presente
+                        </NoRecordsContent>
+                    </MudTable>
+                </MudItem>
+            </MudPaper>
+            </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" OnClick="Cancel">Chiudi</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    @code {
+        [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+        public long? IdCliente { get; set; } = null;
+        IEnumerable<CliCom>? clienti;
+        private string searchString;
+        private int totalItems { get; set; }
+        //int searchIndex = 0;
+
+        private void LoadData()
+        {
+            ClienteSearchModel model = new();
+            model.RagioneSociale = searchString;
+            var righe = clienteService.SearchPaged(model, false);
+            totalItems = righe.Item2;
+            clienti = righe.Item1;
+            //return righe.Item1;
+        }
+
+        private async Task SelectCustomer(int idCliente)
+        {
+            MudDialog.Close(DialogResult.Ok(idCliente));
+            //return Task.CompletedTask;
+        }
+        protected async override Task OnInitializedAsync()
+        {
+            //categoryTree = CategoryService.GetCategoriesTree(IsScadenzario, IsFaq, IsManuali);
+            LoadData();
+            await base.OnInitializedAsync();
+        }
+
+        private Task SearchStringChanged(string newValue)
+        {
+            searchString = newValue;
+            if (newValue != null && newValue.Length > 2)
+            {
+                LoadData();
+                //await ScrollToNext();
+            }
+            else if (string.IsNullOrWhiteSpace(newValue))
+            {
+                LoadData();
+            }
+            return Task.CompletedTask;
+        }
+
+        private async Task ScrollToNext()
+        {
+            // var item = foundCategories.ElementAtOrDefault(searchIndex);
+            // if (item != null)
+            // {
+            //     await ExpandAll2();
+            //     searchIndex++;
+            //     treeViewRef.SelectNode(item);
+            //     await jsRuntime.InvokeVoidAsync("scrollTreeIntoView", $"treeItem_{item.Id}");
+            // }
+            // else
+            // {
+            //     searchIndex = 0;
+            // }
+        }
+
+        private async Task ScrollToPrev()
+        {
+            // var item = foundCategories.ElementAtOrDefault(searchIndex);
+            // if (item != null)
+            // {
+            //     searchIndex--;
+            //     treeViewRef.SelectNode(item);
+            //     await jsRuntime.InvokeVoidAsync("scrollTreeIntoView", $"treeItem_{item.Id}");
+            // }
+            // else
+            // {
+            //     searchIndex = 0;
+            // }
+        }
+
+        void Cancel() => MudDialog.Cancel();
+
+
+    }
+}

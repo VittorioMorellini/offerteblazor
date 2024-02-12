@@ -8,7 +8,7 @@ using OfferteWeb.Utils;
 
 namespace OfferteWeb.Services
 {
-    public interface IOffertaService : IBaseService<Offerta, long, OfferteDbContext>, ISearchEntities<Offerta>
+    public interface IOffertaService : IBaseService<Offerta, long, OfferteDbContext>, ISearchEntities<Offerta>, IUpdateEntities<Offerta>
     {
         Tuple<IEnumerable<Offerta>, int> SearchPaged(OffertaSearchModel model, bool includeDeleted);
     }
@@ -103,20 +103,26 @@ namespace OfferteWeb.Services
             return _search(model);
         }
 
-        //public Task<bool> Delete(Offerta? item)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        public Task<bool> Delete(Offerta? item)
+        {
+            var result = base.Delete(item.Id);
+            return Task.FromResult(result);
+        }
 
-        //public Task<long?> Add(Offerta? item)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        public Task<long?> Add(Offerta? item)
+        {
+            var result = base.Save(0, item);
+            if (result != null)
+                return Task.FromResult((long?)result.Id);
+            else
+                return null;
+        }
 
-        //public Task<bool> Update(Offerta? item)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        public Task<Offerta> Update(Offerta? item)
+        {
+            base.Save(item.Id, item);
+            return Task.FromResult(item);
+        }
     }
 
     public class OffertaSearchModel : QueryBuilderSearchModel

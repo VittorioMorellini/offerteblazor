@@ -110,9 +110,10 @@
                 }
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             Snackbar.Add("Salvataggio fallito", severity: Severity.Error);
+            throw;
         }
         return null;
     }
@@ -138,7 +139,7 @@
                 {
                     Item?.GetType().GetProperty("UpdateUser")?.SetValue(Item, State.Username);
                     var result = await updateService.Update(Item);
-                    if (result)
+                    if (result != null)
                     {
                         Snackbar.Add("Salvataggio avvenuto correttamente", severity: Severity.Info);
                         if (NavManager != null && navigate)

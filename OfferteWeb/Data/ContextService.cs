@@ -42,6 +42,6 @@ namespace OfferteWeb.Data
     {
         public Task<bool> Delete(T? item);
         public Task<long?> Add(T? item);
-        public Task<bool> Update(T? item);
+        public Task<T> Update(T? item);
     }
 }

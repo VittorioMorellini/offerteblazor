@@ -1,0 +1,17 @@
+﻿<MudDialog>
+    <DialogContent>
+        @Text 
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" OnClick="Cancel">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    
+    [Parameter]
+    public string Text { get; set; } //Le modifiche non salvate andranno perse
+    
+    void Cancel() => MudDialog.Cancel();
+}

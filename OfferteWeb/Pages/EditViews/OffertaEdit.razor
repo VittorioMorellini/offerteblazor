@@ -24,6 +24,7 @@
 @inject EntitiesFactory factory;
 @inject IFileService fileService;
 @inject IJSRuntime jsRuntime;
+@inject IClienteService clienteService;
 @inject AppConfiguration appConfiguration;
 
 <Loading IsLoading=@IsLoading></Loading>
@@ -33,18 +34,47 @@
     <OfferteWeb.Components.EditPageHeader Modifica="@InModifica" Entita="@UiEntityName"></OfferteWeb.Components.EditPageHeader>
     <MudForm @ref="form" @bind-IsValid="@isValid" @bind-Errors="@errors">
         <MudGrid Spacing="1">
-            <MudItem xs="12" sm="6" md="6">
+            <MudItem xs="12" sm="6" md="3">
+                <MudTextField Required Variant="Variant.Outlined" @bind-Value="Item.Id" Label="Numero offerta"></MudTextField>
+             </MudItem>
+             <MudItem xs="12" sm="6" md="3">
+                <div style="display:flex; margin-bottom:10px;flex-direction:column">
+                    <div style="display:flex; flex-direction:row;align-items:center">
+                        <MudText Style="margin-right:10px" Typo="Typo.h5">Utente</MudText>
+                        <MudSelect Style="max-width: 300px;flex-grow:0" Clearable Variant=Variant.Outlined ToStringFunc="@(e=> e==null?null : $"{e.Nome} {e.Cognome}")" T="Agente" Label="Utente" MultiSelection="false" Value="SelectedUtente">
+                             @foreach (var r in Redattori)
+                            {
+                                <MudSelectItem T="Agente" Value="@r">@($"{r.Nome} {r.Cognome}")</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </div>
+                </div>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <div style="display:flex; margin-bottom:10px;flex-direction:column">
+                    <div style="display:flex; flex-direction:row;align-items:center">
+                        <MudText Style="margin-right:10px" Typo="Typo.h5">Agente</MudText>
+                        <MudSelect Style="max-width: 300px;flex-grow:0" Clearable Variant=Variant.Outlined ToStringFunc="@(e=> e==null?null : $"{e.Nome} {e.Cognome}")" T="Agente" Label="Agente" MultiSelection="false" Value="SelectedAgente" ValueChanged="RedattoreAddizionaleChanged">
+                             @foreach (var r in Redattori)
+                            {
+                                <MudSelectItem T="Agente" Value="@r">@($"{r.Nome} {r.Cognome}")</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </div>
+                </div>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
                 <MudTextField Required Variant="Variant.Outlined" @bind-Value="Item.CodiceInterno" Label="Codice interno"></MudTextField>
             </MudItem>
-            <MudItem xs="12" sm="6" md="6">
-                <MudSelect Clearable Required Variant="Variant.Outlined" @bind-Value="@Item.StatoOfferta" Label="Stato" AnchorOrigin="Origin.BottomCenter">
+            <MudItem xs="12" sm="6" md="3">
+                 <MudSelect Clearable Required Variant="Variant.Outlined" @bind-Value="Item.StatoOfferta" Label="Stato" AnchorOrigin="Origin.BottomCenter">
                     <MudSelectItem T=byte? Value="@StatoOfferta.Inserita.Item1">@StatoOfferta.Inserita.Item2</MudSelectItem>
                     <MudSelectItem T=byte? Value="@StatoOfferta.Accettata.Item1">@StatoOfferta.Accettata.Item2</MudSelectItem>
                     <MudSelectItem T=byte? Value="@StatoOfferta.Rifiutata.Item1">@StatoOfferta.Rifiutata.Item2</MudSelectItem>
                 </MudSelect>
             </MudItem>
-            <MudItem xs="12" sm="6" md="6">
-                <MudSelect Clearable Variant="Variant.Outlined" @bind-Value="Item.IdTipoProdotto" Label="Tipo">
+            <MudItem xs="12" sm="6" md="3">
+                <MudSelect Clearable Variant="Variant.Outlined" @bind-Value="Item.IdTipoProdotto" Label="Tipo prodotto">
                     @if (TipoProdottos != null)
                     {
                         @foreach (var pt in TipoProdottos)
@@ -54,11 +84,40 @@
                     }
                 </MudSelect>
             </MudItem>
-            <MudItem xs="12" sm="6" md=6>
+            <MudItem xs="12" sm="6" md="3">
+                <div style="display:flex; flex-direction:row;align-items: center;">
+                    <MudAutocomplete T="CliCom"
+                                     MinCharacters="3"
+                                     MaxItems="20"
+                                     Immediate="false" Label="Cliente"
+                                     Value="@SelectedCustomer"
+                                     ValueChanged="CustomerChanged"
+                                     SearchFunc="@SearchCustomer"
+                                     Variant="Variant.Outlined" ShowProgressIndicator="true"
+                                     ToStringFunc="@(e=> e==null?null : e.RagioneSociale)">
+                        <NoItemsTemplate>
+                            <MudText Align="Align.Center" Class="px-4 py-1">
+                                Nessun elemento trovato
+                            </MudText>
+                        </NoItemsTemplate>
+                    </MudAutocomplete>
+                    <MudIconButton aria-label="Bottone per accedere a ricerca clienti" Icon="@Icons.Filled.Search" OnClick="OpenCustomers"></MudIconButton>
+                </div>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
                 <MudDatePicker Variant="Variant.Outlined" @bind-Date="Item.DataOfferta" Label="Data Offerta"></MudDatePicker>
             </MudItem>
+            <MudItem xs=12 sm=12 md=12>
+                <div style="display:flex; justify-content:space-around; column-gap:5vh">
+                    <MudCheckBox @bind-Checked="Item.FineLine" Label="Fineline"></MudCheckBox>
+                    <MudCheckBox @bind-Checked="Item.Criticita" Label="Criticità"></MudCheckBox>
+                    <MudCheckBox @bind-Checked="Item.FresaSi" Label="Fresa sì"></MudCheckBox>
+                    <MudCheckBox @bind-Checked="@Item.PressFit" Label="PressFit"></MudCheckBox>
+                </div>
+            </MudItem>
+
             <MudPaper Style="padding:10px; width:100%" Outlined="true" Elevation="1">
-                <MudItem xs="12">
+                <MudItem xs="12" sm="6" md="6">
                     <div style="display:flex; margin-bottom:10px">
                         <MudText Style="margin-right:10px" Typo="Typo.h5">Allegati (Gerber file)</MudText>
                         @if (loadingFile)
@@ -77,21 +136,6 @@
                                 Carica
                             </MudButton>
                         }
-                    </div>
-                </MudItem>
-            </MudPaper>
-            <MudPaper Style="padding:10px; width:100%" Outlined="true" Elevation="1">
-                <MudItem xs="12">
-                    <div style="display:flex; margin-bottom:10px;flex-direction:column">
-                        <div style="display:flex; flex-direction:row;align-items:center">
-                            <MudText Style="margin-right:10px" Typo="Typo.h5">Altri redattori (massimo 3)</MudText>
-                            <MudSelect Style="max-width: 300px;flex-grow:0" Clearable Variant=Variant.Outlined ToStringFunc="@(e=> e==null?null : $"{e.Nome} {e.Cognome}")" T="Agente" Label="Redattore" MultiSelection="false" Value="SelectedAgente" ValueChanged="RedattoreAddizionaleChanged">
-                                @foreach (var r in Redattori)
-                                {
-                                    <MudSelectItem T="Agente" Value="@r">@($"{r.Nome} {r.Cognome}")</MudSelectItem>
-                                }
-                            </MudSelect>
-                        </div>
                     </div>
                 </MudItem>
             </MudPaper>
@@ -154,18 +198,11 @@
                     height: 80px;
                     flex-direction: row; align-items:center; padding:30px; background-color:lightgrey">
                     <MudItem xs=12 sm=3 md=3>
-                        <MudCheckBox @bind-Checked="@Item.FineLine" Label="Fineline"></MudCheckBox>
                     </MudItem>
                 </MudCard>
             </MudItem>
         </MudGrid>
- *@        <MudItem xs=12 sm=6 md=6>
-            <div style="display:flex; justify-content:space-around; column-gap:5vh">
-                <MudCheckBox @bind-Checked="Item.FineLine" Label="Fineline"></MudCheckBox>
-                <MudCheckBox @bind-Checked="Item.Criticita" Label="Criticità"></MudCheckBox>
-                <MudCheckBox @bind-Checked="Item.FresaSi" Label="Fresa sì"></MudCheckBox>
-            </div>
-        </MudItem>
+ *@        
         <MudGrid Style="padding-bottom:50px" Spacing="1">
             <MudItem xs=12 sm=6 md=3>
                 <MudTextField Variant="Variant.Outlined" Disabled=true @bind-Value="Item.IdUtente" Label="Utente Inserimento"></MudTextField>
@@ -173,7 +210,7 @@
             <MudItem xs=12 sm=6 md=3>
                 <MudTextField Variant="Variant.Outlined" Disabled=true @bind-Value="Item.DataUltimaModifica" Label="Data ultima modifica"></MudTextField>
             </MudItem>
-            </MudGrid>
+        </MudGrid>
         <OfferteWeb.Components.EditPageFooter Modifica="@InModifica" Entita="@UiEntityName" DeleteClicked="DeleteItem" AddClicked="AddItem" UpdateClicked="UpdateOfferta"></OfferteWeb.Components.EditPageFooter>
     </MudForm>
 
@@ -185,28 +222,30 @@
     private bool loadingFile = false;
     //MudTextField<string>? tagAddTextField;
     Agente? SelectedAgente;
+    Agente? SelectedUtente;
     MudTable<OffertaRiga>? tableRelated;
     IEnumerable<Agente> Redattori { get; set; }
+    CliCom? SelectedCustomer;
 
     protected override async Task OnInitializedAsync()
     {
         httpClient.BaseAddress = new Uri(navigationManager.BaseUri);
         searchService = offertaService;
-        //PostTypes = postTypeService.SearchAll(true, null);
+        updateService = offertaService;
+        Redattori = agenteService.Search(new AgenteSearchModel());
 
         if (InModifica == true)
         {
             Item = offertaService.Find(Id);
-            //SelectedCategory = Item.Category;
+            SelectedAgente = Redattori.Where(x => x.Id == Item.IdAgente).FirstOrDefault();
+            SelectedUtente = Redattori.Where(x => x.Id == Item.IdUtente).FirstOrDefault();
         }
         else
         {
             Item = CreateInstance();
             Item.IdAgente = State.User != null ? State.User.Id : 0;
-            //Item.StatoOfferta = Offerta.ReferenceEquals;
+            Item.StatoOfferta = StatoOfferta.Inserita.Item1;
         }
-        //TagList.AddRange(Item.PostTag.Select(x => x.Tag.Name).ToList());
-        Redattori = agenteService.Search(new AgenteSearchModel());
         await base.OnInitializedAsync();
     }
 
@@ -308,10 +347,25 @@
             }
         }
     }
-    
+
     private async Task DeleteRowOfferta(long idRow)
     {
-
+        if (idRow == 0)
+        {
+            var parameter = new DialogParameters();
+            parameter.Add("Text", "Id mancante. Cancellazione non possibile");
+            var dialogAlert = dialogService.Show<DialogAlert>("Warning", parameter);
+            return;
+        }
+        var parameters = new DialogParameters();
+        parameters.Add("Text", "Confermi cancellazione riga offerta?");
+        var dialog = dialogService.Show<DialogConfirm>("Conferma operazione", parameters);
+        var result = await dialog.Result;
+        if (result.Cancelled)
+        {
+            return;
+        }
+        offertaRigaService.Delete(idRow);
     }
 
     protected async Task UpdateOfferta()
@@ -326,6 +380,39 @@
         await UpdateOfferta();        
     }
 
+    private async Task OpenCustomers()
+    {
+        var dialog = dialogService.Show<CustomersSearchView>("Seleziona un cliente",
+        new DialogOptions() { MaxWidth = MaxWidth.ExtraLarge, DisableBackdropClick = true, CloseButton = true, Position = DialogPosition.Center });
+        var result = await dialog.Result;
+        if (!result.Canceled)
+        {
+            var selectedCustomer = result.Data as int?;
+            if (selectedCustomer.HasValue)
+            {
+                SelectedCustomer = await clienteService.FindAsync(selectedCustomer.Value);
+                Item.IdCliente = Convert.ToInt64(selectedCustomer.Value);
+            }
+        }
+    }
+
+    private async Task<IEnumerable<CliCom>> SearchCustomer(string value)
+    {
+        PagerModel model = new();
+        model.Skip = 0;
+        model.Take = 10;
+        //return categoriesService.SearchByString(value, model, true, false);
+
+        return Enumerable.Empty<CliCom>();
+
+    }
+    
+    private async Task CustomerChanged(CliCom? item)
+    {
+        SelectedCustomer = item;
+        Item.IdCliente = (long)SelectedCustomer?.Id;
+    }
+    
     protected async Task ExportPdf()
     {
         snackbar.Add("Sto generando il PDF, attendere prego", Severity.Info);

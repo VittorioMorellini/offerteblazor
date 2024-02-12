@@ -8,7 +8,7 @@ using OfferteWeb.Utils;
 
 namespace OfferteWeb.Services
 {
-    public interface IOffertaRigaService : IBaseService<OffertaRiga, long, OfferteDbContext>, ISearchEntities<OffertaRiga>
+    public interface IOffertaRigaService : IBaseService<OffertaRiga, long, OfferteDbContext>, ISearchEntities<OffertaRiga>, IUpdateEntities<OffertaRiga>
     {
         Tuple<IEnumerable<OffertaRiga>, int> SearchPaged(OffertaRigaSearchModel model, bool includeDeleted);
     }
@@ -34,7 +34,8 @@ namespace OfferteWeb.Services
                     Quantita = x.Quantita,
                     GiorniDiConsegna = x.GiorniDiConsegna,
                     IdOfferta = x.IdOfferta,
-                    DataQuotazione = x.DataQuotazione
+                    DataQuotazione = x.DataQuotazione,
+                    Campione = x.Campione,
                 });
 
             if (model != null)
@@ -88,20 +89,27 @@ namespace OfferteWeb.Services
             return _search(model);
         }
 
-        //public Task<bool> Delete(OffertaRiga? item)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        public Task<bool> Delete(OffertaRiga? item)
+        {
+            var result = base.Delete(item.Id);
+            return Task.FromResult(result);
+        }
 
-        //public Task<long?> Add(OffertaRiga? item)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        public Task<long?> Add(OffertaRiga? item)
+        {
+            var result = base.Save(0, item);
+            if (result != null)
+                return Task.FromResult((long?)result.Id);
+            else
+                return null;
+        }
 
-        //public Task<bool> Update(OffertaRiga? item)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        public Task<OffertaRiga> Update(OffertaRiga? item)
+        {
+            base.Save(item.Id, item);
+
+            return Task.FromResult(item);
+        }
     }
 
     public class OffertaRigaSearchModel : QueryBuilderSearchModel

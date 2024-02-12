@@ -6,8 +6,8 @@
     [Inject]
     NavigationManager? NavManager { get; set; }
 
-    // [Inject]
-    // protected AppState State { get; set; }
+    [Inject]
+    protected AppState State { get; set; }
 
     protected ISearchEntities<T>? searchService;
     public IEnumerable<T>? Items { get; set; }

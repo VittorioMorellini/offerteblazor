@@ -37,6 +37,7 @@
     protected override async Task OnInitializedAsync()
     {
         searchService = offertaRigaService;
+        updateService = offertaRigaService;
         if (InModifica == true)
         {
             Find(Id);

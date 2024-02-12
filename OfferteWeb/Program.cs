@@ -74,6 +74,7 @@ namespace OfferteWeb
             builder.Services.AddScoped<ITipoProdottoService, TipoProdottoService>();
             builder.Services.AddScoped<IMailService, MailService>();
             builder.Services.AddScoped<IFileService, FileService>();
+            builder.Services.AddScoped<IClienteService, ClienteService>();
 
             builder.Services.AddMudServices(config =>
             {
