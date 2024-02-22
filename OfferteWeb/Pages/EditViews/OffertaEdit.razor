@@ -64,145 +64,147 @@
                 </div>
             </MudItem>
             <MudItem xs="12" sm="6" md="3">
-                <MudTextField Required Variant="Variant.Outlined" @bind-Value="Item.CodiceInterno" Label="Codice interno"></MudTextField>
-            </MudItem>
-            <MudItem xs="12" sm="6" md="3">
-                 <MudSelect Clearable Required Variant="Variant.Outlined" @bind-Value="Item.StatoOfferta" Label="Stato" AnchorOrigin="Origin.BottomCenter">
-                    <MudSelectItem T=byte? Value="@StatoOfferta.Inserita.Item1">@StatoOfferta.Inserita.Item2</MudSelectItem>
-                    <MudSelectItem T=byte? Value="@StatoOfferta.Accettata.Item1">@StatoOfferta.Accettata.Item2</MudSelectItem>
-                    <MudSelectItem T=byte? Value="@StatoOfferta.Rifiutata.Item1">@StatoOfferta.Rifiutata.Item2</MudSelectItem>
-                </MudSelect>
-            </MudItem>
-            <MudItem xs="12" sm="6" md="3">
-                <MudSelect Clearable Variant="Variant.Outlined" @bind-Value="Item.IdTipoProdotto" Label="Tipo prodotto">
-                    @if (TipoProdottos != null)
-                    {
-                        @foreach (var pt in TipoProdottos)
-                        {
-                            <MudSelectItem T="long?" Value="@pt.Id">@pt.Descrizione</MudSelectItem>
-                        }
-                    }
-                </MudSelect>
-            </MudItem>
-            <MudItem xs="12" sm="6" md="3">
-                <div style="display:flex; flex-direction:row;align-items: center;">
-                    <MudAutocomplete T="CliCom"
-                                     MinCharacters="3"
-                                     MaxItems="20"
-                                     Immediate="false" Label="Cliente"
-                                     Value="@SelectedCustomer"
-                                     ValueChanged="CustomerChanged"
-                                     SearchFunc="@SearchCustomer"
-                                     Variant="Variant.Outlined" ShowProgressIndicator="true"
-                                     ToStringFunc="@(e=> e==null?null : e.RagioneSociale)">
-                        <NoItemsTemplate>
-                            <MudText Align="Align.Center" Class="px-4 py-1">
-                                Nessun elemento trovato
-                            </MudText>
-                        </NoItemsTemplate>
-                    </MudAutocomplete>
-                    <MudIconButton aria-label="Bottone per accedere a ricerca clienti" Icon="@Icons.Filled.Search" OnClick="OpenCustomers"></MudIconButton>
-                </div>
-            </MudItem>
-            <MudItem xs="12" sm="6" md="3">
                 <MudDatePicker Variant="Variant.Outlined" @bind-Date="Item.DataOfferta" Label="Data Offerta"></MudDatePicker>
             </MudItem>
-            <MudItem xs=12 sm=12 md=12>
-                <div style="display:flex; justify-content:space-around; column-gap:5vh">
-                    <MudCheckBox @bind-Checked="Item.FineLine" Label="Fineline"></MudCheckBox>
-                    <MudCheckBox @bind-Checked="Item.Criticita" Label="Criticità"></MudCheckBox>
-                    <MudCheckBox @bind-Checked="Item.FresaSi" Label="Fresa sì"></MudCheckBox>
-                    <MudCheckBox @bind-Checked="@Item.PressFit" Label="PressFit"></MudCheckBox>
-                </div>
-            </MudItem>
-
-            <MudPaper Style="padding:10px; width:100%" Outlined="true" Elevation="1">
-                <MudItem xs="12" sm="6" md="6">
-                    <div style="display:flex; margin-bottom:10px">
-                        <MudText Style="margin-right:10px" Typo="Typo.h5">Allegati (Gerber file)</MudText>
-                        @if (loadingFile)
-                        {
-                            <MudProgressCircular Indeterminate></MudProgressCircular>
-                        }
-                        else
-                        {
-                            <MudButton HtmlTag="label"
-                                       Disabled=@(Item?.Id == 0)
-                                       Size="Size.Small"
-                                       Variant="Variant.Filled"
-                                       Color="Color.Primary"
-                                       StartIcon="@Icons.Filled.CloudUpload"
-                                       for="fileInput">
-                                Carica
-                            </MudButton>
-                        }
+            <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6" style="width: calc(100%); min-height: 600px">
+                <MudTabPanel Text="Dati generali">
+                    <div style="display: flex">
+                        <MudItem xs="12" sm="6" md="3">
+                            <MudTextField Required Variant="Variant.Outlined" @bind-Value="Item.CodiceInterno" Label="Codice interno"></MudTextField>
+                        </MudItem>
+                        <MudItem xs="12" sm="6" md="3">
+                            <MudSelect Clearable Required Variant="Variant.Outlined" @bind-Value="Item.StatoOfferta" Label="Stato" AnchorOrigin="Origin.BottomCenter">
+                                <MudSelectItem T=byte? Value="@StatoOfferta.Inserita.Item1">@StatoOfferta.Inserita.Item2</MudSelectItem>
+                                <MudSelectItem T=byte? Value="@StatoOfferta.Accettata.Item1">@StatoOfferta.Accettata.Item2</MudSelectItem>
+                                <MudSelectItem T=byte? Value="@StatoOfferta.Rifiutata.Item1">@StatoOfferta.Rifiutata.Item2</MudSelectItem>
+                            </MudSelect>
+                        </MudItem>
+                            <MudItem xs="12" sm="6" md="3">
+                                <MudSelect Clearable Variant="Variant.Outlined" @bind-Value="Item.IdTipoProdotto" Label="Tipo prodotto">
+                                 @if (TipoProdottos != null)
+                                {
+                                    @foreach (var pt in TipoProdottos)
+                                    {
+                                        <MudSelectItem T="long?" Value="@pt.Id">@pt.Descrizione</MudSelectItem>
+                                    }
+                                }
+                            </MudSelect>
+                        </MudItem>
+                        <MudItem xs="12" sm="6" md="3">
+                            <div style="display:flex; flex-direction:row;align-items: center;">
+                                <MudAutocomplete T="CliCom"
+                                                 MinCharacters="3"
+                                                 MaxItems="20"
+                                                 Immediate="false" Label="Cliente"
+                                                 Value="@SelectedCustomer"
+                                                 ValueChanged="CustomerChanged"
+                                                 SearchFunc="@SearchCustomer"
+                                                 Variant="Variant.Outlined" ShowProgressIndicator="true"
+                                                 ToStringFunc="@(e=> e==null?null : e.RagioneSociale)">
+                                    <NoItemsTemplate>
+                                        <MudText Align="Align.Center" Class="px-4 py-1">
+                                            Nessun elemento trovato
+                                        </MudText>
+                                    </NoItemsTemplate>
+                                </MudAutocomplete>
+                                <MudIconButton aria-label="Bottone per accedere a ricerca clienti" Icon="@Icons.Filled.Search" OnClick="OpenCustomers"></MudIconButton>
+                            </div>
+                        </MudItem>
                     </div>
-                </MudItem>
-            </MudPaper>
-            <MudPaper Style="padding:10px; width:100%" Outlined="true" Elevation="1">
-                <MudItem xs="12">
-                    <div style="display:flex; margin-bottom:10px">
-                        <MudText Style="margin-right:10px" Typo="Typo.h5">Righe offerta</MudText>
-                        <MudButton HtmlTag="label"
-                                   Disabled=@(Item?.Id == 0)
-                                   Size="Size.Small"
-                                   Variant="Variant.Filled"
-                                   Color="Color.Secondary"
-                                   StartIcon="@Icons.Filled.Link"
-                                   OnClick="(() => OpenRowOfferta(0))">
-                            Inserisci una riga
-                        </MudButton>
-                    </div>
-                    <MudTable @ref="tableRelated" T="OffertaRiga" Dense ServerData="@(new Func<TableState, Task<TableData<OffertaRiga>>>(RigaReload))" Hover="true" RowsPerPage="10" Bordered="true" Striped="true">
-                        <HeaderContent>
-                            <MudTh>Quantità</MudTh>
-                            <MudTh>Campione</MudTh>
-                            <MudTh>Giorni di consegna</MudTh>
-                            <MudTh>Data quotazione</MudTh>
-                            <MudTh></MudTh>
-                            <MudTh></MudTh>
-                         </HeaderContent>
-                        <RowTemplate>
-                            <MudTd>
-                                <MudText>@context.Quantita</MudText>
-                            </MudTd>
-                            <MudTd>
-                                <MudText>@context.Campione</MudText>
-                            </MudTd>
-                            <MudTd>
-                                <MudText>@context.GiorniDiConsegna</MudText>
-                            </MudTd>
-                            <MudTd>
-                                <MudText>@context.DataQuotazione</MudText>
-                            </MudTd>
-                            <MudTd>
-                                    <MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small" OnClick="(() => DeleteRowOfferta(context.Id))">Elimina</MudButton>
-                            </MudTd>
-                            <MudTd>
-                                <MudButton StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small" OnClick="(()=> OpenRowOfferta(context.Id))">Modifica</MudButton>
-                            </MudTd>
-                        </RowTemplate>
-                        <PagerContent>
-                            <MudTablePager PageSizeOptions="new int[]{15, 50, 100}" />
-                        </PagerContent>
-                        <NoRecordsContent>
-                            Nessun elemento presente
-                        </NoRecordsContent>
-                    </MudTable>
-                </MudItem>
-            </MudPaper>
-        </MudGrid>
-@*         <MudGrid Style="height:100px; align-items:center" Spacing="1">
-            <MudItem xs=12 sm=6 md=6>
-                <MudCard Style="display: flex;
-                    height: 80px;
-                    flex-direction: row; align-items:center; padding:30px; background-color:lightgrey">
-                    <MudItem xs=12 sm=3 md=3>
+                    <MudItem xs=12 sm=12 md=12>
+                        <div style="display:flex; justify-content:space-around; column-gap:5vh">
+                            <MudCheckBox @bind-Checked="Item.FineLine" Label="Fineline"></MudCheckBox>
+                            <MudCheckBox @bind-Checked="Item.Criticita" Label="Criticità"></MudCheckBox>
+                            <MudCheckBox @bind-Checked="Item.FresaSi" Label="Fresa sì"></MudCheckBox>
+                            <MudCheckBox @bind-Checked="@Item.PressFit" Label="PressFit"></MudCheckBox>
+                        </div>
                     </MudItem>
-                </MudCard>
-            </MudItem>
+                    <MudPaper Style="padding:10px; width:100%" Outlined="true" Elevation="1">
+                        <MudItem xs="12" sm="6" md="6">
+                            <div style="display:flex; margin-bottom:10px">
+                                <MudText Style="margin-right:10px" Typo="Typo.h5">Allegati (Gerber file)</MudText>
+                                @if (loadingFile)
+                                {
+                                    <MudProgressCircular Indeterminate></MudProgressCircular>
+                                }
+                                else
+                                {
+                                    <MudButton HtmlTag="label"
+                                               Disabled=@(Item?.Id == 0)
+                                               Size="Size.Small"
+                                               Variant="Variant.Filled"
+                                               Color="Color.Primary"
+                                               StartIcon="@Icons.Filled.CloudUpload"
+                                               for="fileInput">
+                                        Carica
+                                    </MudButton>
+                                }
+                            </div>
+                        </MudItem>
+                    </MudPaper>
+                </MudTabPanel>
+                <MudTabPanel Text="Far east">
+                    <MudText>Content Far east</MudText>
+                </MudTabPanel>
+                <MudTabPanel Text="Righe offerta">
+                    <MudPaper Style="padding:10px; width:100%" Outlined="true" Elevation="1">
+                        <MudItem xs="12">
+                            <div style="display:flex; margin-bottom:10px">
+                                <MudText Style="margin-right:10px" Typo="Typo.h5">Righe offerta</MudText>
+                                <MudButton HtmlTag="label"
+                                           Disabled=@(Item?.Id == 0)
+                                           Size="Size.Small"
+                                           Variant="Variant.Filled"
+                                           Color="Color.Secondary"
+                                           StartIcon="@Icons.Filled.Link"
+                                           OnClick="(() => OpenRowOfferta(0))">
+                                    Inserisci una riga
+                                </MudButton>
+                            </div>
+                            <MudTable @ref="tableRelated" T="OffertaRiga" Dense ServerData="@(new Func<TableState, Task<TableData<OffertaRiga>>>(RigaReload))" Hover="true" RowsPerPage="10" Bordered="true" Striped="true">
+                                <HeaderContent>
+                                     <MudTh>Quantità</MudTh>
+                                     <MudTh>Campione</MudTh>
+                                     <MudTh>Giorni di consegna</MudTh>
+                                     <MudTh>Data quotazione</MudTh>
+                                     <MudTh></MudTh>
+                                     <MudTh></MudTh>
+                                </HeaderContent>
+                                <RowTemplate>
+                                    <MudTd>
+                                        <MudText>@context.Quantita</MudText>
+                                    </MudTd>
+                                    <MudTd>
+                                        <MudText>@context.Campione</MudText>
+                                    </MudTd>
+                                    <MudTd>
+                                        <MudText>@context.GiorniDiConsegna</MudText>
+                                    </MudTd>
+                                    <MudTd>
+                                        <MudText>@context.DataQuotazione</MudText>
+                                    </MudTd>
+                                    <MudTd>
+                                        <MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small" OnClick="(() => DeleteRowOfferta(context.Id))">Elimina</MudButton>
+                                    </MudTd>
+                                    <MudTd>
+                                        <MudButton StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small" OnClick="(()=> OpenRowOfferta(context.Id))">Modifica</MudButton>
+                                    </MudTd>
+                                </RowTemplate>
+                                <PagerContent>
+                                    <MudTablePager PageSizeOptions="new int[]{15, 50, 100}" />
+                                </PagerContent>
+                                <NoRecordsContent>
+                                    Nessun elemento presente
+                                </NoRecordsContent>
+                            </MudTable>
+                        </MudItem>
+                    </MudPaper>
+                </MudTabPanel>
+                <MudTabPanel Text="Tab Disabled" Disabled="true">
+                    <MudText>Content disabled</MudText>
+                </MudTabPanel>
+            </MudTabs>
         </MudGrid>
- *@        
         <MudGrid Style="padding-bottom:50px" Spacing="1">
             <MudItem xs=12 sm=6 md=3>
                 <MudTextField Variant="Variant.Outlined" Disabled=true @bind-Value="Item.IdUtente" Label="Utente Inserimento"></MudTextField>
@@ -213,7 +215,6 @@
         </MudGrid>
         <OfferteWeb.Components.EditPageFooter Modifica="@InModifica" Entita="@UiEntityName" DeleteClicked="DeleteItem" AddClicked="AddItem" UpdateClicked="UpdateOfferta"></OfferteWeb.Components.EditPageFooter>
     </MudForm>
-
 }
 @code {
     private readonly string UiEntityName = "Offerta";
