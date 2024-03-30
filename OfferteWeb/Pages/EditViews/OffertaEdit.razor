@@ -324,12 +324,13 @@
     private async Task OpenRowOfferta(long idRow)
     {
         OffertaRiga riga = new OffertaRiga();
+        string title = "Inserisci";
         if (idRow != 0)
         {
-            //riga = offertaRigaService.Find(idRow);
+            title = "Modifica";
         }
         var parameters = new DialogParameters { ["Id"] = idRow };
-        var dialog = dialogService.Show<OffertaRigaEdit>("Inserisci riga offerta", parameters,
+        var dialog = dialogService.Show<OffertaRigaEdit>($"{title} Riga offerta", parameters,
             new DialogOptions() { MaxWidth = MaxWidth.ExtraExtraLarge, FullWidth = true, DisableBackdropClick = true, CloseButton = true, Position = DialogPosition.Center }
         );
         var result = await dialog.Result;
