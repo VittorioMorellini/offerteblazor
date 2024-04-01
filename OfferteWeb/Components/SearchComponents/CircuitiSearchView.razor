@@ -1,0 +1,139 @@
+﻿@using OfferteWeb.Dto;
+@using OfferteWeb.Models;
+@using OfferteWeb.Services;
+@inject ICirComService cirComService
+@inject ISnackbar snackBar
+@inject IJSRuntime jsRuntime
+
+<MudDialog>
+    <DialogContent>
+        <div style="display:flex; flex-direction:column">
+            <div style="display:flex; flex-direction:row;gap:10px;margin-left: 20px; justify-content:space-between; align-items: center">
+                <MudTextField HelperText="(almeno 3 caratteri)" Variant="Variant.Outlined" Placeholder="Cerca" T="string" Clearable DebounceInterval="2000" Text="@searchString" TextChanged="SearchStringChanged"></MudTextField>
+                <MudIconButton Icon="@Icons.Filled.ArrowLeft" Variant="Variant.Filled" Color="MudBlazor.Color.Secondary" OnClick="@ScrollToPrev"></MudIconButton>
+                <MudIconButton Icon="@Icons.Filled.ArrowRight" Variant="Variant.Filled" Color="MudBlazor.Color.Secondary" OnClick="@ScrollToNext"></MudIconButton>
+            </div>
+            <MudPaper Style="padding:10px; width:100%" Outlined="true" Elevation="1">
+                 <MudItem xs="12">
+                     <MudTable  T="CirCom" Dense Items="circuiti" TotalItems="totalItems" Hover="true" RowsPerPage="10" Bordered="true" Striped="true">
+                         <HeaderContent>
+                             <MudTh>Edp</MudTh>
+                             <MudTh>Codice Interno</MudTh>
+                             <MudTh>Codice cliente</MudTh>
+                             <MudTh>Attrezzatura</MudTh>
+                             <MudTh></MudTh>
+                         </HeaderContent>
+                         <RowTemplate>
+                             <MudTd>
+                                 <MudText>@context.CodiceEdp</MudText>
+                            </MudTd>
+                            <MudTd>
+                                <MudText>@context.CodiceInterno</MudText>
+                            </MudTd>
+                            <MudTd>
+                                <MudText>@context.CodiceCliente</MudText>
+                            </MudTd>
+                            <MudTd>
+                                <MudText>@context.Attrezzatura</MudText>
+                            </MudTd>
+                            <MudTd>
+                                <MudButton StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small" OnClick="() => SelectCircuito(context.CodiceInterno)">Seleziona</MudButton>
+                            </MudTd>
+                        </RowTemplate>
+                        <PagerContent>
+                            <MudTablePager PageSizeOptions="new int[]{15, 50, 100}" />
+                        </PagerContent>
+                        <NoRecordsContent>
+                            Nessun elemento presente
+                        </NoRecordsContent>
+                    </MudTable>
+                </MudItem>
+            </MudPaper>
+            </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" OnClick="Cancel">Chiudi</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    @code {
+        [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+        public string? CodiceInterno { get; set; } = null;
+        IEnumerable<CirCom>? circuiti;
+        private string searchString;
+        private int totalItems { get; set; }
+        //int searchIndex = 0;
+
+        private void LoadData()
+        {
+            CirComSearchModel model = new();
+            model.CodiceInterno = searchString;
+            var righe = cirComService.SearchPaged(model, false);
+            totalItems = righe.Item2;
+            circuiti = righe.Item1;
+            //return righe.Item1;
+        }
+
+        private async Task SelectCircuito(string codiceInterno)
+        {
+            MudDialog.Close(DialogResult.Ok(codiceInterno));
+            //return Task.CompletedTask;
+        }
+        protected async override Task OnInitializedAsync()
+        {
+            //categoryTree = CategoryService.GetCategoriesTree(IsScadenzario, IsFaq, IsManuali);
+            LoadData();
+            await base.OnInitializedAsync();
+        }
+
+        private Task SearchStringChanged(string newValue)
+        {
+            searchString = newValue;
+            if (newValue != null && newValue.Length > 2)
+            {
+                LoadData();
+                //await ScrollToNext();
+            }
+            else if (string.IsNullOrWhiteSpace(newValue))
+            {
+                LoadData();
+            }
+            return Task.CompletedTask;
+        }
+
+        private async Task ScrollToNext()
+        {
+            // var item = foundCategories.ElementAtOrDefault(searchIndex);
+            // if (item != null)
+            // {
+            //     await ExpandAll2();
+            //     searchIndex++;
+            //     treeViewRef.SelectNode(item);
+            //     await jsRuntime.InvokeVoidAsync("scrollTreeIntoView", $"treeItem_{item.Id}");
+            // }
+            // else
+            // {
+            //     searchIndex = 0;
+            // }
+        }
+
+        private async Task ScrollToPrev()
+        {
+            // var item = foundCategories.ElementAtOrDefault(searchIndex);
+            // if (item != null)
+            // {
+            //     searchIndex--;
+            //     treeViewRef.SelectNode(item);
+            //     await jsRuntime.InvokeVoidAsync("scrollTreeIntoView", $"treeItem_{item.Id}");
+            // }
+            // else
+            // {
+            //     searchIndex = 0;
+            // }
+        }
+
+        void Cancel() => MudDialog.Cancel();
+
+
+    }
+}

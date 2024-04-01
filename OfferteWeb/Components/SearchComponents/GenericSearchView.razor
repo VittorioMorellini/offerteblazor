@@ -1,0 +1,132 @@
+﻿@using OfferteWeb.Dto;
+@using OfferteWeb.Models;
+@using OfferteWeb.Services;
+@inject IGenericEntityService genericService
+@inject ISnackbar snackBar
+@inject IJSRuntime jsRuntime
+
+<MudDialog>
+    <DialogContent>
+        <div style="display:flex; flex-direction:column">
+            <div style="display:flex; flex-direction:row;gap:10px;margin-left: 20px; justify-content:space-between; align-items: center">
+                <MudTextField HelperText="(almeno 3 caratteri)" Variant="Variant.Outlined" Placeholder="Cerca" T="string" Clearable DebounceInterval="2000" Text="@searchString" TextChanged="SearchStringChanged"></MudTextField>
+                <MudIconButton Icon="@Icons.Filled.ArrowLeft" Variant="Variant.Filled" Color="MudBlazor.Color.Secondary" OnClick="@ScrollToPrev"></MudIconButton>
+                <MudIconButton Icon="@Icons.Filled.ArrowRight" Variant="Variant.Filled" Color="MudBlazor.Color.Secondary" OnClick="@ScrollToNext"></MudIconButton>
+            </div>
+            <MudPaper Style="padding:10px; width:100%" Outlined="true" Elevation="1">
+                 <MudItem xs="12">
+                     <MudTable  T="GenericEntity" Dense Items="entities" TotalItems="totalItems" Hover="true" RowsPerPage="10" Bordered="true" Striped="true">
+                         <HeaderContent>
+                             <MudTh>Id</MudTh>
+                             <MudTh>Descrizione</MudTh>
+                             <MudTh></MudTh>
+                         </HeaderContent>
+                         <RowTemplate>
+                             <MudTd>
+                                 <MudText>@context.Id</MudText>
+                            </MudTd>
+                            <MudTd>
+                                <MudText>@context.Descrizione</MudText>
+                            </MudTd>
+                            <MudTd>
+                                <MudButton StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small" OnClick="() => SelectEntity(context.Id)">Seleziona</MudButton>
+                            </MudTd>
+                        </RowTemplate>
+                        <PagerContent>
+                            <MudTablePager PageSizeOptions="new int[]{15, 50, 100}" />
+                        </PagerContent>
+                        <NoRecordsContent>
+                            Nessun elemento presente
+                        </NoRecordsContent>
+                    </MudTable>
+                </MudItem>
+            </MudPaper>
+            </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" OnClick="Cancel">Chiudi</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    @code {
+        [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+        public string? Descrizione { get; set; } = null;
+        public long? Id { get; set; } = null;
+        IEnumerable<GenericEntity>? entities;
+        private string searchString;
+        private int totalItems { get; set; }
+        //int searchIndex = 0;
+
+        private void LoadData()
+        {
+            GenericEntitySearchModel model = new();
+            model.Descrizione = searchString;
+            var righe = genericService.SearchPaged(model, false);
+            totalItems = righe.Item2;
+            entities = righe.Item1;
+            //return righe.Item1;
+        }
+
+        private async Task SelectEntity(long id)
+        {
+            MudDialog.Close(DialogResult.Ok(id));
+            //return Task.CompletedTask;
+        }
+        protected async override Task OnInitializedAsync()
+        {
+            genericService.TableName = "SpessoreMateriale";
+            LoadData();
+            await base.OnInitializedAsync();
+        }
+
+        private Task SearchStringChanged(string newDescrizione)
+        {
+            searchString = newDescrizione;
+            if (newDescrizione != null && newDescrizione.Length > 2)
+            {
+                LoadData();
+                //await ScrollToNext();
+            }
+            else if (string.IsNullOrWhiteSpace(newDescrizione))
+            {
+                LoadData();
+            }
+            return Task.CompletedTask;
+        }
+
+        private async Task ScrollToNext()
+        {
+            // var item = foundCategories.ElementAtOrDefault(searchIndex);
+            // if (item != null)
+            // {
+            //     await ExpandAll2();
+            //     searchIndex++;
+            //     treeViewRef.SelectNode(item);
+            //     await jsRuntime.InvokeVoidAsync("scrollTreeIntoView", $"treeItem_{item.Id}");
+            // }
+            // else
+            // {
+            //     searchIndex = 0;
+            // }
+        }
+
+        private async Task ScrollToPrev()
+        {
+            // var item = foundCategories.ElementAtOrDefault(searchIndex);
+            // if (item != null)
+            // {
+            //     searchIndex--;
+            //     treeViewRef.SelectNode(item);
+            //     await jsRuntime.InvokeVoidAsync("scrollTreeIntoView", $"treeItem_{item.Id}");
+            // }
+            // else
+            // {
+            //     searchIndex = 0;
+            // }
+        }
+
+        void Cancel() => MudDialog.Cancel();
+
+
+    }
+}

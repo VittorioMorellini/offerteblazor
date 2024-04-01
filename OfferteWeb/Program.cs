@@ -75,6 +75,8 @@ namespace OfferteWeb
             builder.Services.AddScoped<IMailService, MailService>();
             builder.Services.AddScoped<IFileService, FileService>();
             builder.Services.AddScoped<IClienteService, ClienteService>();
+            builder.Services.AddScoped<ICirComService, CirComService>();
+            builder.Services.AddScoped<IGenericEntityService, GenericEntityService>();
 
             builder.Services.AddMudServices(config =>
             {

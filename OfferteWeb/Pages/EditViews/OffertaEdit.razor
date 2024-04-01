@@ -1,6 +1,7 @@
 ﻿@page "/offerta/edit/{Id:long}"
 @page "/offerta/new"
 
+@using OfferteWeb.Components.SearchComponents
 @using OfferteWeb.Models
 @using OfferteWeb.Pages.ListViews;
 @using OfferteWeb.Services
@@ -19,12 +20,14 @@
 @inject IOffertaService offertaService
 @inject IOffertaRigaService offertaRigaService
 @inject IAgenteService agenteService;
+@inject IGenericEntityService genericService;
 @inject NavigationManager navigationManager;
 @inject ISnackbar snackbar;
 @inject EntitiesFactory factory;
 @inject IFileService fileService;
 @inject IJSRuntime jsRuntime;
 @inject IClienteService clienteService;
+@inject ICirComService cirComService;
 @inject AppConfiguration appConfiguration;
 
 <Loading IsLoading=@IsLoading></Loading>
@@ -51,56 +54,69 @@
                 </div>
             </MudItem>
             <MudItem xs="12" sm="6" md="3">
-                <div style="display:flex; margin-bottom:10px;flex-direction:column">
-                    <div style="display:flex; flex-direction:row;align-items:center">
-                        <MudText Style="margin-right:10px" Typo="Typo.h5">Agente</MudText>
-                        <MudSelect Style="max-width: 300px;flex-grow:0" Clearable Variant=Variant.Outlined ToStringFunc="@(e=> e==null?null : $"{e.Nome} {e.Cognome}")" T="Agente" Label="Agente" MultiSelection="false" Value="SelectedAgente" ValueChanged="RedattoreAddizionaleChanged">
-                             @foreach (var r in Redattori)
-                            {
-                                <MudSelectItem T="Agente" Value="@r">@($"{r.Nome} {r.Cognome}")</MudSelectItem>
-                            }
-                        </MudSelect>
-                    </div>
-                </div>
+                <MudTextField Required Variant="Variant.Outlined" @bind-Value="Item.Listino" Label="Listino"></MudTextField>
             </MudItem>
             <MudItem xs="12" sm="6" md="3">
-                <MudDatePicker Variant="Variant.Outlined" @bind-Date="Item.DataOfferta" Label="Data Offerta"></MudDatePicker>
             </MudItem>
             <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6" style="width: calc(100%); min-height: 600px">
                 <MudTabPanel Text="Dati generali">
+                    <div style="display: flex; flex-direction: column">
                     <div style="display: flex">
-                        <MudItem xs="12" sm="6" md="3">
-                            <MudTextField Required Variant="Variant.Outlined" @bind-Value="Item.CodiceInterno" Label="Codice interno"></MudTextField>
+                         <MudItem xs="12" sm="6" md="3" lg="3">
+                             <div style="display:flex; margin-bottom:10px;flex-direction:column">
+                                 <div style="display:flex; flex-direction:row;align-items:center">
+                                     <MudText Style="margin-right:10px" Typo="Typo.h5">Agente</MudText>
+                                     <MudSelect Style="max-width: 300px;flex-grow:0" Clearable Variant=Variant.Outlined ToStringFunc="@(e=> e==null?null : $"{e.Nome} {e.Cognome}")" T="Agente" Label="Agente" MultiSelection="false" Value="SelectedAgente" ValueChanged="RedattoreAddizionaleChanged">
+                                         @foreach (var r in Redattori)
+                                        {
+                                            <MudSelectItem T="Agente" Value="@r">@($"{r.Nome} {r.Cognome}")</MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                </div>
+                            </div>
+                        </MudItem>
+                        <MudItem xs="12" sm="6" md="3" lg="3">
+                            <MudDatePicker Variant="Variant.Outlined" @bind-Date="Item.DataOfferta" Label="Data Offerta"></MudDatePicker>
+                        </MudItem>
+                        <MudItem xs="12" sm="6" md="6" lg="6">
+                            <MudTextField Required Variant="Variant.Outlined" @bind-Value="Item.RevisioneDocumento" Label="Revisione"></MudTextField>
+                        </MudItem>
+                    </div>
+                    <div style="display: flex">
+                        <MudItem xs="12" sm="6" md="3" lg="3">
+                            <MudTextField Required Variant="Variant.Outlined" @bind-Value="Item.MatricolCliente" Label="Matricola"></MudTextField>
                         </MudItem>
                         <MudItem xs="12" sm="6" md="3">
-                            <MudSelect Clearable Required Variant="Variant.Outlined" @bind-Value="Item.StatoOfferta" Label="Stato" AnchorOrigin="Origin.BottomCenter">
-                                <MudSelectItem T=byte? Value="@StatoOfferta.Inserita.Item1">@StatoOfferta.Inserita.Item2</MudSelectItem>
-                                <MudSelectItem T=byte? Value="@StatoOfferta.Accettata.Item1">@StatoOfferta.Accettata.Item2</MudSelectItem>
-                                <MudSelectItem T=byte? Value="@StatoOfferta.Rifiutata.Item1">@StatoOfferta.Rifiutata.Item2</MudSelectItem>
-                            </MudSelect>
-                        </MudItem>
-                            <MudItem xs="12" sm="6" md="3">
-                                <MudSelect Clearable Variant="Variant.Outlined" @bind-Value="Item.IdTipoProdotto" Label="Tipo prodotto">
-                                 @if (TipoProdottos != null)
-                                {
-                                    @foreach (var pt in TipoProdottos)
-                                    {
-                                        <MudSelectItem T="long?" Value="@pt.Id">@pt.Descrizione</MudSelectItem>
-                                    }
-                                }
-                            </MudSelect>
+                            <div style="display:flex; flex-direction:row;align-items: center;">
+                                <MudAutocomplete T="CirCom"
+                                                MinCharacters="3"
+                                                MaxItems="20"
+                                                Immediate="false" Label="Codice interno"
+                                                Value="@SelectedCircuito"
+                                                ValueChanged="CircuitoChanged"
+                                                SearchFunc="@SearchCircuito"
+                                                Variant="Variant.Outlined" ShowProgressIndicator="true"
+                                                ToStringFunc="@(e=> e==null ? null : e.CodiceInterno)">
+                                    <NoItemsTemplate>
+                                    <MudText Align="Align.Center" Class="px-4 py-1">
+                                        Nessun elemento trovato
+                                    </MudText>
+                                    </NoItemsTemplate>
+                                </MudAutocomplete>
+                                <MudIconButton aria-label="Accedere a ricerca circuiti" Icon="@Icons.Filled.Search" OnClick="OpenCircuiti"></MudIconButton>
+                            </div>
                         </MudItem>
                         <MudItem xs="12" sm="6" md="3">
                             <div style="display:flex; flex-direction:row;align-items: center;">
                                 <MudAutocomplete T="CliCom"
-                                                 MinCharacters="3"
-                                                 MaxItems="20"
-                                                 Immediate="false" Label="Cliente"
-                                                 Value="@SelectedCustomer"
-                                                 ValueChanged="CustomerChanged"
-                                                 SearchFunc="@SearchCustomer"
-                                                 Variant="Variant.Outlined" ShowProgressIndicator="true"
-                                                 ToStringFunc="@(e=> e==null?null : e.RagioneSociale)">
+                                                MinCharacters="3"
+                                                MaxItems="20"
+                                                Immediate="false" Label="Cliente"
+                                                Value="@SelectedCustomer"
+                                                ValueChanged="CustomerChanged"
+                                                SearchFunc="@SearchCustomer"
+                                                Variant="Variant.Outlined" ShowProgressIndicator="true"
+                                                ToStringFunc="@(e=> e==null?null : e.RagioneSociale)">
                                     <NoItemsTemplate>
                                         <MudText Align="Align.Center" Class="px-4 py-1">
                                             Nessun elemento trovato
@@ -110,38 +126,108 @@
                                 <MudIconButton aria-label="Bottone per accedere a ricerca clienti" Icon="@Icons.Filled.Search" OnClick="OpenCustomers"></MudIconButton>
                             </div>
                         </MudItem>
+                        <MudItem xs="12" sm="6" md="3">
+                            <MudSelect Clearable Variant="Variant.Outlined" @bind-Value="Item.IdValuta" Label="Valuta">
+                                @if (Valutas != null)
+                                {
+                                    @foreach (var v in Valutas)
+                                    {
+                                        <MudSelectItem T="long?" Value="@v.Id">@v.DescrBreve</MudSelectItem>
+                                    }
+                                }
+                            </MudSelect>
+                        </MudItem>
                     </div>
-                    <MudItem xs=12 sm=12 md=12>
-                        <div style="display:flex; justify-content:space-around; column-gap:5vh">
-                            <MudCheckBox @bind-Checked="Item.FineLine" Label="Fineline"></MudCheckBox>
-                            <MudCheckBox @bind-Checked="Item.Criticita" Label="Criticità"></MudCheckBox>
-                            <MudCheckBox @bind-Checked="Item.FresaSi" Label="Fresa sì"></MudCheckBox>
-                            <MudCheckBox @bind-Checked="@Item.PressFit" Label="PressFit"></MudCheckBox>
-                        </div>
-                    </MudItem>
-                    <MudPaper Style="padding:10px; width:100%" Outlined="true" Elevation="1">
-                        <MudItem xs="12" sm="6" md="6">
-                            <div style="display:flex; margin-bottom:10px">
-                                <MudText Style="margin-right:10px" Typo="Typo.h5">Allegati (Gerber file)</MudText>
-                                @if (loadingFile)
+                    <div style="display: flex">
+                        <MudItem xs="12" sm="6" md="3" lg="3">
+                            <MudTextField Required Variant="Variant.Outlined" @bind-Value="Item.FormaDiPagamento" Label="Forma di pagamento"></MudTextField>
+                        </MudItem>
+                        <MudItem xs="12" sm="6" md="3" lg="3">
+                            <MudTextField Required Variant="Variant.Outlined" @bind-Value="Item.IdTrasporto" Label="Trasporto"></MudTextField>
+                        </MudItem>
+                        <MudItem xs="12" sm="6" md="3" lg="3">
+                            <MudTextField Required Variant="Variant.Outlined" @bind-Value="Item.CondizioniResa" Label="Condizioni di resa"></MudTextField>
+                        </MudItem>
+                        <MudItem xs="12" sm="6" md="3" lg="3">
+                            <MudDatePicker Variant="Variant.Outlined" @bind-Date="Item.DataScadenzaOfferta" Label="Scadenza Offerta"></MudDatePicker>
+                        </MudItem>
+                    </div>
+                    <div style="display: flex">
+                        <MudItem xs="12" sm="6" md="3">
+                            <MudSelect Clearable Required Variant="Variant.Outlined" @bind-Value="Item.StatoOfferta" Label="Stato" AnchorOrigin="Origin.BottomCenter">
+                                <MudSelectItem T=byte? Value="@StatoOfferta.Inserita.Item1">@StatoOfferta.Inserita.Item2</MudSelectItem>
+                                <MudSelectItem T=byte? Value="@StatoOfferta.Accettata.Item1">@StatoOfferta.Accettata.Item2</MudSelectItem>
+                                <MudSelectItem T=byte? Value="@StatoOfferta.Rifiutata.Item1">@StatoOfferta.Rifiutata.Item2</MudSelectItem>
+                            </MudSelect>
+                        </MudItem>
+                        <MudItem xs="12" sm="6" md="3">
+                            <MudSelect Clearable Variant="Variant.Outlined" @bind-Value="Item.IdTipoProdotto" Label="Tipo prodotto">
+                                @if (TipoProdottos != null)
+                            {
+                                @foreach (var pt in TipoProdottos)
                                 {
-                                    <MudProgressCircular Indeterminate></MudProgressCircular>
+                                    <MudSelectItem T="long?" Value="@pt.Id">@pt.Descrizione</MudSelectItem>
                                 }
-                                else
-                                {
-                                    <MudButton HtmlTag="label"
-                                               Disabled=@(Item?.Id == 0)
-                                               Size="Size.Small"
-                                               Variant="Variant.Filled"
-                                               Color="Color.Primary"
-                                               StartIcon="@Icons.Filled.CloudUpload"
-                                               for="fileInput">
-                                        Carica
-                                    </MudButton>
-                                }
+                            }
+                            </MudSelect>
+                        </MudItem>
+                        <MudItem xs=12 sm=12 md=6>
+                            <div style="display:flex; justify-content:space-around; column-gap:5vh">
+                                <MudCheckBox @bind-Checked="Item.FineLine" Label="Fineline"></MudCheckBox>
+                                <MudCheckBox @bind-Checked="@Item.PressFit" Label="PressFit"></MudCheckBox>
+                                <MudCheckBox @bind-Checked="Item.MicroForatura" Label="Microforature"></MudCheckBox>
+                                <MudCheckBox @bind-Checked="Item.ImpedenzaControllata" Label="Impedenza controllata"></MudCheckBox>
                             </div>
                         </MudItem>
-                    </MudPaper>
+                    </div>
+                    <div style="display: flex">
+                        <MudItem xs="12" sm="6" md="3">
+                            <div style="display:flex; flex-direction:row;align-items: center;">
+                                <MudAutocomplete T="GenericEntity"
+                                               MinCharacters="3"
+                                               MaxItems="20"
+                                               Immediate="false" Label="Spessore materiale"
+                                               Value="@SelectedSpessoreInnerLayer"
+                                               ValueChanged="SpessoreInnerLayerChanged"
+                                               SearchFunc="@SearchGenericInnerLayer"
+                                               Variant="Variant.Outlined" ShowProgressIndicator="true"
+                                               ToStringFunc="@(e => e==null ? null : e.Descrizione)">
+                                    <NoItemsTemplate>
+                                        <MudText Align="Align.Center" Class="px-4 py-1">
+                                            Nessun elemento trovato
+                                        </MudText>
+                                    </NoItemsTemplate>
+                                </MudAutocomplete>
+                                <MudIconButton aria-label="Accedere a ricerca Sepssore" Icon="@Icons.Filled.Search" OnClick="OpenSpessoreInnerLayer"></MudIconButton>
+                            </div>
+                        </MudItem>                    
+                    </div>
+                    <div style="display: flex">
+                        <MudPaper Style="padding:10px; width:100%" Outlined="true" Elevation="1">
+                            <MudItem xs="12" sm="12" md="6">
+                                <div style="display:flex; margin-bottom:10px">
+                                    <MudText Style="margin-right:10px" Typo="Typo.h5">Allegati (Gerber file)</MudText>
+                                    @if (loadingFile)
+                                    {
+                                        <MudProgressCircular Indeterminate></MudProgressCircular>
+                                    }
+                                    else
+                                    {
+                                        <MudButton HtmlTag="label"
+                                                   Disabled=@(Item?.Id == 0)
+                                                   Size="Size.Small"
+                                                   Variant="Variant.Filled"
+                                                   Color="Color.Primary"
+                                                   StartIcon="@Icons.Filled.CloudUpload"
+                                                   for="fileInput">
+                                            Carica
+                                        </MudButton>
+                                    }
+                                </div>
+                            </MudItem>
+                        </MudPaper>
+                    </div>
+                    </div>
                 </MudTabPanel>
                 <MudTabPanel Text="Far east">
                     <MudText>Content Far east</MudText>
@@ -220,13 +306,16 @@
     private readonly string UiEntityName = "Offerta";
     private string? newTag;
     private IEnumerable<TipoProdotto> TipoProdottos { get; set; }
+    private IEnumerable<Valuta> Valutas { get; set; }
     private bool loadingFile = false;
     //MudTextField<string>? tagAddTextField;
     Agente? SelectedAgente;
     Agente? SelectedUtente;
+    GenericEntity? SelectedSpessoreInnerLayer;
     MudTable<OffertaRiga>? tableRelated;
     IEnumerable<Agente> Redattori { get; set; }
     CliCom? SelectedCustomer;
+    CirCom? SelectedCircuito;
 
     protected override async Task OnInitializedAsync()
     {
@@ -397,7 +486,52 @@
             }
         }
     }
+    private async Task OpenCircuiti()
+    {
+        var dialog = dialogService.Show<CircuitiSearchView>("Seleziona un circuito",
+        new DialogOptions() { MaxWidth = MaxWidth.ExtraLarge, DisableBackdropClick = true, CloseButton = true, Position = DialogPosition.Center });
+        var result = await dialog.Result;
+        if (!result.Canceled)
+        {
+            var selectedCircuito = result.Data as string;
+            if (!string.IsNullOrWhiteSpace(selectedCircuito))
+            {
+                SelectedCircuito = await cirComService.FindAsync(selectedCircuito);
+                Item.CodiceInterno = selectedCircuito;
+            }
+        }
+    }
+    private async Task OpenSpessoreInnerLayer()
+    {
+        var dialog = dialogService.Show<GenericSearchView>("Seleziona uno spessore Materiale",
+        new DialogOptions() { MaxWidth = MaxWidth.ExtraLarge, DisableBackdropClick = true, CloseButton = true, Position = DialogPosition.Center });
+        var result = await dialog.Result;
+        if (!result.Canceled)
+        {
+            var selectedSpessoreId = result.Data as int?;
+            if (selectedSpessoreId.HasValue)
+            {
+                var selectedSpessore = await genericService.FindAsync(selectedSpessoreId.Value);
+                Item.SpessoreInnerLayer = Convert.ToDouble(selectedSpessore.Id);
+            }
+        }
+    }
 
+    private async Task<IEnumerable<GenericEntity>> SearchGenericInnerLayer(string descrizione)
+    {
+        PagerModel model = new();
+        model.Skip = 0;
+        model.Take = 10;
+        //return categoriesService.SearchByString(value, model, true, false);
+
+        return Enumerable.Empty<GenericEntity>();
+    }
+    private async Task SpessoreInnerLayerChanged(GenericEntity? item)
+    {
+        SelectedSpessoreInnerLayer = item;
+        Item.SpessoreInnerLayer = (long)SelectedSpessoreInnerLayer?.Id;
+    }
+    
     private async Task<IEnumerable<CliCom>> SearchCustomer(string value)
     {
         PagerModel model = new();
@@ -408,11 +542,27 @@
         return Enumerable.Empty<CliCom>();
 
     }
-    
+    private async Task<IEnumerable<CirCom>> SearchCircuito(string value)
+    {
+        PagerModel model = new();
+        model.Skip = 0;
+        model.Take = 10;
+        //return categoriesService.SearchByString(value, model, true, false);
+
+        return Enumerable.Empty<CirCom>();
+
+    }
+
     private async Task CustomerChanged(CliCom? item)
     {
         SelectedCustomer = item;
         Item.IdCliente = (long)SelectedCustomer?.Id;
+    }
+    
+    private async Task CircuitoChanged(CirCom? item)
+    {
+        SelectedCircuito = item;
+        Item.CodiceInterno = SelectedCircuito?.CodiceInterno;
     }
     
     protected async Task ExportPdf()
