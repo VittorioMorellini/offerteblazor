@@ -39,7 +39,6 @@ namespace OfferteWeb.Services
             if (id != 0)
             {
                 s += " WHERE Id = @id";
-                int i = 0;
                 SqlCommand command = new SqlCommand();
                 command.Connection = connection;
                 command.CommandText = s;
@@ -47,10 +46,12 @@ namespace OfferteWeb.Services
                 SqlDataReader reader = command.ExecuteReader();
                 if (reader.HasRows)
                 {
+                    int i = 0;
+                    reader.Read();
                     var entity = new GenericEntity
                     {
                         Id = reader.GetInt64(i++),
-                        Codice = reader.GetString(i++),
+                        // Codice = reader.GetString(i++),
                         Descrizione = reader.GetString(i++),
                     };
                     return entity;
@@ -103,7 +104,6 @@ namespace OfferteWeb.Services
             {
                 s += " ORDER BY Descrizione";
             }
-            int i = 0;
             SqlCommand command = new SqlCommand();
             command.Connection = connection;
             command.CommandText = s;
@@ -112,15 +112,18 @@ namespace OfferteWeb.Services
             SqlDataReader reader = command.ExecuteReader();
             if (reader.HasRows)
             {
-                var entity = new GenericEntity
+                while (reader.Read())
                 {
-                    Id = reader.GetInt64(i++),
-                    Codice = reader.GetString(i++),
-                    Descrizione = reader.GetString(i++),
-                };
-                entities.Add(entity);
-            }
-            
+                    int i = 0;
+                    var entity = new GenericEntity
+                    {
+                        Id = reader.GetInt64(i++),
+                        //Codice = reader.GetString(i++),
+                        Descrizione = reader.GetString(i++),
+                    };
+                    entities.Add(entity);
+                }
+            }            
             count = entities.Count();
             return new Tuple<IEnumerable<GenericEntity>, int>(entities, count);
         }

@@ -49,9 +49,9 @@ public partial class Offerta
 
     public long? IdMaterialeTec { get; set; }
 
-    public double? SpessRame { get; set; }
+    public long? SpessRame { get; set; }
 
-    public double? SpessoreFinale { get; set; }
+    public long? SpessoreFinale { get; set; }
 
     public long? FinituraSuperficiale { get; set; }
 
@@ -185,9 +185,9 @@ public partial class Offerta
 
     public long? IdTipoRigidoDf { get; set; }
 
-    public double? SpessoreInnerLayer { get; set; }
+    public long? SpessoreInnerLayer { get; set; }
 
-    public double? SpessRameInnerLayer { get; set; }
+    public long? SpessRameInnerLayer { get; set; }
 
     public string? NoteMaster { get; set; }
 

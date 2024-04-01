@@ -508,11 +508,11 @@
         var result = await dialog.Result;
         if (!result.Canceled)
         {
-            var selectedSpessoreId = result.Data as int?;
+            var selectedSpessoreId = result.Data as long?;
             if (selectedSpessoreId.HasValue)
             {
-                var selectedSpessore = await genericService.FindAsync(selectedSpessoreId.Value);
-                Item.SpessoreInnerLayer = Convert.ToDouble(selectedSpessore.Id);
+                SelectedSpessoreInnerLayer = await genericService.FindAsync(selectedSpessoreId.Value);
+                Item.SpessoreInnerLayer = selectedSpessoreId;
             }
         }
     }
@@ -529,7 +529,7 @@
     private async Task SpessoreInnerLayerChanged(GenericEntity? item)
     {
         SelectedSpessoreInnerLayer = item;
-        Item.SpessoreInnerLayer = (long)SelectedSpessoreInnerLayer?.Id;
+        Item.SpessoreInnerLayer = SelectedSpessoreInnerLayer?.Id;
     }
     
     private async Task<IEnumerable<CliCom>> SearchCustomer(string value)
