@@ -91,16 +91,19 @@
                                 <MudAutocomplete T="CirCom"
                                                 MinCharacters="3"
                                                 MaxItems="20"
-                                                Immediate="false" Label="Codice interno"
+                                                Immediate="false" 
+                                                Label="Codice interno"
                                                 Value="@SelectedCircuito"
                                                 ValueChanged="CircuitoChanged"
                                                 SearchFunc="@SearchCircuito"
-                                                Variant="Variant.Outlined" ShowProgressIndicator="true"
+                                                Variant="Variant.Outlined" 
+                                                ShowProgressIndicator="true"
+                                                AdornmentIcon="null"
                                                 ToStringFunc="@(e=> e==null ? null : e.CodiceInterno)">
                                     <NoItemsTemplate>
-                                    <MudText Align="Align.Center" Class="px-4 py-1">
-                                        Nessun elemento trovato
-                                    </MudText>
+                                        <MudText Align="Align.Center" Class="px-4 py-1">
+                                            Nessun elemento trovato
+                                        </MudText>
                                     </NoItemsTemplate>
                                 </MudAutocomplete>
                                 <MudIconButton aria-label="Accedere a ricerca circuiti" Icon="@Icons.Filled.Search" OnClick="OpenCircuiti"></MudIconButton>
@@ -115,7 +118,9 @@
                                                 Value="@SelectedCustomer"
                                                 ValueChanged="CustomerChanged"
                                                 SearchFunc="@SearchCustomer"
-                                                Variant="Variant.Outlined" ShowProgressIndicator="true"
+                                                Variant="Variant.Outlined" 
+                                                ShowProgressIndicator="true"
+                                                AdornmentIcon="null"
                                                 ToStringFunc="@(e=> e==null?null : e.RagioneSociale)">
                                     <NoItemsTemplate>
                                         <MudText Align="Align.Center" Class="px-4 py-1">
