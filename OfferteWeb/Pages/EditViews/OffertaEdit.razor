@@ -149,7 +149,7 @@
                             <MudTextField Required Variant="Variant.Outlined" @bind-Value="Item.CondizioniResa" Label="Condizioni di resa"></MudTextField>
                         </MudItem>
                         <MudItem xs="12" sm="6" md="3" lg="3">
-                            <MudDatePicker Variant="Variant.Outlined" @bind-Date="Item.DataScadenzaOfferta" Label="Scadenza Offerta"></MudDatePicker>
+                            <MudDatePicker Variant="Variant.Outlined" Date="Item.DataScadenzaOfferta" DateChanged="GetDataScadenza" Label="Scadenza Offerta"></MudDatePicker>
                         </MudItem>
                     </div>
                     <div style="display: flex">
@@ -362,6 +362,11 @@
         var righe = offertaRigaService.SearchPaged(model, false);
 
         return new TableData<OffertaRiga>() { TotalItems = righe.Item2, Items = righe.Item1 }; ;
+    }
+
+    private void GetDataScadenza(DateTime? value)
+    {
+        Item.DataScadenzaOfferta = value ?? DateTime.Now;
     }
 
     private void OpenOfferta(long newId)

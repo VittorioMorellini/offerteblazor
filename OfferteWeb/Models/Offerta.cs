@@ -85,7 +85,7 @@ public partial class Offerta
 
     public double? ScartoPrevisto { get; set; }
 
-    public DateTime? DataScadenzaOfferta { get; set; }
+    public DateTime DataScadenzaOfferta { get; set; }
 
     public long? IdValuta { get; set; }
 
