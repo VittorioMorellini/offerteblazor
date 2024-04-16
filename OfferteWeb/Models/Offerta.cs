@@ -11,7 +11,7 @@ public partial class Offerta
 
     public long IdAgente { get; set; }
 
-    public DateTime? DataOfferta { get; set; }
+    public DateTime DataOfferta { get; set; }
 
     public string? MatricolCliente { get; set; }
 
