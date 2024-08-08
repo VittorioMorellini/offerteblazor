@@ -1,4 +1,5 @@
 using System;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using OfferteWeb.Data;
 using OfferteWeb.Models;
@@ -34,12 +35,18 @@ namespace OfferteWeb.Services
 
         public IEnumerable<TipoProdotto> SearchAll(bool includeDeleted, QueryBuilderSearchModel searchModel)
         {
-            throw new NotImplementedException();
+            return ctx.TipoProdotto.ToList();
         }
 
         public IEnumerable<TipoProdotto> SearchByString(string searchString, QueryBuilderSearchModel searchModel, bool includeDeleted)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+            IQueryable<TipoProdotto> tipiProdottis = ctx.TipoProdotto.AsNoTracking();            
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                tipiProdottis = tipiProdottis.Where(x => x.Descrizione != null && x.Descrizione.Contains(searchString));
+            }
+            return tipiProdottis.OrderByDescending(x => x.Descrizione).ToList();
         }
     }
 

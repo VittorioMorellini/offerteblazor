@@ -77,6 +77,7 @@ namespace OfferteWeb
             builder.Services.AddScoped<IClienteService, ClienteService>();
             builder.Services.AddScoped<ICirComService, CirComService>();
             builder.Services.AddScoped<IGenericEntityService, GenericEntityService>();
+            builder.Services.AddScoped<ITipoProdottoService, TipoProdottoService>();
 
             builder.Services.AddMudServices(config =>
             {

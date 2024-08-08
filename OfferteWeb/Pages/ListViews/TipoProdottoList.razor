@@ -1,0 +1,67 @@
+﻿@page "/tipoprodotto"
+
+@using OfferteWeb.Models
+@using OfferteWeb.Services
+@using OfferteWeb.Components
+@using OfferteWeb.Pages
+
+@inject ITipoProdottoService tipoProdottoService
+@inject NavigationManager navigationManager;
+@inherits BaseListPage<TipoProdotto>;
+<Loading IsLoading=@IsLoading></Loading>
+
+<div class="pt-2">
+    <PageTitle>Tipo Prodotto</PageTitle>
+    <ListPageHeader EntityName=TipoProdotto NewItemClicked="NewItem" SearchAllClicked="(() => SearchAll())"></ListPageHeader>
+    <MudTextField InputType="InputType.Search" @bind-Value="searchString" Placeholder="Cerca..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" DebounceInterval="500" OnDebounceIntervalElapsed="(() => SearchByString(searchString))"></MudTextField>
+    <MudTable class="mt-4" Virtualize="true" Dense Items="@Items" ReadOnly>
+        <HeaderContent>
+            <MudTh>Descrizione</MudTh>
+            <MudTh>CodicePerLayup</MudTh>
+            <MudTh>Num.Facce</MudTh>
+            <MudTh>Num.Strati</MudTh>
+            <MudTh>Peso Kg al MQ</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>
+                <MudText>@context.Descrizione</MudText>
+            </MudTd>
+            <MudTd>
+                <MudText>@context.CodicePerLayup</MudText>
+            </MudTd>
+            <MudTd>
+                <MudText>@context.NumFacce</MudText>
+            </MudTd>
+            <MudTd>
+                <MudText>@context.NumStrati</MudText>
+            </MudTd>
+            <MudTd>
+                <MudText>@context.PesoKgmetroQ</MudText>
+            </MudTd>
+            <MudTd>
+                <MudButton StartIcon="@Icons.Material.Outlined.Edit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" Class="m-1" OnClick="@((e) => EditItem(context.Id))">Modifica</MudButton>
+            </MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager PageSizeOptions="new int[]{15, 50, 100}" />
+        </PagerContent>
+        <NoRecordsContent>
+            Nessun elemento presente
+        </NoRecordsContent>
+    </MudTable>
+</div>
+
+@code {
+    private string searchString = String.Empty;
+
+    public string TipoProdotto = "Tipo Prodotto";
+
+    protected override async Task OnInitializedAsync()
+    {
+        searchService = tipoProdottoService;
+        SearchByString(searchString);
+        //Tags = await tagService.SearchTags();
+    }
+
+
+}

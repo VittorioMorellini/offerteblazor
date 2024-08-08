@@ -21,6 +21,9 @@
     <MudNavGroup Title="Clienti" Expanded="true">
         <MudNavLink OnClick="(() => MethodForNavigationCheck.Invoke(customer))" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Business">Clienti</MudNavLink>
     </MudNavGroup>
+    <MudNavGroup Title="Tabelle" Expanded="true">
+        <MudNavLink OnClick="(() => MethodForNavigationCheck.Invoke(tipoprodotto))" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Equalizer">Tipologia prodotto</MudNavLink>
+    </MudNavGroup>
 </MudNavMenu>
 
 
@@ -39,6 +42,7 @@
     string circuitNew = "/circuit/new";
     string circuit = "/circuit";
     string offer = "/";
+    string tipoprodotto = "/tipoprodotto";
 
     private void ToggleNavMenu()
     {
