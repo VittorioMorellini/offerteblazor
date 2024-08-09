@@ -14,26 +14,26 @@
 
 <div style="display:flex; justify-content:space-between">
     <OfferteWeb.Components.EditPageHeader Modifica="@InModifica" Entita="Tag"></OfferteWeb.Components.EditPageHeader>
-    <OfferteWeb.Components.EditPageFooter Entita="@UiEntityName" AddClicked="AddItem" UpdateClicked="UpdateItem" DeleteClicked="DeleteItem" Modifica="@InModifica"></OfferteWeb.Components.EditPageFooter>
+    <OfferteWeb.Components.EditPageFooter Entita="@UiEntityName" AddClicked="AddItem" UpdateClicked="UpdateTipoProdotto" DeleteClicked="DeleteItem" Modifica="@InModifica"></OfferteWeb.Components.EditPageFooter>
 </div>
 <MudForm @ref="form" @bind-IsValid="@isValid" @bind-Errors="@errors">
     <MudGrid Spacing="1">
-        <MudItem xs=12 sm=6 md=3>
+        <MudItem xs=12 sm=6 md=4>
             <MudTextField Variant="Variant.Outlined" Disabled="true" @bind-Value="Item.Id" Label="Id" ></MudTextField>
         </MudItem>
-        <MudItem xs=12 sm=6 md=3>
+        <MudItem xs=12 sm=6 md=4>
             <MudTextField Variant="Variant.Outlined" @bind-Value="Item.Descrizione" Label="Descrizione" Required></MudTextField>
         </MudItem>
-        <MudItem xs=12 sm=6 md=3>
+        <MudItem xs=12 sm=6 md=4>
             <MudTextField Variant="Variant.Outlined" @bind-Value="Item.CodicePerLayup" Label="Codice per Layup" Required></MudTextField>
         </MudItem>
-        <MudItem xs=12 sm=6 md=3>
+        <MudItem xs=12 sm=6 md=4>
             <MudTextField Variant="Variant.Outlined" @bind-Value="Item.NumFacce" Label="Numero facce" Required></MudTextField>
         </MudItem>
-        <MudItem xs=12 sm=6 md=3>
+        <MudItem xs=12 sm=6 md=4>
             <MudTextField Variant="Variant.Outlined" @bind-Value="Item.NumStrati" Label="Numero strati" Required></MudTextField>
         </MudItem>
-        <MudItem xs=12 sm=6 md=3>
+        <MudItem xs=12 sm=6 md=4>
             <MudTextField Variant="Variant.Outlined" @bind-Value="Item.PesoKgmetroQ" Label="Peso al metro quadro"></MudTextField>
         </MudItem>
     </MudGrid>
@@ -47,6 +47,7 @@
     protected override async Task OnInitializedAsync()
     {
         searchService = tipoProdottoService;
+        updateService = tipoProdottoService;
 
         if (InModifica == true)
         {
@@ -57,5 +58,13 @@
             Item = CreateInstance();
         }
     }
+
+    protected async Task UpdateTipoProdotto()
+    {
+        await SetLoading(true);
+        await UpdateItem();
+        await SetLoading(false);
+    }
+
 
 }

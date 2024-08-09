@@ -23,6 +23,7 @@
     </MudNavGroup>
     <MudNavGroup Title="Tabelle" Expanded="true">
         <MudNavLink OnClick="(() => MethodForNavigationCheck.Invoke(tipoprodotto))" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Equalizer">Tipologia prodotto</MudNavLink>
+        <MudNavLink OnClick="(() => MethodForNavigationCheck.Invoke(grafite))" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Face">Grafite</MudNavLink>
     </MudNavGroup>
 </MudNavMenu>
 
@@ -43,6 +44,7 @@
     string circuit = "/circuit";
     string offer = "/";
     string tipoprodotto = "/tipoprodotto";
+    string grafite = "/grafite";
 
     private void ToggleNavMenu()
     {

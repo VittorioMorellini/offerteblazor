@@ -1142,7 +1142,6 @@ public partial class OfferteDbContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PK__TipoProd__3214EC072E1BDC42");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.CodicePerLayup)
                 .HasMaxLength(10)
                 .IsUnicode(false);
