@@ -159,6 +159,48 @@
                     </div>
                     <div style="display: flex">
                         <MudItem xs="12" sm="6" md="3">
+                            <div style="display:flex; flex-direction:row;align-items: center;">
+                                <MudAutocomplete T="GenericEntity"
+                                                    MinCharacters="3"
+                                                    MaxItems="20"
+                                                    Immediate="false" Label="Spessore materiale"
+                                                    Value="@SelectedSpessoreMateriale"
+                                                    ValueChanged="SpessoreMaterialeChanged"
+                                                    SearchFunc="@SearchGenericMateriale"
+                                                    Variant="Variant.Outlined" ShowProgressIndicator="true"
+                                                    ToStringFunc="@(e => e==null ? null : e.Descrizione)">
+                                    <NoItemsTemplate>
+                                        <MudText Align="Align.Center" Class="px-4 py-1">
+                                            Nessun elemento trovato
+                                        </MudText>
+                                    </NoItemsTemplate>
+                                </MudAutocomplete>
+                                <MudIconButton aria-label="Accedere a ricerca Sepssore" Icon="@Icons.Filled.Search" OnClick="OpenSpessoreMateriale"></MudIconButton>
+                            </div>
+                        </MudItem>
+                            <MudItem xs="12" sm="6" md="3">
+                                <div style="display:flex; flex-direction:row;align-items: center;">
+                                    <MudAutocomplete T="GenericEntity"
+                                                     MinCharacters="3"
+                                                     MaxItems="20"
+                                                     Immediate="false" Label="Spessore rame"
+                                                     Value="@SelectedSpessoreRame"
+                                                     ValueChanged="SpessoreRameChanged"
+                                                     SearchFunc="@SearchGenericRame"
+                                                     Variant="Variant.Outlined" ShowProgressIndicator="true"
+                                                     ToStringFunc="@(e => e==null ? null : e.Descrizione)">
+                                        <NoItemsTemplate>
+                                            <MudText Align="Align.Center" Class="px-4 py-1">
+                                                Nessun elemento trovato
+                                            </MudText>
+                                        </NoItemsTemplate>
+                                    </MudAutocomplete>
+                                    <MudIconButton aria-label="Accedere a ricerca Sepssore" Icon="@Icons.Filled.Search" OnClick="OpenSpessoreRame"></MudIconButton>
+                                </div>
+                            </MudItem>
+                        </div>
+                    <div style="display: flex">
+                        <MudItem xs="12" sm="6" md="3">
                             <MudSelect Clearable Required Variant="Variant.Outlined" @bind-Value="Item.StatoOfferta" Label="Stato" AnchorOrigin="Origin.BottomCenter">
                                 <MudSelectItem T=byte? Value="@StatoOfferta.Inserita.Item1">@StatoOfferta.Inserita.Item2</MudSelectItem>
                                 <MudSelectItem T=byte? Value="@StatoOfferta.Accettata.Item1">@StatoOfferta.Accettata.Item2</MudSelectItem>
@@ -176,6 +218,8 @@
                             }
                             </MudSelect>
                         </MudItem>
+                    </div>
+                    <div style="display: flex">
                         <MudItem xs=12 sm=12 md=6>
                             <div style="display:flex; justify-content:space-around; column-gap:5vh">
                                 <MudCheckBox @bind-Checked="Item.FineLine" Label="Fineline"></MudCheckBox>
@@ -184,28 +228,6 @@
                                 <MudCheckBox @bind-Checked="Item.ImpedenzaControllata" Label="Impedenza controllata"></MudCheckBox>
                             </div>
                         </MudItem>
-                    </div>
-                    <div style="display: flex">
-                        <MudItem xs="12" sm="6" md="3">
-                            <div style="display:flex; flex-direction:row;align-items: center;">
-                                <MudAutocomplete T="GenericEntity"
-                                               MinCharacters="3"
-                                               MaxItems="20"
-                                               Immediate="false" Label="Spessore materiale"
-                                               Value="@SelectedSpessoreInnerLayer"
-                                               ValueChanged="SpessoreInnerLayerChanged"
-                                               SearchFunc="@SearchGenericInnerLayer"
-                                               Variant="Variant.Outlined" ShowProgressIndicator="true"
-                                               ToStringFunc="@(e => e==null ? null : e.Descrizione)">
-                                    <NoItemsTemplate>
-                                        <MudText Align="Align.Center" Class="px-4 py-1">
-                                            Nessun elemento trovato
-                                        </MudText>
-                                    </NoItemsTemplate>
-                                </MudAutocomplete>
-                                <MudIconButton aria-label="Accedere a ricerca Sepssore" Icon="@Icons.Filled.Search" OnClick="OpenSpessoreInnerLayer"></MudIconButton>
-                            </div>
-                        </MudItem>                    
                     </div>
                     <div style="display: flex">
                         <MudPaper Style="padding:10px; width:100%" Outlined="true" Elevation="1">
@@ -316,7 +338,8 @@
     //MudTextField<string>? tagAddTextField;
     Agente? SelectedAgente;
     Agente? SelectedUtente;
-    GenericEntity? SelectedSpessoreInnerLayer;
+    GenericEntity? SelectedSpessoreMateriale;
+    GenericEntity? SelectedSpessoreRame;
     MudTable<OffertaRiga>? tableRelated;
     IEnumerable<Agente> Redattori { get; set; }
     CliCom? SelectedCustomer;
@@ -373,7 +396,7 @@
     {
         Item.DataOfferta = value ?? DateTime.Now;
     }
-    
+
     private void GetDataScadenza(DateTime? value)
     {
         Item.DataScadenzaOfferta = value ?? DateTime.Now;
@@ -516,9 +539,11 @@
             }
         }
     }
-    private async Task OpenSpessoreInnerLayer()
+    private async Task OpenSpessoreMateriale()
     {
+        var parameters = new DialogParameters<GenericTableRicerca> { { x => x.TableName, "SpessoreMateriale" }, { x => x.KeyName, "Id" }, { x => x.DescriptionName, "Descrizione" } };
         var dialog = dialogService.Show<GenericSearchView>("Seleziona uno spessore Materiale",
+        parameters,
         new DialogOptions() { MaxWidth = MaxWidth.ExtraLarge, DisableBackdropClick = true, CloseButton = true, Position = DialogPosition.Center });
         var result = await dialog.Result;
         if (!result.Canceled)
@@ -526,13 +551,31 @@
             var selectedSpessoreId = result.Data as long?;
             if (selectedSpessoreId.HasValue)
             {
-                SelectedSpessoreInnerLayer = await genericService.FindAsync(selectedSpessoreId.Value);
-                Item.SpessoreInnerLayer = selectedSpessoreId;
+                SelectedSpessoreMateriale = await genericService.FindAsync(selectedSpessoreId.Value);
+                Item.SpessoreFinale = selectedSpessoreId;
             }
         }
     }
 
-    private async Task<IEnumerable<GenericEntity>> SearchGenericInnerLayer(string descrizione)
+    private async Task OpenSpessoreRame()
+    {
+        var parameters = new DialogParameters<GenericTableRicerca> { { x => x.TableName, "SpessoreRame" }, { x => x.KeyName, "Id" }, { x => x.DescriptionName, "Descrizione" } };
+        var dialog = dialogService.Show<GenericSearchView>("Seleziona uno spessore base CU", parameters,
+            new DialogOptions() { MaxWidth = MaxWidth.ExtraLarge, DisableBackdropClick = true, 
+                CloseButton = true, Position = DialogPosition.Center });
+        var result = await dialog.Result;
+        if (!result.Canceled)
+        {
+            var selectedSpessoreId = result.Data as long?;
+            if (selectedSpessoreId.HasValue)
+            {
+                SelectedSpessoreRame = await genericService.FindAsync(selectedSpessoreId.Value);
+                Item.SpessRame = selectedSpessoreId;
+            }
+        }
+    }
+    
+    private async Task<IEnumerable<GenericEntity>> SearchGenericMateriale(string descrizione)
     {
         PagerModel model = new();
         model.Skip = 0;
@@ -541,10 +584,25 @@
 
         return Enumerable.Empty<GenericEntity>();
     }
-    private async Task SpessoreInnerLayerChanged(GenericEntity? item)
+    private async Task<IEnumerable<GenericEntity>> SearchGenericRame(string descrizione)
     {
-        SelectedSpessoreInnerLayer = item;
-        Item.SpessoreInnerLayer = SelectedSpessoreInnerLayer?.Id;
+        PagerModel model = new();
+        model.Skip = 0;
+        model.Take = 10;
+        //return categoriesService.SearchByString(value, model, true, false);
+
+        return Enumerable.Empty<GenericEntity>();
+    }
+    private async Task SpessoreMaterialeChanged(GenericEntity? item)
+    {
+        SelectedSpessoreMateriale = item;
+        Item.SpessoreFinale = SelectedSpessoreMateriale?.Id;
+    }
+    
+    private async Task SpessoreRameChanged(GenericEntity? item)
+    {
+        SelectedSpessoreRame = item;
+        Item.SpessRame = SelectedSpessoreRame?.Id;
     }
     
     private async Task<IEnumerable<CliCom>> SearchCustomer(string value)

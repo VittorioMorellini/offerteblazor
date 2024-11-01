@@ -41,3 +41,11 @@ public static class StatoOfferta
     public static Tuple<byte, string> Accettata { get { return Tuple.Create((byte)2, "Accettata"); } }
     public static Tuple<byte, string> Rifiutata { get { return Tuple.Create((byte)3, "Rifiutata"); } }
 }
+
+public class GenericTableRicerca
+{
+    public string TableName { get; set; }
+    public string KeyName { get; set; }
+    public string KeyType { get; set; }
+    public string DescriptionName { get; set; }
+}

@@ -424,14 +424,14 @@ namespace OfferteWeb.Utils
         //public int? Skip { get; set; }
         //public int? Take { get; set; }        
         //public string OrderBy { get; set; }
-        public PagerModel Pager { get; set; }
+        public PagerModel Pager { get; set; } = null!;
     }
 
     public class PagerModel
     {
         public int? Skip { get; set; }
         public int? Take { get; set; }
-        public string OrderBy { get; set; }
+        public string OrderBy { get; set; } = null!;
         public bool Ignore { get; set; }
         public SortDirection Direction { get; set; }
     }

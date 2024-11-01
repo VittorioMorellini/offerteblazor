@@ -55,6 +55,12 @@
         IEnumerable<GenericEntity>? entities;
         private string searchString;
         private int totalItems { get; set; }
+        [Parameter]
+        public string TableName {get; set; }
+        [Parameter]
+        public string KeyName { get; set; }
+        [Parameter]
+        public string DescriptionName { get; set; }
         //int searchIndex = 0;
 
         private void LoadData()
@@ -74,7 +80,9 @@
         }
         protected async override Task OnInitializedAsync()
         {
-            genericService.TableName = "SpessoreMateriale";
+            genericService.TableName = TableName;
+            genericService.KeyName = KeyName;
+            genericService.DescriptionName = DescriptionName;
             LoadData();
             await base.OnInitializedAsync();
         }

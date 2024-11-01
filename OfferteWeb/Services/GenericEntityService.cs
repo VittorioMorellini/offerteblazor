@@ -12,6 +12,8 @@ namespace OfferteWeb.Services
     public interface IGenericEntityService : IBaseService<GenericEntity, long, OfferteDbContext>, ISearchEntities<GenericEntity>
     {
         string TableName { get; set; }
+        string KeyName { get; set; }
+        string DescriptionName { get; set; }
         Tuple<IEnumerable<GenericEntity>, int> SearchPaged(GenericEntitySearchModel model, bool includeDeleted);
 
         Task<GenericEntity> FindAsync(long id);
@@ -20,6 +22,8 @@ namespace OfferteWeb.Services
     public class GenericEntityService : BaseService<GenericEntity, long, OfferteDbContext>, IGenericEntityService
     {
         public string TableName { get;  set; }
+        public string KeyName { get; set; }
+        public string DescriptionName { get; set; }
         public GenericEntityService(IConfiguration configuration, OfferteDbContext ctx = null)
             : base(configuration, ctx)
         {
@@ -35,10 +39,10 @@ namespace OfferteWeb.Services
             var connection = new SqlConnection(ctx.Database.GetConnectionString());
             connection.Open();
 
-            var s = "SELECT Id, Descrizione FROM " + TableName;
+            var s = "SELECT " + KeyName + "," + DescriptionName + " FROM " + TableName;
             if (id != 0)
             {
-                s += " WHERE Id = @id";
+                s += " WHERE " + KeyName + " = @id";
                 SqlCommand command = new SqlCommand();
                 command.Connection = connection;
                 command.CommandText = s;
@@ -93,7 +97,7 @@ namespace OfferteWeb.Services
             //{
             //    entities = entities.Skip(model.Pager.Skip.Value).Take(model.Pager.Take.Value);
             //}
-            if (!string.IsNullOrWhiteSpace(model.Pager?.OrderBy))
+            if (!string.IsNullOrWhiteSpace(model?.Pager?.OrderBy))
             {
                 //if (model.Pager.Direction == MudBlazor.SortDirection.Ascending)
                 //{
@@ -162,7 +166,7 @@ namespace OfferteWeb.Services
     public class GenericEntitySearchModel : QueryBuilderSearchModel
     {
         public long? Id { get; set; }
-        public string CodiceInterno { get; set; }
-        public string Descrizione { get; set; }
+        public string CodiceInterno { get; set; } = null!;
+        public string Descrizione { get; set; } = null!;
     }
 }
