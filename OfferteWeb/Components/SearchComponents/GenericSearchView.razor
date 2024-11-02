@@ -61,12 +61,16 @@
         public string KeyName { get; set; }
         [Parameter]
         public string DescriptionName { get; set; }
-        //int searchIndex = 0;
+        [Parameter]
+        public string KeyType { get; set; }
+        [Parameter]
+        public int? IdLingua { get; set; }
 
         private void LoadData()
         {
             GenericEntitySearchModel model = new();
             model.Descrizione = searchString;
+            model.IdLingua = IdLingua;
             var righe = genericService.SearchPaged(model, false);
             totalItems = righe.Item2;
             entities = righe.Item1;

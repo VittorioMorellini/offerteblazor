@@ -167,7 +167,9 @@
                                                     Value="@SelectedSpessoreMateriale"
                                                     ValueChanged="SpessoreMaterialeChanged"
                                                     SearchFunc="@SearchGenericMateriale"
-                                                    Variant="Variant.Outlined" ShowProgressIndicator="true"
+                                                    Variant="Variant.Outlined" 
+                                                    ShowProgressIndicator="true"
+                                                    AdornmentIcon="null"
                                                     ToStringFunc="@(e => e==null ? null : e.Descrizione)">
                                     <NoItemsTemplate>
                                         <MudText Align="Align.Center" Class="px-4 py-1">
@@ -175,30 +177,108 @@
                                         </MudText>
                                     </NoItemsTemplate>
                                 </MudAutocomplete>
-                                <MudIconButton aria-label="Accedere a ricerca Sepssore" Icon="@Icons.Filled.Search" OnClick="OpenSpessoreMateriale"></MudIconButton>
+                                <MudIconButton aria-label="Accedere a ricerca Sepssore" Icon="@Icons.Filled.Search" OnClick=@(() => OpenSpessoreMateriale("Seleziona uno spessore Materiale"))></MudIconButton>
                             </div>
                         </MudItem>
-                            <MudItem xs="12" sm="6" md="3">
-                                <div style="display:flex; flex-direction:row;align-items: center;">
-                                    <MudAutocomplete T="GenericEntity"
-                                                     MinCharacters="3"
-                                                     MaxItems="20"
-                                                     Immediate="false" Label="Spessore rame"
-                                                     Value="@SelectedSpessoreRame"
-                                                     ValueChanged="SpessoreRameChanged"
-                                                     SearchFunc="@SearchGenericRame"
-                                                     Variant="Variant.Outlined" ShowProgressIndicator="true"
+                        <MudItem xs="12" sm="6" md="3">
+                            <div style="display:flex; flex-direction:row;align-items: center;">
+                                <MudAutocomplete T="GenericEntity"
+                                                    MinCharacters="3"
+                                                    MaxItems="20"
+                                                    Immediate="false" Label="Spessore rame"
+                                                    Value="@SelectedSpessoreRame"
+                                                    ValueChanged="SpessoreRameChanged"
+                                                    SearchFunc="@SearchGenericRame"
+                                                    Variant="Variant.Outlined" 
+                                                    ShowProgressIndicator="true"
+                                                    AdornmentIcon="null"
+                                                    ToStringFunc="@(e => e==null ? null : e.Descrizione)">
+                                    <NoItemsTemplate>
+                                        <MudText Align="Align.Center" Class="px-4 py-1">
+                                            Nessun elemento trovato
+                                        </MudText>
+                                    </NoItemsTemplate>
+                                </MudAutocomplete>
+                                <MudIconButton aria-label="Accedere a ricerca Sepssore" Icon="@Icons.Filled.Search" OnClick=@((e) => OpenSpessoreRame("Seleziona uno spessore base CU"))></MudIconButton>
+                            </div>
+                        </MudItem>
+                        <MudItem xs="12" sm="6" md="3">
+                            <div style="display:flex; flex-direction:row;align-items: center;">
+                                <MudAutocomplete T="GenericEntity"
+                                                    MinCharacters="3"
+                                                    MaxItems="20"
+                                                    Immediate="false" Label="Spessore inner Layer"
+                                                    Value="@SelectedSpessoreInnerLayer"
+                                                    ValueChanged="SpessoreInnerChanged"
+                                                    SearchFunc="@SearchGenericMateriale"
+                                                    Variant="Variant.Outlined" 
+                                                    ShowProgressIndicator="true"
+                                                     AdornmentIcon="null"
                                                      ToStringFunc="@(e => e==null ? null : e.Descrizione)">
-                                        <NoItemsTemplate>
-                                            <MudText Align="Align.Center" Class="px-4 py-1">
-                                                Nessun elemento trovato
-                                            </MudText>
-                                        </NoItemsTemplate>
-                                    </MudAutocomplete>
-                                    <MudIconButton aria-label="Accedere a ricerca Sepssore" Icon="@Icons.Filled.Search" OnClick="OpenSpessoreRame"></MudIconButton>
-                                </div>
-                            </MudItem>
-                        </div>
+                                    <NoItemsTemplate>
+                                        <MudText Align="Align.Center" Class="px-4 py-1">
+                                            Nessun elemento trovato
+                                        </MudText>
+                                    </NoItemsTemplate>
+                                </MudAutocomplete>
+                                <MudIconButton aria-label="Accedere a ricerca Sepssore" Icon="@Icons.Filled.Search" OnClick=@((e) => OpenSpessoreMateriale("Seleziona uno spessore Inner Layer"))></MudIconButton>
+                            </div>
+                        </MudItem>
+                        <MudItem xs="12" sm="6" md="3">
+                            <div style="display:flex; flex-direction:row;align-items: center;">
+                                <MudAutocomplete T="GenericEntity"
+                                                    MinCharacters="3"
+                                                    MaxItems="20"
+                                                    Immediate="false" Label="Spessore CU BASE inner"
+                                                    Value="@SelectedSpessoreRameInner"
+                                                    ValueChanged="SpessoreRameInnerChanged"
+                                                    SearchFunc="@SearchGenericRame"
+                                                    Variant="Variant.Outlined" 
+                                                    ShowProgressIndicator="true"
+                                                    AdornmentIcon="null"
+                                                    ToStringFunc="@(e => e==null ? null : e.Descrizione)">
+                                    <NoItemsTemplate>
+                                        <MudText Align="Align.Center" Class="px-4 py-1">
+                                            Nessun elemento trovato
+                                        </MudText>
+                                    </NoItemsTemplate>
+                                </MudAutocomplete>
+                                <MudIconButton aria-label="Accedere a ricerca Sepssore" Icon="@Icons.Filled.Search" OnClick=@((e) => OpenSpessoreRame("Seleziona uno spessore cu Base Inner"))></MudIconButton>
+                            </div>
+                        </MudItem>
+                    </div>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <MudItem xs="12" sm="6" md="4" lg="4" style="display: flex">
+                            <div style="display: flex; align-items: center"><label>Dim Singolo/Cartella</label></div>
+                            <MudNumericField Required Variant="Variant.Outlined" @bind-Value="Item.DimXfigura" Label=""></MudNumericField>
+                            <span style="display: flex; align-items: center">X</span>
+                            <MudNumericField Required Variant="Variant.Outlined" @bind-Value="Item.DimYfigura" Label=""></MudNumericField>
+                        </MudItem>
+                        <MudItem xs="12" sm="6" md="4" lg="4" style="display: flex">
+                            <div style="display: flex; align-items: center"><label>Numero circuiti per cartella</label></div>
+                            <MudNumericField Required Variant="Variant.Outlined" @bind-Value="Item.NumCircuitiXcart" Label=""></MudNumericField>
+                            <span style="display: flex; align-items: center">X</span> 
+                            <MudNumericField Required Variant="Variant.Outlined" @bind-Value="Item.NumCircuitiYcart" Label=""></MudNumericField>
+                        </MudItem>
+                        <MudAutocomplete T="GenericEntity"
+                                            MinCharacters="3"
+                                            MaxItems="20"
+                                            Immediate="false" Label="Numero strati"
+                                            Value="@SelectedNumeroStrati"
+                                            ValueChanged="NumeroStratiChanged"
+                                            SearchFunc="@SearchGenericNumeroStrati"
+                                            Variant="Variant.Outlined" 
+                                            ShowProgressIndicator="true"
+                                            AdornmentIcon="null"
+                                            ToStringFunc="@(e => e==null ? null : e.Descrizione)">
+                            <NoItemsTemplate>
+                                <MudText Align="Align.Center" Class="px-4 py-1">
+                                    Nessun elemento trovato
+                                </MudText>
+                            </NoItemsTemplate>
+                        </MudAutocomplete>
+                        <MudIconButton aria-label="Accedere a ricerca numero starti" Icon="@Icons.Filled.Search" OnClick=@((e) => OpenStrati("Seleziona un numero strati"))></MudIconButton>
+                    </div>
                     <div style="display: flex">
                         <MudItem xs="12" sm="6" md="3">
                             <MudSelect Clearable Required Variant="Variant.Outlined" @bind-Value="Item.StatoOfferta" Label="Stato" AnchorOrigin="Origin.BottomCenter">
@@ -207,26 +287,85 @@
                                 <MudSelectItem T=byte? Value="@StatoOfferta.Rifiutata.Item1">@StatoOfferta.Rifiutata.Item2</MudSelectItem>
                             </MudSelect>
                         </MudItem>
+                    </div>
+                    <div style="display: flex; align-items: center">
                         <MudItem xs="12" sm="6" md="3">
-                            <MudSelect Clearable Variant="Variant.Outlined" @bind-Value="Item.IdTipoProdotto" Label="Laminato base">
-                            @if (TipoProdottos != null)
+                            <MudSelect Clearable Variant="Variant.Outlined" @bind-Value="Item.IdMaterialeTec" Label="Laminato base">
+                            @if (Materialis != null)
                             {
-                                @foreach (var pt in TipoProdottos)
+                                @foreach (var mt in Materialis)
                                 {
-                                    <MudSelectItem T="long?" Value="@pt.Id">@pt.Descrizione</MudSelectItem>
+                                    <MudSelectItem T="long?" Value="@mt.Id">@mt.Descrizione</MudSelectItem>
                                 }
                             }
                             </MudSelect>
                         </MudItem>
+                        <MudItem xs="12" sm="6" md="3" lg="3">
+                            <MudNumericField Required Variant="Variant.Outlined" @bind-Value="@Item.ComponentiSmd" Label="Componenti Smd"></MudNumericField>
+                        </MudItem>
+                        <MudItem xs="12" sm="6" md="2" lg="2">
+                            <MudNumericField Required Variant="Variant.Outlined" @bind-Value="Item.ComponentiPth" Label="Pth"></MudNumericField>
+                        </MudItem>
+                        <MudItem xs="12" sm="6" md="2" lg="2">
+                            <MudCheckBox @bind-Checked="Item.Attrezzatura" Label="Attrezzatura fotografica" LabelPosition="LabelPosition.Start"></MudCheckBox>
+                        </MudItem>
+                        <MudItem xs="12" sm="6" md="2" lg="2">
+                            <MudNumericField Required Variant="Variant.Outlined" @bind-Value="Item.AttrezzaturaAdd" Label="Variazione attrezzatura"></MudNumericField>
+                        </MudItem>
+                    </div>
+                    <div style="display: flex; align-items: center">
+                        <MudAutocomplete T="GenericEntity"
+                                            MinCharacters="3"
+                                            MaxItems="20"
+                                            Immediate="false" Label="Tipologia prodotto"
+                                            Value="@SelectedTipologiaProdotto"
+                                            ValueChanged="TipologiaProdottoChanged"
+                                            SearchFunc="@SearchGenericTipologiaProdotto"
+                                            Variant="Variant.Outlined"
+                                            ShowProgressIndicator="true"
+                                            AdornmentIcon="null"
+                                            ToStringFunc="@(e => e==null ? null : e.Descrizione)">
+                            <NoItemsTemplate>
+                                <MudText Align="Align.Center" Class="px-4 py-1">
+                                    Nessun elemento trovato
+                                </MudText>
+                            </NoItemsTemplate>
+                        </MudAutocomplete>
+                        <MudIconButton aria-label="Accedere a ricerca numero starti" Icon="@Icons.Filled.Search" OnClick=@((e) => OpenTipologiaProdotto("Seleziona tipologia prodotto"))></MudIconButton>
+                        <MudItem xs="12" sm="6" md="3" lg="3">
+                            <MudNumericField Required Variant="Variant.Outlined" @bind-Value="Item.DiametroMinForo" Label="Diametro minimo foro"></MudNumericField>
+                        </MudItem>
+                        <MudItem xs="12" sm="6" md="3" lg="3">
+                            <MudCheckBox @bind-Checked="Item.Setup" Label="Setup" LabelPosition="LabelPosition.Start"></MudCheckBox>
+                        </MudItem>
+                        <MudItem xs="12" sm="6" md="3" lg="3">
+                            <MudNumericField Required Variant="Variant.Outlined" @bind-Value="Item.MinutiSetup" Label="Minuti setup"></MudNumericField>
+                        </MudItem>
+                    </div>
+                    <div style="display: flex">
                     </div>
                     <div style="display: flex">
                         <MudItem xs=12 sm=12 md=6>
-                            <div style="display:flex; justify-content:space-around; column-gap:5vh">
-                                <MudCheckBox @bind-Checked="Item.FineLine" Label="Fineline"></MudCheckBox>
-                                <MudCheckBox @bind-Checked="@Item.PressFit" Label="PressFit"></MudCheckBox>
-                                <MudCheckBox @bind-Checked="Item.MicroForatura" Label="Microforature"></MudCheckBox>
-                                <MudCheckBox @bind-Checked="Item.ImpedenzaControllata" Label="Impedenza controllata"></MudCheckBox>
+                            <div style="display:flex; justify-content: flex-start; column-gap:5vh">
+                                <MudCheckBox @bind-Checked="Item.FineLine" Label="Fineline" LabelPosition="LabelPosition.Start"></MudCheckBox>
+                                <MudCheckBox @bind-Checked="@Item.PressFit" Label="PressFit" LabelPosition="LabelPosition.Start"></MudCheckBox>
                             </div>
+                        </MudItem>
+                    </div>
+                    <div style="display: flex">
+                        <MudItem xs=12 sm=12 md=6>
+                            <div style="display:flex; column-gap:5vh">
+                                <MudCheckBox @bind-Checked="Item.MicroForatura" Label="Microforature" LabelPosition="LabelPosition.Start"></MudCheckBox>
+                                <MudCheckBox @bind-Checked="Item.ImpedenzaControllata" Label="Impedenza controllata" LabelPosition="LabelPosition.Start"></MudCheckBox>
+                            </div>
+                        </MudItem>
+                    </div>
+                    <div style="display: flex; justify-content: flex-start">
+                        <MudCheckBox @bind-Checked="Item.TestSondeMobili" Label="Test sondo mobili" LabelPosition="LabelPosition.Start"></MudCheckBox>
+                    </div>
+                    <div>
+                        <MudItem xs="12" sm="6" md="3">
+                            <MudTextField Variant="Variant.Outlined" @bind-Value="Item.Note" Label="Note"></MudTextField>
                         </MudItem>
                     </div>
                     <div style="display: flex">
@@ -332,7 +471,8 @@
 @code {
     private readonly string UiEntityName = "Offerta";
     private string? newTag;
-    private IEnumerable<TipoProdotto> TipoProdottos { get; set; }
+    //private IEnumerable<TipoProdotto> TipoProdottos { get; set; }
+    private IEnumerable<Materiale> Materialis { get; set; }
     private IEnumerable<Valuta> Valutas { get; set; }
     private bool loadingFile = false;
     //MudTextField<string>? tagAddTextField;
@@ -340,6 +480,10 @@
     Agente? SelectedUtente;
     GenericEntity? SelectedSpessoreMateriale;
     GenericEntity? SelectedSpessoreRame;
+    GenericEntity? SelectedSpessoreInnerLayer;
+    GenericEntity? SelectedSpessoreRameInner;
+    GenericEntity? SelectedNumeroStrati;
+    GenericEntity? SelectedTipologiaProdotto;
     MudTable<OffertaRiga>? tableRelated;
     IEnumerable<Agente> Redattori { get; set; }
     CliCom? SelectedCustomer;
@@ -539,10 +683,10 @@
             }
         }
     }
-    private async Task OpenSpessoreMateriale()
+    private async Task OpenSpessoreMateriale(string title)
     {
         var parameters = new DialogParameters<GenericTableRicerca> { { x => x.TableName, "SpessoreMateriale" }, { x => x.KeyName, "Id" }, { x => x.DescriptionName, "Descrizione" } };
-        var dialog = dialogService.Show<GenericSearchView>("Seleziona uno spessore Materiale",
+        var dialog = dialogService.Show<GenericSearchView>(title,
         parameters,
         new DialogOptions() { MaxWidth = MaxWidth.ExtraLarge, DisableBackdropClick = true, CloseButton = true, Position = DialogPosition.Center });
         var result = await dialog.Result;
@@ -557,10 +701,10 @@
         }
     }
 
-    private async Task OpenSpessoreRame()
+    private async Task OpenSpessoreRame(string title)
     {
         var parameters = new DialogParameters<GenericTableRicerca> { { x => x.TableName, "SpessoreRame" }, { x => x.KeyName, "Id" }, { x => x.DescriptionName, "Descrizione" } };
-        var dialog = dialogService.Show<GenericSearchView>("Seleziona uno spessore base CU", parameters,
+        var dialog = dialogService.Show<GenericSearchView>(title, parameters,
             new DialogOptions() { MaxWidth = MaxWidth.ExtraLarge, DisableBackdropClick = true, 
                 CloseButton = true, Position = DialogPosition.Center });
         var result = await dialog.Result;
@@ -571,6 +715,47 @@
             {
                 SelectedSpessoreRame = await genericService.FindAsync(selectedSpessoreId.Value);
                 Item.SpessRame = selectedSpessoreId;
+            }
+        }
+    }
+
+    private async Task OpenStrati(string title)
+    {
+        var parameters = new DialogParameters<GenericTableRicerca> { { x => x.TableName, "TipoProdotto" }, { x => x.KeyName, "Id" }, { x => x.DescriptionName, "Descrizione" } };
+        var dialog = dialogService.Show<GenericSearchView>(title, parameters,
+            new DialogOptions() { MaxWidth = MaxWidth.ExtraLarge, DisableBackdropClick = true, 
+                CloseButton = true, Position = DialogPosition.Center });
+        var result = await dialog.Result;
+        if (!result.Canceled)
+        {
+            var selectedStratiId = result.Data as long?;
+            if (selectedStratiId.HasValue)
+            {
+                SelectedNumeroStrati = await genericService.FindAsync(selectedStratiId.Value);
+                Item.IdTipoProdotto = selectedStratiId;
+            }
+        }
+    }
+
+    private async Task OpenTipologiaProdotto(string title, int? idLingua = null)
+    {
+        var parameters = new DialogParameters<GenericTableRicerca> { 
+            { x => x.TableName, "TipoRigido" }, 
+            { x => x.KeyName, "Id" }, 
+            { x => x.DescriptionName, "Descrizione" }, 
+            { x => x.IdLingua, idLingua.HasValue ? idLingua.Value : null } 
+        };
+        var dialog = dialogService.Show<GenericSearchView>(title, parameters,
+            new DialogOptions() { MaxWidth = MaxWidth.ExtraLarge, DisableBackdropClick = true, 
+                CloseButton = true, Position = DialogPosition.Center });
+        var result = await dialog.Result;
+        if (!result.Canceled)
+        {
+            var selectedStratiId = result.Data as long?;
+            if (selectedStratiId.HasValue)
+            {
+                SelectedNumeroStrati = await genericService.FindAsync(selectedStratiId.Value, idLingua);
+                Item.IdTipoProdotto = selectedStratiId;
             }
         }
     }
@@ -593,6 +778,25 @@
 
         return Enumerable.Empty<GenericEntity>();
     }
+    private async Task<IEnumerable<GenericEntity>> SearchGenericNumeroStrati(string descrizione)
+    {
+        PagerModel model = new();
+        model.Skip = 0;
+        model.Take = 10;
+        //return categoriesService.SearchByString(value, model, true, false);
+
+        return Enumerable.Empty<GenericEntity>();
+    }
+    private async Task<IEnumerable<GenericEntity>> SearchGenericTipologiaProdotto(string descrizione)
+    {
+        PagerModel model = new();
+        model.Skip = 0;
+        model.Take = 10;
+        //return categoriesService.SearchByString(value, model, true, false);
+
+        return Enumerable.Empty<GenericEntity>();
+    }
+    
     private async Task SpessoreMaterialeChanged(GenericEntity? item)
     {
         SelectedSpessoreMateriale = item;
@@ -604,7 +808,30 @@
         SelectedSpessoreRame = item;
         Item.SpessRame = SelectedSpessoreRame?.Id;
     }
+        
+    private async Task SpessoreInnerChanged(GenericEntity? item)
+    {
+        SelectedSpessoreInnerLayer = item;
+        Item.SpessoreInnerLayer = SelectedSpessoreInnerLayer?.Id;
+    }
     
+    private async Task SpessoreRameInnerChanged(GenericEntity? item)
+    {
+        SelectedSpessoreRameInner = item;
+        Item.SpessRameInnerLayer = SelectedSpessoreRameInner?.Id;
+    }
+    
+    private async Task TipologiaProdottoChanged(GenericEntity? item)
+    {
+        SelectedTipologiaProdotto = item;
+        Item.IdTipoRigidoDf = SelectedTipologiaProdotto?.Id;
+    }
+    private async Task NumeroStratiChanged(GenericEntity? item)
+    {
+        SelectedNumeroStrati = item;
+        Item.IdTipoProdotto = SelectedNumeroStrati?.Id;
+    }
+
     private async Task<IEnumerable<CliCom>> SearchCustomer(string value)
     {
         PagerModel model = new();

@@ -15,8 +15,7 @@ namespace OfferteWeb.Services
         string KeyName { get; set; }
         string DescriptionName { get; set; }
         Tuple<IEnumerable<GenericEntity>, int> SearchPaged(GenericEntitySearchModel model, bool includeDeleted);
-
-        Task<GenericEntity> FindAsync(long id);
+        Task<GenericEntity> FindAsync(long id, int? idLingua = null);
     }
 
     public class GenericEntityService : BaseService<GenericEntity, long, OfferteDbContext>, IGenericEntityService
@@ -34,7 +33,7 @@ namespace OfferteWeb.Services
             return _search(model).Item1;
         }
 
-        public async Task<GenericEntity> FindAsync(long id)
+        public async Task<GenericEntity> FindAsync(long id, int? idLingua = null)
         {
             var connection = new SqlConnection(ctx.Database.GetConnectionString());
             connection.Open();
@@ -45,6 +44,11 @@ namespace OfferteWeb.Services
                 s += " WHERE " + KeyName + " = @id";
                 SqlCommand command = new SqlCommand();
                 command.Connection = connection;
+                if (idLingua.HasValue)
+                {
+                    s += " AND IdLingua = @idlingua";
+                    command.Parameters.Add(new SqlParameter("idlingua", idLingua));
+                }
                 command.CommandText = s;
                 command.Parameters.Add(new SqlParameter("id", id));
                 SqlDataReader reader = command.ExecuteReader();
@@ -74,7 +78,7 @@ namespace OfferteWeb.Services
             List<GenericEntity> entities = new();
             List<SqlParameter> parameters = new();
 
-            var s = "SELECT Id, Descrizione FROM " + TableName;
+            var s = "SELECT " + KeyName + "," + DescriptionName + " FROM " + TableName;
             s += " WHERE 1=1";
             if (model != null)
             {
@@ -82,6 +86,11 @@ namespace OfferteWeb.Services
                 {
                     s += " AND Id = @id";
                     parameters.Add(new SqlParameter("id", model.Id));
+                }
+                if (model.IdLingua.HasValue)
+                {
+                    s += " AND IdLinguA = @idlingua";
+                    parameters.Add(new SqlParameter("idlingua", model.IdLingua));
                 }
                 if (!string.IsNullOrWhiteSpace(model.Descrizione))
                 {
@@ -168,5 +177,6 @@ namespace OfferteWeb.Services
         public long? Id { get; set; }
         public string CodiceInterno { get; set; } = null!;
         public string Descrizione { get; set; } = null!;
+        public int? IdLingua { get; set; } = null!;
     }
 }

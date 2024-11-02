@@ -208,6 +208,10 @@ public partial class Offerta
     /// </summary>
     public int? NumeroOfferta { get; set; }
 
+    public bool Setup { get; set; }
+
+    public double? MinutiSetup { get; set; }
+
     public virtual ColoreSerigrafia? ColoreSerigrafiaNavigation { get; set; }
 
     public virtual FinituraMeccanica? FinituraMeccanicaNavigation { get; set; }

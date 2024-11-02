@@ -48,4 +48,5 @@ public class GenericTableRicerca
     public string KeyName { get; set; }
     public string KeyType { get; set; }
     public string DescriptionName { get; set; }
+    public int? IdLingua { get; set; }
 }
