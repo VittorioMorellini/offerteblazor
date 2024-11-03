@@ -21,9 +21,32 @@
                         <div class="backdiv" style="display: flex; flex-direction: column; gap: 12px; justify-content: center; align-items: center; justify-items: center;
                                     height: 100vh; top: 0; left: 0; width: 100vw; height: 100vh; position: absolute;
                                     background-size: 100vw 100vh; background-image: linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)), url(images/background.jpg); ">
-                            <img src="/images/logo.png" style="max-width: 420px;"/>
+                        <img src="/images/logo.png" style="max-width: 420px;" />
+                        <OfferteWeb.Pages.Identity.RedirectToLogin />
+                        @*
                             <MudButton Class="font-weight-bold" EndIcon="@Icons.Filled.Login" Variant="Variant.Filled" Href="/Identity/Login" Color="Color.Primary">Accedi</MudButton>
-                            @*
+                            <form id="account" method="post">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-floating m-lg-3">
+                                <input asp-for="Input.Username" class="form-control" autocomplete="username" aria-required="true" />
+                                <label asp-for="Input.Username" class="form-label">Username</label>
+                                <span asp-validation-for="Input.Username" class="text-danger"></span>
+                            </div>
+                            <div>
+                                <br />
+                            </div>
+                            <div class="form-floating m-lg-3">
+                                <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" />
+                                <label asp-for="Input.Password" class="form-label">Password</label>
+                                <span asp-validation-for="Input.Password" class="text-danger"></span>
+                            </div>
+                            <MudButton Class="font-weight-bold" EndIcon="@Icons.Filled.Login" Variant="Variant.Filled" OnClick="() => handleLogin()" Color="Color.Primary">Accedi</MudButton>
+                            <img src="/images/logo.png" style="max-width: 420px;" />
+                            </form>
+                        *@
+                        @* <OfferteWeb.Pages.Identity.RedirectToLogin /> *@
+                            @* Href="/Identity/Login"
+                            <MudButton Class="font-weight-bold" Color="Color.Primary" OnClick="() => handleLogin()" EndIcon="@Icons.Filled.Login">Sign In</MudButton>
                             <div class="login">
                                 <div class="form-group">
                                     <label> Username </label>
@@ -44,8 +67,11 @@
                             <img class="m-auto" alt="Techboard" src="https://www.techboardgroup.com/images/logo_tb_catena.png" style="max-width: 150px;">
                         </div>
                     </NotAuthorized>
+                    <Authorizing>
+                        Please wait while the authorization going on ...
+                    </Authorizing>
                     <Authorized>
-                        @* <StateInitializer InitialAppState="@InitialAppState"></StateInitializer> *@
+                        <StateInitializer></StateInitializer>
                         <MudAppBar Elevation="0" Style="z-index:1000 !important">
                             <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())"/>
                             <BackButton MethodForNavigationCheck="BackNavigation"></BackButton>
@@ -93,7 +119,6 @@
     // public OfferteWeb.State.InitialApplicationState InitialAppState { get; set; }
 
     private Agente agente = new Agente();
-
     bool _drawerOpen = true;
     private MudThemeProvider? _mudThemeProvider;
     public bool IsClicked = false;
@@ -149,7 +174,7 @@
         var auth = await authenticationStateTask;
         if (auth != null)
         {
-            var identity = auth.User.Identity as ClaimsIdentity; ;
+            var identity = auth.User.Identity as ClaimsIdentity;
             agente.RagioneSociale = identity.FindFirst("FullName")?.Value;
             agente.Username = identity.FindFirst("Username")?.Value;
             agente.Id = Convert.ToInt64(identity.FindFirst("Id")?.Value);
@@ -161,10 +186,6 @@
         }
         await base.OnInitializedAsync();
     }
-
-    // async Task<bool> HandleLogin()
-    // {
-    // }
     
     private async Task OpenDialogForUserEdit()
     {

@@ -1,0 +1,48 @@
+@inject NavigationManager _NavigationManager
+
+<PageTitle>Forbidden</PageTitle>
+
+<MudCard Class="border-b-8 border-solid mud-border-warning">
+    <MudCardContent>
+        <MudGrid Spacing="1">
+            <MudItem xs="12" Class="d-flex justify-center pa-0">
+                <div id="error">
+                    <div class="error">
+                        <div class="error-403">
+                            <h1>@CodiceErrore</h1>
+                        </div>
+                    </div>
+                </div>
+            </MudItem>
+            <MudItem xs="12" Class="d-flex justify-center pa-0">
+                <MudIcon Icon="@Icons.Material.Filled.Warning" Color="Color.Warning" Size="Size.Large" Class="align-self-center" />
+                <MudText Typo="Typo.h4" Class="mx-4">Accesso negato</MudText>
+            </MudItem>
+            <MudItem xs="12" Class="d-flex justify-center pa-0">
+                <MudButton StartIcon="@Icons.Material.Filled.ArrowBack" aria-label="delete"  OnClick="@BackToHomePage">Indietro</MudButton>
+                <MudButton StartIcon="@Icons.Material.Filled.ExitToApp" aria-label="delete"  OnClick="@Logout">Logout</MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter]
+    public Exception? Exception { get; set; }
+    [Parameter]
+    public EventCallback RecoverRequest { get; set; }
+    [Parameter]
+    public int CodiceErrore { get; set; } = 403;
+
+    private void BackToHomePage()
+    {
+        RecoverRequest.InvokeAsync();
+        _NavigationManager.NavigateTo(@"\", forceLoad: true);
+    }
+
+     private void Logout()
+    {
+        RecoverRequest.InvokeAsync();
+        _NavigationManager.NavigateTo(@"/logout", true);
+    }
+}

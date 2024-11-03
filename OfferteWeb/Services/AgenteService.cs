@@ -60,7 +60,8 @@ public class AgenteService : BaseService<Agente, long, OfferteDbContext>, IAgent
         //    !principal.PrincipalGrouping.Select(x => x.Grouping).Any())
         //    throw new Exception($"Principal without group, {username}");
         List<long> ids = agente.AgenteGruppo.Select(x => x.IdGruppo).ToList();
-        List<Gruppo> gruppi = ctx.Gruppo.Where(x => ids.Contains(x.Id)).ToList();
+        List<Gruppo> gruppi = new();
+        if (ids.Count > 0) gruppi = ctx.Gruppo.Where(x => ids.Contains(x.Id)).ToList();
         foreach (Gruppo item in gruppi)
         {
             if (item.DirittoSede) agente.DirittoSede = true;

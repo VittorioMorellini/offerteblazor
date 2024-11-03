@@ -40,8 +40,8 @@
             <MudItem xs="12" sm="6" md="3">
                 <MudTextField Required Variant="Variant.Outlined" @bind-Value="Item.Id" Label="Numero offerta"></MudTextField>
              </MudItem>
-             <MudItem xs="12" sm="6" md="3">
-                <div style="display:flex; margin-bottom:10px;flex-direction:column">
+             <MudItem xs="12" sm="6" md="6">
+                <div style="display:flex; margin-bottom:10px;flex-direction:row; align-items: center; align-content: center">
                     <div style="display:flex; flex-direction:row;align-items:center">
                         <MudText Style="margin-right:10px" Typo="Typo.h5">Utente</MudText>
                         <MudSelect Style="max-width: 300px;flex-grow:0" Clearable Variant=Variant.Outlined ToStringFunc="@(e=> e==null?null : $"{e.Nome} {e.Cognome}")" T="Agente" Label="Utente" MultiSelection="false" Value="SelectedUtente">
@@ -51,12 +51,13 @@
                             }
                         </MudSelect>
                     </div>
+                    <div>
+                        Dallo stato mail: @State?.User?.Mail
+                    </div>
                 </div>
             </MudItem>
             <MudItem xs="12" sm="6" md="3">
                 <MudTextField Required Variant="Variant.Outlined" @bind-Value="Item.Listino" Label="Listino"></MudTextField>
-            </MudItem>
-            <MudItem xs="12" sm="6" md="3">
             </MudItem>
             <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6" style="width: calc(100%); min-height: 600px">
                 <MudTabPanel Text="Dati generali">
@@ -277,7 +278,7 @@
                                 </MudText>
                             </NoItemsTemplate>
                         </MudAutocomplete>
-                        <MudIconButton aria-label="Accedere a ricerca numero starti" Icon="@Icons.Filled.Search" OnClick=@((e) => OpenStrati("Seleziona un numero strati"))></MudIconButton>
+                        <MudIconButton aria-label="Accedere a ricerca numero strati" Icon="@Icons.Filled.Search" OnClick=@((e) => OpenStrati("Seleziona un numero strati"))></MudIconButton>
                     </div>
                     <div style="display: flex">
                         <MudItem xs="12" sm="6" md="3">
@@ -331,7 +332,7 @@
                                 </MudText>
                             </NoItemsTemplate>
                         </MudAutocomplete>
-                        <MudIconButton aria-label="Accedere a ricerca numero starti" Icon="@Icons.Filled.Search" OnClick=@((e) => OpenTipologiaProdotto("Seleziona tipologia prodotto"))></MudIconButton>
+                        <MudIconButton aria-label="Accedere a ricerca tipologia prodotto" Icon="@Icons.Filled.Search" OnClick=@((e) => OpenTipologiaProdotto("Seleziona tipologia prodotto"))></MudIconButton>
                         <MudItem xs="12" sm="6" md="3" lg="3">
                             <MudNumericField Required Variant="Variant.Outlined" @bind-Value="Item.DiametroMinForo" Label="Diametro minimo foro"></MudNumericField>
                         </MudItem>
@@ -343,7 +344,25 @@
                         </MudItem>
                     </div>
                     <div style="display: flex">
-                    </div>
+                            <MudAutocomplete T="GenericEntity"
+                                             MinCharacters="3"
+                                             MaxItems="20"
+                                             Immediate="false" Label="Finitura superficiale"
+                                             Value="@SelectedFinituraSuperficiale"
+                                             ValueChanged="FinituraSuperficialeChanged"
+                                             SearchFunc="@SearchGenericTipologiaProdotto"
+                                             Variant="Variant.Outlined"
+                                             ShowProgressIndicator="true"
+                                             AdornmentIcon="null"
+                                             ToStringFunc="@(e => e==null ? null : e.Descrizione)">
+                                <NoItemsTemplate>
+                                    <MudText Align="Align.Center" Class="px-4 py-1">
+                                        Nessun elemento trovato
+                                    </MudText>
+                                </NoItemsTemplate>
+                            </MudAutocomplete>
+                            <MudIconButton aria-label="Accedere a ricerca finitura superficiale" Icon="@Icons.Filled.Search" OnClick=@((e) => OpenFinituraSuperficiale("Seleziona finitura superficiale", null))></MudIconButton>
+                        </div>
                     <div style="display: flex">
                         <MudItem xs=12 sm=12 md=6>
                             <div style="display:flex; justify-content: flex-start; column-gap:5vh">
@@ -484,6 +503,7 @@
     GenericEntity? SelectedSpessoreRameInner;
     GenericEntity? SelectedNumeroStrati;
     GenericEntity? SelectedTipologiaProdotto;
+    GenericEntity? SelectedFinituraSuperficiale;
     MudTable<OffertaRiga>? tableRelated;
     IEnumerable<Agente> Redattori { get; set; }
     CliCom? SelectedCustomer;
@@ -495,7 +515,7 @@
         searchService = offertaService;
         updateService = offertaService;
         Redattori = agenteService.Search(new AgenteSearchModel());
-
+        Console.WriteLine("Utente: " + State?.User?.Username);
         if (InModifica == true)
         {
             Item = offertaService.Find(Id);
@@ -736,7 +756,6 @@
             }
         }
     }
-
     private async Task OpenTipologiaProdotto(string title, int? idLingua = null)
     {
         var parameters = new DialogParameters<GenericTableRicerca> { 
@@ -751,15 +770,37 @@
         var result = await dialog.Result;
         if (!result.Canceled)
         {
-            var selectedStratiId = result.Data as long?;
-            if (selectedStratiId.HasValue)
+            var selectedTipologiaPrId = result.Data as long?;
+            if (selectedTipologiaPrId.HasValue)
             {
-                SelectedNumeroStrati = await genericService.FindAsync(selectedStratiId.Value, idLingua);
-                Item.IdTipoProdotto = selectedStratiId;
+                SelectedNumeroStrati = await genericService.FindAsync(selectedTipologiaPrId.Value, idLingua);
+                Item.IdTipoProdotto = selectedTipologiaPrId;
             }
         }
     }
-    
+    private async Task OpenFinituraSuperficiale(string title, int? idLingua = null)
+    {
+        var parameters = new DialogParameters<GenericTableRicerca> { 
+            { x => x.TableName, "FinituraSuperficialeDesc" }, 
+            { x => x.KeyName, "Id" }, 
+            { x => x.DescriptionName, "Descrizione" }, 
+            { x => x.IdLingua, idLingua.HasValue ? idLingua.Value : null } 
+        };
+        var dialog = dialogService.Show<GenericSearchView>(title, parameters,
+            new DialogOptions() { MaxWidth = MaxWidth.ExtraLarge, DisableBackdropClick = true, 
+                CloseButton = true, Position = DialogPosition.Center });
+        var result = await dialog.Result;
+        if (!result.Canceled)
+        {
+            var selectedFinSuperfId = result.Data as long?;
+            if (selectedFinSuperfId.HasValue)
+            {
+                SelectedFinituraSuperficiale = await genericService.FindAsync(selectedFinSuperfId.Value, idLingua);
+                Item.IdTipoProdotto = selectedFinSuperfId;
+            }
+        }
+    }
+
     private async Task<IEnumerable<GenericEntity>> SearchGenericMateriale(string descrizione)
     {
         PagerModel model = new();
@@ -827,6 +868,11 @@
         Item.IdTipoRigidoDf = SelectedTipologiaProdotto?.Id;
     }
     private async Task NumeroStratiChanged(GenericEntity? item)
+    {
+        SelectedNumeroStrati = item;
+        Item.IdTipoProdotto = SelectedNumeroStrati?.Id;
+    }
+    private async Task FinituraSuperficialeChanged(GenericEntity? item)
     {
         SelectedNumeroStrati = item;
         Item.IdTipoProdotto = SelectedNumeroStrati?.Id;

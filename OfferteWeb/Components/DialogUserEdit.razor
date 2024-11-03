@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Authentication.Cookies
 @inject IAgenteService _agenteService;
 @inject ISnackbar Snackbar
+@inject IHttpContextAccessor httpContextAccessor;
 @inject NavigationManager navigationManager
 <MudDialog>
     <DialogContent>
@@ -41,8 +42,8 @@
         </MudGrid>
     </DialogContent>
     <DialogActions>
-        @*         <MudDivider></MudDivider> *@
-        <MudButton ButtonType="ButtonType.Button" Href="/Identity/Logout" Color="Color.Primary">Logout</MudButton>
+        @*         <MudDivider></MudDivider>   *@
+        <MudButton ButtonType="ButtonType.Button" Color="Color.Primary" Href="/Identity/Logout">Logout</MudButton>
         <MudButton OnClick="Close">Chiudi</MudButton>
     </DialogActions>
 </MudDialog>
@@ -105,7 +106,6 @@
             imageJpgDataURL = string.Format("data:image/jpeg;base64,{0}", imageSrc);
         }
     }
-
 
     void Close() => MudDialog.Close(DialogResult.Ok(true));
 }

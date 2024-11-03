@@ -5,13 +5,16 @@
 
 @model OfferteWeb.Pages.Identity.LoginModel
 @attribute [AllowAnonymous]
-<div style="display: flex; flex-direction:column; justify-content: center; align-items: center">
-<h1>Log in</h1>
+<div style="display: flex; flex-direction:column; align-items: center; justify-content: center; height: 100vh">
+<h1 style="text-align: center">Techboard group</h1>
 <div style="display: flex; justify-content: center; align-items: center">
     <div class="row">
         <div class="col-md-12">
             <section>
                 <form id="account" method="post">
+                    <div style="display: flex; align-items: center; justify-content: center">
+                        <img src="/images/logo.png" style="max-width: 420px;" />
+                    </div>
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <div class="form-floating m-lg-3">
                         <input asp-for="Input.Username" class="form-control" autocomplete="username" aria-required="true" />
@@ -22,7 +25,7 @@
                         <br />
                     </div>
                     <div class="form-floating m-lg-3">
-                        <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" />
+                        <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" type="password" />
                         <label asp-for="Input.Password" class="form-label"></label>
                         <span asp-validation-for="Input.Password" class="text-danger"></span>
                     </div>
@@ -30,7 +33,7 @@
                     <div style="text-align: center">
                         <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
                     </div>
-                    @* <div>
+                    @*<div>
                         <p>
                         <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
                         </p>
@@ -40,7 +43,8 @@
                         <p>
                         <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
                         </p>
-                    </div>*@
+                    </div>
+                    *@
                 </form>
             </section>
         </div>

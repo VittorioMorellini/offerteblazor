@@ -1,0 +1,116 @@
+﻿@layout LoginLayout
+@* @page "/login" *@
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Cookies
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity 
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Security.Claims
+
+@inject NavigationManager navigationManager;
+@inject IAgenteService agenteService;
+@inject IHttpContextAccessor httpContextAccessor;
+@inject ILogger<LoginModel> _logger;
+@attribute [AllowAnonymous]
+
+<div class="text-center">
+    <img src="/images/logo.png" style="max-width: 420px;" />
+    <EditForm class="form-signin mb-4" Model="@_credential" OnSubmit="@Authenticate">
+        <div class="form-group">
+            <label for="user-name">User name</label>
+            <InputText class="form-control" id="user-name" aria-describedby="emailHelp" placeholder="Indirizzo e-mail" @bind-Value=@_credential.UserName />
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <InputText type="password" class="form-control" id="password" placeholder="Password" @bind-Value=@_credential.Password />
+        </div>
+        <div class="form-group">
+            <button type="submit" id="login" name="login" class="btn btn-primary">Login</button>
+        </div>
+        @* ... other stuff, like "forgot my password", etc... *@
+    </EditForm>
+</div>
+
+@code {
+    public class Credential { public string UserName { get; set; } = ""; public string Password { get; set; } = ""; }
+    private Credential _credential = new Credential();
+
+    private bool IsError { get; set; } = false;
+    private async void Authenticate()
+    {
+        IsError = false;
+        //....perform authentication using _credential fields
+        if (string.IsNullOrWhiteSpace(_credential.UserName) || string.IsNullOrWhiteSpace(_credential.Password))
+        {
+            IsError = true;
+            return;
+        }
+
+        if (!string.IsNullOrWhiteSpace(_credential.UserName) && !string.IsNullOrWhiteSpace(_credential.Password))
+        {
+            // Use Input.Email and Input.Password to authenticate the user
+            // with your custom authentication logic.
+
+            // For demonstration purposes, the sample validates the user
+            // on the email address maria.rodriguez@contoso.com with
+            // any password that passes model validation.
+            Agente agente = agenteService.Authenticate(_credential.UserName, _credential.Password);
+            if (agente == null)
+            {
+                IsError = true;
+                //ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                //return Page();
+            }
+
+            var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, agente.Nome),
+                    new Claim(ClaimTypes.Surname, agente.Cognome),
+                    new Claim("Id", agente.Id.ToString()),
+                    new Claim("FullName", agente.RagioneSociale),
+                    new Claim(ClaimTypes.Role, "Administrator"),
+                    new Claim(ClaimTypes.Email, agente.Mail),
+                    new Claim(ClaimTypes.Surname, agente.Cognome),
+                    new Claim(ClaimTypes.MobilePhone, agente.Telefono ?? ""),
+                    new Claim("Username", _credential.UserName),
+                    new Claim("Password", _credential.Password),
+                };
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var authProperties = new AuthenticationProperties
+            {
+                //AllowRefresh = <bool>,
+                // Refreshing the authentication session should be allowed.
+
+                //ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10),
+                // The time at which the authentication ticket expires. A
+                // value set here overrides the ExpireTimeSpan option of
+                // CookieAuthenticationOptions set with AddCookie.
+
+                //IsPersistent = true,
+                // Whether the authentication session is persisted across
+                // multiple requests. When used with cookies, controls
+                // whether the cookie's lifetime is absolute (matching the
+                // lifetime of the authentication ticket) or session-based.
+
+                //IssuedUtc = <DateTimeOffset>,
+                // The time at which the authentication ticket was issued.
+
+                //RedirectUri = <string>
+                // The full path or absolute URI to be used as an http
+                // redirect response value.
+            };
+
+            await httpContextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties);
+
+            _logger.LogInformation("User {Email} logged in at {Time}.", agente.Mail, DateTime.UtcNow);
+            //return LocalRedirect(Url.RouteUrl(ReturnUrl));
+            //return Redirect("~/");
+            //return Page();
+            navigationManager.NavigateTo("/");
+        }
+    }
+} 

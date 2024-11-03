@@ -92,7 +92,7 @@ builder.Services.AddMudServices(config =>
 builder.Services.AddScoped<DialogService>();
 builder.Services.AddScoped<AppState>();
 builder.Services.AddScoped<EntitiesFactory>();
-
+builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

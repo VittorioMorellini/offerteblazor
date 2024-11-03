@@ -12,19 +12,13 @@ namespace OfferteWeb.Pages.Identity
         public async Task OnGetAsync()
         {
             await DoLogout();
+            Redirect("~/");
         }
 
         public async Task DoLogout()
         {
-            //if (!string.IsNullOrEmpty(ErrorMessage))
-            //{
-            //    ModelState.AddModelError(string.Empty, ErrorMessage);
-            //}
             // Clear the existing external cookie
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-            //return LocalRedirect(Url.Content("~/"));
-            //return Redirect("~/");
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);            
             //return LocalRedirect(Url.Content("~/"));
         }
 

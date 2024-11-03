@@ -1,0 +1,42 @@
+﻿@using OfferteWeb.Exceptions
+@using OfferteWeb.Components.Errors
+
+@if (Exception is AuthorizeException authorizeException)
+{
+    if (authorizeException.StatusCode == 404)
+    {
+        <Error404 />
+    }
+    else if (authorizeException.StatusCode == 403)
+    {
+        <Error403 />
+    }
+     else if (authorizeException.StatusCode == 401)
+    {
+        <Error403 CodiceErrore="401" />
+    }
+    else
+    {
+        <Error500 Exception="Exception" RecoverRequest="RecoverRequest" />
+    }
+}
+else
+{
+   <Error500 Exception="Exception" RecoverRequest="RecoverRequest" />
+}
+
+
+
+@code {
+    [Parameter]
+    public Exception? Exception { get; set; }
+
+    [Parameter]
+    public EventCallback RecoverRequest { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Serilog.Log.Error(Exception, Exception.Message);
+        base.OnInitialized();
+    }
+}

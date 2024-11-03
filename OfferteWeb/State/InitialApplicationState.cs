@@ -1,11 +1,11 @@
-﻿using System.Text.Json;
+﻿using OfferteWeb.Models;
+using System.Text.Json;
 
 namespace OfferteWeb.State;
-
-public class InitialApplicationState
-{
-    public AuthData AuthData { get; set; }
-}
+//public class InitialApplicationState
+//{
+//    public AuthData AuthData { get; set; }
+//}
 
 public class AuthData
 {
@@ -13,4 +13,5 @@ public class AuthData
     public string Role { get; set; }
     public string Token { get; set; }
     public string Id { get; set; }
+    public Agente User { get; set; }
 }

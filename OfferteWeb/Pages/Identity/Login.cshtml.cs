@@ -29,18 +29,18 @@ namespace OfferteWeb.Pages.Identity
         [BindProperty]
         public InputModel Input { get; set; }
         public string ReturnUrl { get; set; }
+        //[BindProperty]
+        //public bool IsError { get; set; } = false;
 
         public void OnGet()
         {
             ReturnUrl = Url.Content("~/");
         }
 
-
         public async Task<IActionResult> OnPostAsync()
         {
-
             ReturnUrl = Url.Content("~/");
-
+            //IsError = false;
             if (ModelState.IsValid)
             {
                 // Use Input.Email and Input.Password to authenticate the user
@@ -104,6 +104,10 @@ namespace OfferteWeb.Pages.Identity
 
                 //return LocalRedirect(Url.RouteUrl(ReturnUrl));
                 return Redirect("~/");
+            } 
+            else
+            {
+                //IsError = true;
             }
             return Page();
 
@@ -121,7 +125,6 @@ namespace OfferteWeb.Pages.Identity
             //};
             //var customAuthStateProvider = (CustomAuthenticationStateProvider)authenticationStateProvider;
             //await customAuthStateProvider.UpdateUserAuthenticated(authData);
-
         }
 
         public class InputModel
