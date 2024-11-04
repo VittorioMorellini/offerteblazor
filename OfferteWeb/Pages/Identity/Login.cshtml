@@ -37,7 +37,7 @@
                             <div style="text-align: center">
                                 <div class="col-md-12">
                                     <div class="alert alert-danger" role="alert">
-                                        <label class="form-label">@ModelState["LoginError"].Errors.First().ErrorMessage</label>
+                                        <label class="form-label">@ModelState["LoginError"].Errors.Last().ErrorMessage</label>
                                     </div>
                                 </div>
                             </div>
