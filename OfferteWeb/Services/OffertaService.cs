@@ -1,4 +1,5 @@
 using System;
+using System.IO.Compression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -79,6 +80,7 @@ namespace OfferteWeb.Services
                 offerte = offerte.Take(model.Limit.Value);
             }
 
+            //ZipFile.CreateFromDirectory()
             count = offerte.Count();
             if (model.Pager != null)
             {

@@ -3,13 +3,34 @@
 @code {
     [CascadingParameter]
     private Task<AuthenticationState>? AuthState { get; set; } = null;
-
+    private string returnUrl = string.Empty;
+    /// 
+    /// In this method the naviogationManager net9 it does not work,
+    /// so I had to manage it in the OnAfterRender method
+    ///
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthState!;
         if (authState?.User?.Identity == null || !authState.User.Identity.IsAuthenticated)
         {
-            var returnUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+            returnUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+            //Bug of Net9 in thsi inizialization; it does not work the navigation manager
+            // var returnUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+            // if (string.IsNullOrEmpty(returnUrl))
+            //     NavigationManager.NavigateTo("/Identity/Login", true);
+            // else
+            //     NavigationManager.NavigateTo("/Identity/Login?returnUrl=" + returnUrl, true);
+        }
+    }
+
+    /// <summary>
+    /// I had to manage the NavigationManager in this method
+    /// because in the OnInitializedAsync method it does not work
+    ///
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
             if (string.IsNullOrEmpty(returnUrl))
                 NavigationManager.NavigateTo("/Identity/Login", true);
             else
