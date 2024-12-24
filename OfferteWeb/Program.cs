@@ -24,6 +24,8 @@ using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 var logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
     //.MinimumLevel.Information()
@@ -35,49 +37,49 @@ var logger = new LoggerConfiguration()
 builder.Logging.AddSerilog(logger);
 
 // Custom metrics for the application
-var greeterMeter = new Meter("OtPrGrYa.Example", "1.0.0");
-var countGreetings = greeterMeter.CreateCounter<int>("greetings.count", description: "Counts the number of greetings");
-//// Custom ActivitySource for the application
-var greeterActivitySource = new ActivitySource("OtPrGrJa.Example");
+//var greeterMeter = new Meter("OtPrGrYa.Example", "1.0.0");
+//var countGreetings = greeterMeter.CreateCounter<int>("greetings.count", description: "Counts the number of greetings");
+////// Custom ActivitySource for the application
+//var greeterActivitySource = new ActivitySource("OtPrGrJa.Example");
 
-var tracingOtlpEndpoint = builder.Configuration["OTLP_ENDPOINT_URL"]; 
-var otel = builder.Services.AddOpenTelemetry();
-// Configure OpenTelemetry Resources with the application name
-otel.ConfigureResource(resource => resource
-    .AddService(serviceName: builder.Environment.ApplicationName));
-// Add Metrics for ASP.NET Core and our custom metrics and export to Prometheus
-otel.WithMetrics(metrics => metrics
-    // Metrics provider from OpenTelemetry
-    .AddAspNetCoreInstrumentation()
-    .AddMeter(greeterMeter.Name)
-    // Metrics provides by ASP.NET Core in .NET 8
-    .AddMeter("Microsoft.AspNetCore.Hosting")
-    .AddMeter("Microsoft.AspNetCore.Server.Kestrel")
-    .AddPrometheusExporter());
+//var tracingOtlpEndpoint = builder.Configuration["OTLP_ENDPOINT_URL"]; 
+//var otel = builder.Services.AddOpenTelemetry();
+//// Configure OpenTelemetry Resources with the application name
+//otel.ConfigureResource(resource => resource
+//    .AddService(serviceName: builder.Environment.ApplicationName));
+//// Add Metrics for ASP.NET Core and our custom metrics and export to Prometheus
+//otel.WithMetrics(metrics => metrics
+//    // Metrics provider from OpenTelemetry
+//    .AddAspNetCoreInstrumentation()
+//    .AddMeter(greeterMeter.Name)
+//    // Metrics provides by ASP.NET Core in .NET 8
+//    .AddMeter("Microsoft.AspNetCore.Hosting")
+//    .AddMeter("Microsoft.AspNetCore.Server.Kestrel")
+//    .AddPrometheusExporter());
 
-// Add Tracing for ASP.NET Core and our custom ActivitySource and export to Jaeger
-otel.WithTracing(tracing =>
-{
-    tracing.AddAspNetCoreInstrumentation();
-    tracing.AddHttpClientInstrumentation();
-    tracing.AddSource(greeterActivitySource.Name);
-    if (tracingOtlpEndpoint != null)
-    {
-        tracing.AddOtlpExporter(otlpOptions =>
-        {
-            otlpOptions.Endpoint = new Uri(tracingOtlpEndpoint);
-        });
-    }
-    else
-    {
-        tracing.AddConsoleExporter();
-    }
-});
+//// Add Tracing for ASP.NET Core and our custom ActivitySource and export to Jaeger
+//otel.WithTracing(tracing =>
+//{
+//    tracing.AddAspNetCoreInstrumentation();
+//    tracing.AddHttpClientInstrumentation();
+//    tracing.AddSource(greeterActivitySource.Name);
+//    if (tracingOtlpEndpoint != null)
+//    {
+//        tracing.AddOtlpExporter(otlpOptions =>
+//        {
+//            otlpOptions.Endpoint = new Uri(tracingOtlpEndpoint);
+//        });
+//    }
+//    else
+//    {
+//        tracing.AddConsoleExporter();
+//    }
+//});
 
 builder.Services.AddDbContext<OfferteDbContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("Offerte")),
-    // Ë necessario che sia Transient poichË ho necessit‡ di compiere azioni asincrone
-    // ogni Service cosÏ ha la propria versione unica di DocDsDbContext (con la propria connessione)
+    // √® necessario che sia Transient poich√® ho necessit√† di compiere azioni asincrone
+    // ogni Service cos√¨ ha la propria versione unica di DocDsDbContext (con la propria connessione)
     ServiceLifetime.Transient
 );
             
@@ -140,6 +142,8 @@ builder.Services.AddScoped<EntitiesFactory>();
 builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 var app = builder.Build();
 
+app.MapDefaultEndpoints();
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -161,7 +165,7 @@ app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
 // Configure the Prometheus scraping endpoint
-app.MapPrometheusScrapingEndpoint();
+//app.MapPrometheusScrapingEndpoint();
 
 app.Run();
 

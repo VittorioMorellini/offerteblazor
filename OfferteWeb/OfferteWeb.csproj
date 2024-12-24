@@ -24,13 +24,17 @@
     <PackageReference Include="Radzen.Blazor" Version="5.5.2" />
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
     <PackageReference Include="TinyMCE.Blazor" Version="1.0.4" />
-    <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.9.0" />
+    <!--<PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.9.0" />
     <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.9.0" />
     <PackageReference Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" Version="1.9.0-beta.2" />
     <PackageReference Include="OpenTelemetry.Exporter.Zipkin" Version="1.9.0" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.9.0" />
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.9.0" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.9.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.9.0" />-->
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OfferteBlazor.ServiceDefaults\OfferteBlazor.ServiceDefaults.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Update="Pages\EditViews\OffertaRigaEdit.razor">
