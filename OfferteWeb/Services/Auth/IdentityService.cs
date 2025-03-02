@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 // using LazyCache;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using OfferteWeb.Models;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
 using OfferteWeb.Models.Auth;
 
 namespace OfferteWeb.Services
