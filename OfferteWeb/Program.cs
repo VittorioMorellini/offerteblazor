@@ -1,26 +1,13 @@
-using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor;
 using MudBlazor.Services;
 using OfferteWeb;
-using OfferteWeb.Authentication;
-using OfferteWeb.Data;
-using OfferteWeb.Handler;
 using OfferteWeb.Models;
 using OfferteWeb.Models.Auth;
 using OfferteWeb.Services;
 using OfferteWeb.State;
 using Serilog;
-using System.Diagnostics.Metrics;
-using System.Diagnostics;
-using OpenTelemetry.Metrics;
-using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
 

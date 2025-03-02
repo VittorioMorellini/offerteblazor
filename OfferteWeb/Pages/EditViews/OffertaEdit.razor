@@ -44,7 +44,7 @@
                 <div style="display:flex; margin-bottom:10px;flex-direction:row; align-items: center; align-content: center">
                     <div style="display:flex; flex-direction:row;align-items:center">
                         <MudText Style="margin-right:10px" Typo="Typo.h5">Utente</MudText>
-                        <MudSelect Style="max-width: 300px;flex-grow:0" Clearable Variant=Variant.Outlined ToStringFunc="@(e=> e==null?null : $"{e.Nome} {e.Cognome}")" T="Agente" Label="Utente" MultiSelection="false" Value="SelectedUtente">
+                        <MudSelect Style="max-width: 300px;flex-grow:0" Clearable Variant=Variant.Outlined ToStringFunc="@((Agente e)=> $"{e?.Nome} {e?.Cognome}")" T="Agente" Label="Utente" MultiSelection="false" Value="SelectedUtente">
                              @foreach (var r in Redattori)
                             {
                                 <MudSelectItem T="Agente" Value="@r">@($"{r.Nome} {r.Cognome}")</MudSelectItem>
@@ -67,7 +67,7 @@
                              <div style="display:flex; margin-bottom:10px;flex-direction:column">
                                  <div style="display:flex; flex-direction:row;align-items:center">
                                      <MudText Style="margin-right:10px" Typo="Typo.h5">Agente</MudText>
-                                     <MudSelect Style="max-width: 300px;flex-grow:0" Clearable Variant=Variant.Outlined ToStringFunc="@(e=> e==null?null : $"{e.Nome} {e.Cognome}")" T="Agente" Label="Agente" MultiSelection="false" Value="SelectedAgente" ValueChanged="RedattoreAddizionaleChanged">
+                                     <MudSelect Style="max-width: 300px;flex-grow:0" Clearable Variant=Variant.Outlined ToStringFunc="@((Agente e)=> $"{e?.Nome} {e?.Cognome}")" T="Agente" Label="Agente" MultiSelection="false" Value="SelectedAgente" ValueChanged="RedattoreAddizionaleChanged">
                                          @foreach (var r in Redattori)
                                         {
                                             <MudSelectItem T="Agente" Value="@r">@($"{r.Nome} {r.Cognome}")</MudSelectItem>
@@ -100,7 +100,7 @@
                                                 Variant="Variant.Outlined" 
                                                 ShowProgressIndicator="true"
                                                 AdornmentIcon="null"
-                                                ToStringFunc="@(e=> e==null ? null : e.CodiceInterno)">
+                                                ToStringFunc="@((CirCom e)=> e?.CodiceInterno)">
                                     <NoItemsTemplate>
                                         <MudText Align="Align.Center" Class="px-4 py-1">
                                             Nessun elemento trovato
@@ -122,7 +122,7 @@
                                                 Variant="Variant.Outlined" 
                                                 ShowProgressIndicator="true"
                                                 AdornmentIcon="null"
-                                                ToStringFunc="@(e=> e==null?null : e.RagioneSociale)">
+                                                ToStringFunc="@((CliCom e)=> e?.RagioneSociale)">
                                     <NoItemsTemplate>
                                         <MudText Align="Align.Center" Class="px-4 py-1">
                                             Nessun elemento trovato
@@ -171,7 +171,7 @@
                                                     Variant="Variant.Outlined" 
                                                     ShowProgressIndicator="true"
                                                     AdornmentIcon="null"
-                                                    ToStringFunc="@(e => e==null ? null : e.Descrizione)">
+                                                    ToStringFunc="@((GenericEntity e) => e?.Descrizione)">
                                     <NoItemsTemplate>
                                         <MudText Align="Align.Center" Class="px-4 py-1">
                                             Nessun elemento trovato
@@ -193,14 +193,14 @@
                                                     Variant="Variant.Outlined" 
                                                     ShowProgressIndicator="true"
                                                     AdornmentIcon="null"
-                                                    ToStringFunc="@(e => e==null ? null : e.Descrizione)">
+                                                    ToStringFunc="@((GenericEntity e) => e?.Descrizione)">
                                     <NoItemsTemplate>
                                         <MudText Align="Align.Center" Class="px-4 py-1">
                                             Nessun elemento trovato
                                         </MudText>
                                     </NoItemsTemplate>
                                 </MudAutocomplete>
-                                <MudIconButton aria-label="Accedere a ricerca Sepssore" Icon="@Icons.Filled.Search" OnClick=@((e) => OpenSpessoreRame("Seleziona uno spessore base CU"))></MudIconButton>
+                                <MudIconButton aria-label="Accedere a ricerca Sepssore" Icon="@Icons.Filled.Search" OnClick=@((MouseEventArgs e) => OpenSpessoreRame("Seleziona uno spessore base CU"))></MudIconButton>
                             </div>
                         </MudItem>
                         <MudItem xs="12" sm="6" md="3">
@@ -215,14 +215,14 @@
                                                     Variant="Variant.Outlined" 
                                                     ShowProgressIndicator="true"
                                                      AdornmentIcon="null"
-                                                     ToStringFunc="@(e => e==null ? null : e.Descrizione)">
+                                                     ToStringFunc="@((GenericEntity e) => e?.Descrizione)">
                                     <NoItemsTemplate>
                                         <MudText Align="Align.Center" Class="px-4 py-1">
                                             Nessun elemento trovato
                                         </MudText>
                                     </NoItemsTemplate>
                                 </MudAutocomplete>
-                                <MudIconButton aria-label="Accedere a ricerca Sepssore" Icon="@Icons.Filled.Search" OnClick=@((e) => OpenSpessoreMateriale("Seleziona uno spessore Inner Layer"))></MudIconButton>
+                                <MudIconButton aria-label="Accedere a ricerca Sepssore" Icon="@Icons.Filled.Search" OnClick=@((MouseEventArgs e) => OpenSpessoreMateriale("Seleziona uno spessore Inner Layer"))></MudIconButton>
                             </div>
                         </MudItem>
                         <MudItem xs="12" sm="6" md="3">
@@ -237,14 +237,14 @@
                                                     Variant="Variant.Outlined" 
                                                     ShowProgressIndicator="true"
                                                     AdornmentIcon="null"
-                                                    ToStringFunc="@(e => e==null ? null : e.Descrizione)">
+                                                    ToStringFunc="@((GenericEntity e) => e?.Descrizione)">
                                     <NoItemsTemplate>
                                         <MudText Align="Align.Center" Class="px-4 py-1">
                                             Nessun elemento trovato
                                         </MudText>
                                     </NoItemsTemplate>
                                 </MudAutocomplete>
-                                <MudIconButton aria-label="Accedere a ricerca Sepssore" Icon="@Icons.Filled.Search" OnClick=@((e) => OpenSpessoreRame("Seleziona uno spessore cu Base Inner"))></MudIconButton>
+                                <MudIconButton aria-label="Accedere a ricerca Sepssore" Icon="@Icons.Filled.Search" OnClick=@((MouseEventArgs e) => OpenSpessoreRame("Seleziona uno spessore cu Base Inner"))></MudIconButton>
                             </div>
                         </MudItem>
                     </div>
@@ -271,14 +271,14 @@
                                             Variant="Variant.Outlined" 
                                             ShowProgressIndicator="true"
                                             AdornmentIcon="null"
-                                            ToStringFunc="@(e => e==null ? null : e.Descrizione)">
+                                            ToStringFunc="@((GenericEntity e) => e?.Descrizione)">
                             <NoItemsTemplate>
                                 <MudText Align="Align.Center" Class="px-4 py-1">
                                     Nessun elemento trovato
                                 </MudText>
                             </NoItemsTemplate>
                         </MudAutocomplete>
-                        <MudIconButton aria-label="Accedere a ricerca numero strati" Icon="@Icons.Filled.Search" OnClick=@((e) => OpenStrati("Seleziona un numero strati"))></MudIconButton>
+                        <MudIconButton aria-label="Accedere a ricerca numero strati" Icon="@Icons.Filled.Search" OnClick=@((MouseEventArgs e) => OpenStrati("Seleziona un numero strati"))></MudIconButton>
                     </div>
                     <div style="display: flex">
                         <MudItem xs="12" sm="6" md="3">
@@ -325,14 +325,14 @@
                                             Variant="Variant.Outlined"
                                             ShowProgressIndicator="true"
                                             AdornmentIcon="null"
-                                            ToStringFunc="@(e => e==null ? null : e.Descrizione)">
+                                            ToStringFunc="@((GenericEntity e) => e==null ? null : e?.Descrizione)">
                             <NoItemsTemplate>
                                 <MudText Align="Align.Center" Class="px-4 py-1">
                                     Nessun elemento trovato
                                 </MudText>
                             </NoItemsTemplate>
                         </MudAutocomplete>
-                        <MudIconButton aria-label="Accedere a ricerca tipologia prodotto" Icon="@Icons.Filled.Search" OnClick=@((e) => OpenTipologiaProdotto("Seleziona tipologia prodotto"))></MudIconButton>
+                        <MudIconButton aria-label="Accedere a ricerca tipologia prodotto" Icon="@Icons.Filled.Search" OnClick=@((MouseEventArgs e) => OpenTipologiaProdotto("Seleziona tipologia prodotto"))></MudIconButton>
                         <MudItem xs="12" sm="6" md="3" lg="3">
                             <MudNumericField Required Variant="Variant.Outlined" @bind-Value="Item.DiametroMinForo" Label="Diametro minimo foro"></MudNumericField>
                         </MudItem>
@@ -354,14 +354,14 @@
                                              Variant="Variant.Outlined"
                                              ShowProgressIndicator="true"
                                              AdornmentIcon="null"
-                                             ToStringFunc="@(e => e==null ? null : e.Descrizione)">
+                                             ToStringFunc="@((GenericEntity e) => e?.Descrizione)">
                                 <NoItemsTemplate>
                                     <MudText Align="Align.Center" Class="px-4 py-1">
                                         Nessun elemento trovato
                                     </MudText>
                                 </NoItemsTemplate>
                             </MudAutocomplete>
-                            <MudIconButton aria-label="Accedere a ricerca finitura superficiale" Icon="@Icons.Filled.Search" OnClick=@((e) => OpenFinituraSuperficiale("Seleziona finitura superficiale", null))></MudIconButton>
+                            <MudIconButton aria-label="Accedere a ricerca finitura superficiale" Icon="@Icons.Filled.Search" OnClick=@((MouseEventArgs e) => OpenFinituraSuperficiale("Seleziona finitura superficiale", null))></MudIconButton>
                         </div>
                     <div style="display: flex">
                         <MudItem xs=12 sm=12 md=6>

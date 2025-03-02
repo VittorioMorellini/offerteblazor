@@ -56,7 +56,6 @@
     </DialogActions>
 </MudDialog>
 @code {
-    @code {
         [CascadingParameter] MudDialogInstance MudDialog { get; set; }
         public long? IdCliente { get; set; } = null;
         IEnumerable<CliCom>? clienti;
@@ -135,5 +134,4 @@
         void Cancel() => MudDialog.Cancel();
 
 
-    }
 }
