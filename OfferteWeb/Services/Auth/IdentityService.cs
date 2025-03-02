@@ -39,11 +39,12 @@ namespace OfferteWeb.Services
         private OfferteDbContext ctx;
         private readonly IConfiguration _configuration;
 
-        public IdentityService(IHttpContextAccessor context, AuthContext authContext, IConfiguration configuration, OfferteDbContext ctx = null)
+        public IdentityService(IHttpContextAccessor context, AuthContext authContext, IConfiguration configuration, OfferteDbContext ctx)
         {
             this.context = context;
             this.authContext = authContext;
-            this.ctx = ctx ?? new OfferteDbContext();
+            ArgumentNullException.ThrowIfNull(ctx);
+            this.ctx = ctx; //?? new OfferteDbContext();
             _configuration = configuration;
         }
 

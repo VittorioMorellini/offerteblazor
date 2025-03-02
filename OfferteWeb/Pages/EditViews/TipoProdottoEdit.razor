@@ -13,7 +13,7 @@
 @inject ISnackbar snackbar;
 
 <div style="display:flex; justify-content:space-between">
-    <OfferteWeb.Components.EditPageHeader Modifica="@InModifica" Entita="Tag"></OfferteWeb.Components.EditPageHeader>
+    <OfferteWeb.Components.EditPageHeader Modifica="@InModifica" Entita="TipoProdotto"></OfferteWeb.Components.EditPageHeader>
     <OfferteWeb.Components.EditPageFooter Entita="@UiEntityName" AddClicked="AddItem" UpdateClicked="UpdateTipoProdotto" DeleteClicked="DeleteItem" Modifica="@InModifica"></OfferteWeb.Components.EditPageFooter>
 </div>
 <MudForm @ref="form" @bind-IsValid="@isValid" @bind-Errors="@errors">

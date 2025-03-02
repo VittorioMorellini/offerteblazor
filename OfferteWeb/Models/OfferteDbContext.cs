@@ -6,10 +6,6 @@ namespace OfferteWeb.Models;
 
 public partial class OfferteDbContext : DbContext
 {
-    public OfferteDbContext()
-    {
-    }
-
     public OfferteDbContext(DbContextOptions<OfferteDbContext> options)
         : base(options)
     {
@@ -134,10 +130,6 @@ public partial class OfferteDbContext : DbContext
     public virtual DbSet<Trasporto> Trasporto { get; set; }
 
     public virtual DbSet<Valuta> Valuta { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=S-2020-150127\\SQLEXPRESS;Initial Catalog=Offerte;Persist Security Info=False;TrustServerCertificate=True;User ID=sa;Password=sapwd");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -682,8 +674,6 @@ public partial class OfferteDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.DataOfferta).HasColumnType("datetime");
-            entity.Property(e => e.DataScadenzaOfferta).HasColumnType("date");
-            entity.Property(e => e.DataUltimaModifica).HasColumnType("date");
             entity.Property(e => e.Destinatario)
                 .HasMaxLength(100)
                 .IsUnicode(false);

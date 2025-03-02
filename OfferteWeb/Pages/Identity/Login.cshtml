@@ -5,6 +5,13 @@
 
 @model OfferteWeb.Pages.Identity.LoginModel
 @attribute [AllowAnonymous]
+<script>
+    window.onload = function () {
+        //console.log('sono in load login function')
+        document.getElementById('loginName').focus();
+    }
+</script>
+
 <div style="display: flex; flex-direction:column; align-items: center; justify-content: center; height: 100vh">
     <h1 style="text-align: center">Techboard group</h1>
     <div style="display: flex; justify-content: center; align-items: center">
@@ -17,7 +24,7 @@
                         </div>
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <div class="form-floating m-lg-3">
-                            <input asp-for="Input.Username" class="form-control" autocomplete="username" aria-required="true" />
+                            <input asp-for="Input.Username" id="loginName" class="form-control" autocomplete="username" aria-required="true" />
                             <label asp-for="Input.Username" class="form-label"></label>
                             <span asp-validation-for="Input.Username" class="text-danger"></span>
                         </div>
