@@ -7,19 +7,9 @@ namespace OfferteWeb.Pages.Identity
 {
     public class LogoutModel : PageModel
     {
-        public string ErrorMessage { get; set; }
-
         public async Task OnGetAsync()
         {
-            await DoLogout();
-            Redirect("~/");
-        }
-
-        public async Task DoLogout()
-        {
-            // Clear the existing external cookie
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);            
-            //return LocalRedirect(Url.Content("~/"));
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
 
         public IActionResult OnPost()

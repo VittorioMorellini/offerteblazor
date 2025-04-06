@@ -71,7 +71,7 @@
                         Please wait while the authorization going on ...
                     </Authorizing>
                     <Authorized>
-                        <StateInitializer></StateInitializer>
+                        @* <StateInitializer></StateInitializer> *@
                         <MudAppBar Elevation="0" Style="z-index:1000 !important">
                             <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())"/>
                             <BackButton MethodForNavigationCheck="BackNavigation"></BackButton>
@@ -115,10 +115,8 @@
 @code {
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
-    // [CascadingParameter]
-    // public OfferteWeb.State.InitialApplicationState InitialAppState { get; set; }
 
-    private Agente agente = new Agente();
+    private Agente agente = new();
     bool _drawerOpen = true;
     private MudThemeProvider? _mudThemeProvider;
     public bool IsClicked = false;
@@ -164,10 +162,10 @@
         _drawerOpen = !_drawerOpen;
     }
 
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-    }
+    // protected override void OnInitialized()
+    // {
+    //     base.OnInitialized();
+    // }
 
     protected override async Task OnInitializedAsync()
     {
@@ -212,10 +210,10 @@
         }
     }
 
-    private void BackNavigation()
-    {
-        NavigationChecking("", true);
-    }
+    // private void BackNavigation()
+    // {
+    //     NavigationChecking("", true);
+    // }
 
     private async Task NavigationChecking(string indirizzo, bool backButtonClick = false)
     {

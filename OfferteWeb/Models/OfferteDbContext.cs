@@ -745,7 +745,7 @@ public partial class OfferteDbContext : DbContext
             entity.HasOne(d => d.IdClienteNavigation).WithMany(p => p.Offerta)
                 .HasForeignKey(d => d.IdCliente)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Offerta__IdClien__27C3E46E");
+                .HasConstraintName("FK_Offerta_Clicom");
 
             entity.HasOne(d => d.IdFollowUpNavigation).WithMany(p => p.Offerta)
                 .HasForeignKey(d => d.IdFollowUp)

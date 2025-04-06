@@ -80,4 +80,6 @@ public partial class CliCom
     public short? IdTolleranza { get; set; }
 
     public string? DummyPoof { get; set; }
+
+    public virtual ICollection<Offerta> Offerta { get; set; } = new List<Offerta>();
 }

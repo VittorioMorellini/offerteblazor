@@ -116,27 +116,11 @@ namespace OfferteWeb.Pages.Identity
                 ModelState.AddModelError("LoginError", "Login credential are not valid");
             }
             return Page();
-
-            //await HttpContext.sign
-            //Console.WriteLine("Login to do");
-            //localStorage set user
-            //AuthData authData = new AuthData
-            //{
-            //    Id = agente.Id.ToString(),
-            //    Username = agente.Username,
-            //    Role = agente.Role,
-            //    Mail = agente.Mail != null ? agente.Mail : "",
-            //    RagioneSociale = agente?.RagioneSociale,
-            //    Token = agente.Token
-            //};
-            //var customAuthStateProvider = (CustomAuthenticationStateProvider)authenticationStateProvider;
-            //await customAuthStateProvider.UpdateUserAuthenticated(authData);
         }
 
         public class InputModel
         {
             [Required]
-            //[Username]
             public string Username { get; set; }
             [Required]
             public string Password { get; set; }

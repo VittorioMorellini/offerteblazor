@@ -16,6 +16,4 @@ public partial class Cliente
     public string? CodNazione { get; set; }
 
     public string? CodClienteAhr { get; set; }
-
-    public virtual ICollection<Offerta> Offerta { get; set; } = new List<Offerta>();
 }

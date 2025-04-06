@@ -1,6 +1,7 @@
-﻿@using OfferteWeb.Dto;
-@using OfferteWeb.Models;
-@using OfferteWeb.Services;
+﻿@using Microsoft.JSInterop
+@using MudBlazor
+@using OfferteWeb.Models
+@using OfferteWeb.Services
 @inject IGenericEntityService genericService
 @inject ISnackbar snackBar
 @inject IJSRuntime jsRuntime
@@ -14,16 +15,16 @@
                 <MudIconButton Icon="@Icons.Filled.ArrowRight" Variant="Variant.Filled" Color="MudBlazor.Color.Secondary" OnClick="@ScrollToNext"></MudIconButton>
             </div>
             <MudPaper Style="padding:10px; width:100%" Outlined="true" Elevation="1">
-                 <MudItem xs="12">
-                     <MudTable  T="GenericEntity" Dense Items="entities" TotalItems="totalItems" Hover="true" RowsPerPage="10" Bordered="true" Striped="true">
-                         <HeaderContent>
-                             <MudTh>Id</MudTh>
-                             <MudTh>Descrizione</MudTh>
-                             <MudTh></MudTh>
-                         </HeaderContent>
-                         <RowTemplate>
-                             <MudTd>
-                                 <MudText>@context.Id</MudText>
+                <MudItem xs="12">
+                    <MudTable  T="GenericEntity" Dense Items="entities" TotalItems="totalItems" Hover="true" RowsPerPage="10" Bordered="true" Striped="true">
+                        <HeaderContent>
+                            <MudTh>Id</MudTh>
+                            <MudTh>Descrizione</MudTh>
+                            <MudTh></MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd>
+                                <MudText>@context.Id</MudText>
                             </MudTd>
                             <MudTd>
                                 <MudText>@context.Descrizione</MudText>
@@ -41,89 +42,89 @@
                     </MudTable>
                 </MudItem>
             </MudPaper>
-            </div>
+        </div>
     </DialogContent>
     <DialogActions>
         <MudButton Variant="Variant.Filled" OnClick="Cancel">Chiudi</MudButton>
     </DialogActions>
 </MudDialog>
+
 @code {
-    @code {
-        [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-        public string? Descrizione { get; set; } = null;
-        public long? Id { get; set; } = null;
-        IEnumerable<GenericEntity>? entities;
-        private string searchString;
-        private int totalItems { get; set; }
-        [Parameter]
-        public string TableName {get; set; }
-        [Parameter]
-        public string KeyName { get; set; }
-        [Parameter]
-        public string DescriptionName { get; set; }
-        [Parameter]
-        public string KeyType { get; set; }
-        [Parameter]
-        public int? IdLingua { get; set; }
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    public string? Descrizione { get; set; } = null;
+    public long? Id { get; set; } = null;
+    IEnumerable<GenericEntity>? entities;
+    private string searchString;
+    private int totalItems { get; set; }
+    [Parameter]
+    public string TableName {get; set; }
+    [Parameter]
+    public string KeyName { get; set; }
+    [Parameter]
+    public string DescriptionName { get; set; }
+    [Parameter]
+    public string KeyType { get; set; }
+    [Parameter]
+    public int? IdLingua { get; set; }
 
-        private void LoadData()
-        {
-            GenericEntitySearchModel model = new();
-            model.Descrizione = searchString;
-            model.IdLingua = IdLingua;
-            var righe = genericService.SearchPaged(model, false);
-            totalItems = righe.Item2;
-            entities = righe.Item1;
-            //return righe.Item1;
-        }
+    private void LoadData()
+    {
+        GenericEntitySearchModel model = new();
+        model.Descrizione = searchString;
+        model.IdLingua = IdLingua;
+        var righe = genericService.SearchPaged(model, false);
+        totalItems = righe.Item2;
+        entities = righe.Item1;
+        //return righe.Item1;
+    }
 
-        private async Task SelectEntity(long id)
+    private async Task SelectEntity(long id)
+    {
+        MudDialog.Close(DialogResult.Ok(id));
+        //return Task.CompletedTask;
+    }
+    protected async override Task OnInitializedAsync()
+    {
+        genericService.TableName = TableName;
+        genericService.KeyName = KeyName;
+        genericService.DescriptionName = DescriptionName;
+        LoadData();
+        await base.OnInitializedAsync();
+    }
+
+    private Task SearchStringChanged(string newDescrizione)
+    {
+        searchString = newDescrizione;
+        if (newDescrizione != null && newDescrizione.Length > 2)
         {
-            MudDialog.Close(DialogResult.Ok(id));
-            //return Task.CompletedTask;
-        }
-        protected async override Task OnInitializedAsync()
-        {
-            genericService.TableName = TableName;
-            genericService.KeyName = KeyName;
-            genericService.DescriptionName = DescriptionName;
             LoadData();
-            await base.OnInitializedAsync();
+            //await ScrollToNext();
         }
-
-        private Task SearchStringChanged(string newDescrizione)
+        else if (string.IsNullOrWhiteSpace(newDescrizione))
         {
-            searchString = newDescrizione;
-            if (newDescrizione != null && newDescrizione.Length > 2)
-            {
-                LoadData();
-                //await ScrollToNext();
-            }
-            else if (string.IsNullOrWhiteSpace(newDescrizione))
-            {
-                LoadData();
-            }
-            return Task.CompletedTask;
+            LoadData();
         }
+        return Task.CompletedTask;
+    }
 
-        private async Task ScrollToNext()
-        {
-            // var item = foundCategories.ElementAtOrDefault(searchIndex);
-            // if (item != null)
-            // {
-            //     await ExpandAll2();
-            //     searchIndex++;
-            //     treeViewRef.SelectNode(item);
-            //     await jsRuntime.InvokeVoidAsync("scrollTreeIntoView", $"treeItem_{item.Id}");
-            // }
-            // else
-            // {
-            //     searchIndex = 0;
-            // }
-        }
+    private async Task ScrollToNext()
+    {
+        // var item = foundCategories.ElementAtOrDefault(searchIndex);
+        // if (item != null)
+        // {
+        //     await ExpandAll2();
+        //     searchIndex++;
+        //     treeViewRef.SelectNode(item);
+        //     await jsRuntime.InvokeVoidAsync("scrollTreeIntoView", $"treeItem_{item.Id}");
+        // }
+        // else
+        // {
+        //     searchIndex = 0;
+        // }
+    }
 
-        private async Task ScrollToPrev()
-        {
+    private async Task ScrollToPrev()
+    {
             // var item = foundCategories.ElementAtOrDefault(searchIndex);
             // if (item != null)
             // {
@@ -135,10 +136,7 @@
             // {
             //     searchIndex = 0;
             // }
-        }
-
-        void Cancel() => MudDialog.Cancel();
-
-
     }
+    void Cancel() => MudDialog.Cancel();
+
 }

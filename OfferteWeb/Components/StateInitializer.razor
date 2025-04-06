@@ -1,16 +1,13 @@
-﻿@using OfferteWeb.Handler
-@inject AppState state;
+﻿@inject AppState state;
 @code {
     // [Parameter]
-    // public InitialApplicationState InitialAppState { get; set; }
-    [Parameter]
-    public Action StateInitialized { get; set; }
+    // public Action StateInitialized { get; set; }
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
         state.Initialize();
-        StateInitialized?.Invoke();
+        //StateInitialized?.Invoke();
     }
 
 }

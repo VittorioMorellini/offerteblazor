@@ -8,31 +8,36 @@ using OfferteWeb.Utils;
 
 namespace OfferteWeb.Services
 {
-    public interface IClienteService : IBaseService<CliCom, long, OfferteDbContext>, ISearchEntities<CliCom>
+    public interface ICliComService : IBaseService<CliCom, int, OfferteDbContext>, ISearchEntities<CliCom>
     {
-        Tuple<IEnumerable<CliCom>, int> SearchPaged(ClienteSearchModel model, bool includeDeleted);
+        Tuple<IEnumerable<CliCom>, int> SearchPaged(CliComSearchModel model, bool includeDeleted);
 
         Task<CliCom> FindAsync(int idCliente);
     }
 
-    public class ClienteService : BaseService<CliCom, long, OfferteDbContext>, IClienteService
+    public class CliComService : BaseService<CliCom, int, OfferteDbContext>, ICliComService
     {
-        public ClienteService(IConfiguration configuration, OfferteDbContext ctx = null)
+        public CliComService(IConfiguration configuration, OfferteDbContext ctx = null)
             : base(configuration, ctx)
         {
         }
 
-        internal IEnumerable<CliCom> Search(ClienteSearchModel model)
+        internal IEnumerable<CliCom> Search(CliComSearchModel model)
         {
             return _search(model).Item1;
         }
 
-        public async Task<CliCom> FindAsync(int idCliente)
+        public CliCom Find(long id)
         {
-            return await ctx.CliCom.FindAsync(idCliente);
+            throw new Exception("Not implemented");
         }
 
-        private Tuple<IEnumerable<CliCom>, int> _search(ClienteSearchModel model)
+        public async Task<CliCom> FindAsync(int id)
+        {
+            return await ctx.CliCom.FindAsync(id);
+        }
+
+        private Tuple<IEnumerable<CliCom>, int> _search(CliComSearchModel model)
         {
             int count = 0;
             IQueryable<CliCom> clienti = ctx.CliCom
@@ -95,7 +100,7 @@ namespace OfferteWeb.Services
         {
             throw new NotImplementedException();
         }
-        public Tuple<IEnumerable<CliCom>, int> SearchPaged(ClienteSearchModel model, bool includeDeleted)
+        public Tuple<IEnumerable<CliCom>, int> SearchPaged(CliComSearchModel model, bool includeDeleted)
         {
             return _search(model);
         }
@@ -116,7 +121,7 @@ namespace OfferteWeb.Services
         //}
     }
 
-    public class ClienteSearchModel : QueryBuilderSearchModel
+    public class CliComSearchModel : QueryBuilderSearchModel
     {
         public string RagioneSociale { get; set; }
     }

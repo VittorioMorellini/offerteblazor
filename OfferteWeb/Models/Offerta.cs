@@ -17,7 +17,7 @@ public partial class Offerta
 
     public string? CodiceInterno { get; set; }
 
-    public long IdCliente { get; set; }
+    public int IdCliente { get; set; }
 
     public double? DimXfigura { get; set; }
 
@@ -127,7 +127,7 @@ public partial class Offerta
 
     public bool FModificata { get; set; }
 
-    public DateTime? DataUltimaModifica { get; set; }
+    public DateOnly? DataUltimaModifica { get; set; }
 
     public string? RevisioneDocumento { get; set; }
 
@@ -222,7 +222,7 @@ public partial class Offerta
 
     public virtual Agente IdAgenteNavigation { get; set; } = null!;
 
-    public virtual Cliente IdClienteNavigation { get; set; } = null!;
+    public virtual CliCom IdClienteNavigation { get; set; } = null!;
 
     public virtual Followup? IdFollowUpNavigation { get; set; }
 

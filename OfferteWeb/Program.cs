@@ -103,7 +103,7 @@ builder.Services.AddScoped<IOffertaRigaService, OffertaRigaService>();
 builder.Services.AddScoped<ITipoProdottoService, TipoProdottoService>();
 builder.Services.AddScoped<IMailService, MailService>();
 builder.Services.AddScoped<IFileService, FileService>();
-builder.Services.AddScoped<IClienteService, ClienteService>();
+builder.Services.AddScoped<ICliComService, CliComService>();
 builder.Services.AddScoped<ICirComService, CirComService>();
 builder.Services.AddScoped<IGenericEntityService, GenericEntityService>();
 builder.Services.AddScoped<ITipoProdottoService, TipoProdottoService>();

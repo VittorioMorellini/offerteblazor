@@ -1,28 +1,28 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@* <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="/">OfferteWeb</a>
     </div>
 </div>
-
-<MudNavMenu>
-    <MudNavLink OnClick="(() => MethodForNavigationCheck.Invoke(home))" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
-    <MudNavLink OnClick="(() => MethodForNavigationCheck.Invoke(offer))" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.LocalOffer">Offerte</MudNavLink>
+ *@<MudNavMenu>
+    <MudNavLink Href="/home" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Welcome</MudNavLink>
+    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.LocalOffer">Offerte</MudNavLink>
     @if (IsAdmin())
     {
         <MudNavGroup Title="Admin" Expanded="true">
-            <MudNavLink OnClick="(() => MethodForNavigationCheck.Invoke(user))" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Person">Utenti</MudNavLink>
-            <MudNavLink OnClick="(() => MethodForNavigationCheck.Invoke(grouping))" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Group">Gruppi</MudNavLink>
+            <MudNavLink Href="/agenti" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Person">Utenti</MudNavLink>
+            <MudNavLink Href="/grouping" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Group">Gruppi</MudNavLink>
         </MudNavGroup>
     }
     <MudNavGroup Title="Circuiti" Expanded="true">
-        <MudNavLink OnClick="(() => MethodForNavigationCheck.Invoke(circuitNew))" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Article">Nuovo circuito</MudNavLink>
-        <MudNavLink OnClick="(() => MethodForNavigationCheck.Invoke(circuit))" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.List">Elenco</MudNavLink>
+        <MudNavLink Href="/circuit/new" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Article">Nuovo circuito</MudNavLink>
+        <MudNavLink Href="/circuit" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.List">Elenco</MudNavLink>
     </MudNavGroup>
     <MudNavGroup Title="Clienti" Expanded="true">
-        <MudNavLink OnClick="(() => MethodForNavigationCheck.Invoke(customer))" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Business">Clienti</MudNavLink>
+        <MudNavLink Href="/customer" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Business">Clienti</MudNavLink>
     </MudNavGroup>
     <MudNavGroup Title="Tabelle" Expanded="true">
-        <MudNavLink OnClick="(() => MethodForNavigationCheck.Invoke(tipoprodotto))" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Equalizer">Tipologia prodotto</MudNavLink>
+        <MudNavLink Href="/tipoprodotto" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Equalizer">Tipologia prodotto</MudNavLink>
+        @* The next one makes full submit, all page is rerendered*@
         <MudNavLink OnClick="(() => MethodForNavigationCheck.Invoke(grafite))" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Face">Grafite</MudNavLink>
     </MudNavGroup>
 </MudNavMenu>
@@ -33,22 +33,15 @@
     public string Role { get; set; }
     [Parameter] public Action<string> MethodForNavigationCheck { get; set; }
     
-    private bool collapseNavMenu = true;
+    private bool _collapseNavMenu = true;
+    private bool _shouldRender = false;
 
-    // private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-    string home = "/home";
-    string user = "/agenti";
-    string grouping = "/grouping";
-    string customer = "/customer";
-    string circuitNew = "/circuit/new";
-    string circuit = "/circuit";
-    string offer = "/";
-    string tipoprodotto = "/tipoprodotto";
+    //string tipoprodotto = "/tipoprodotto";
     string grafite = "/grafite";
 
     private void ToggleNavMenu()
     {
-        collapseNavMenu = !collapseNavMenu;
+        _collapseNavMenu = !_collapseNavMenu;
     }
     
     public bool IsAdmin()
@@ -56,4 +49,5 @@
         return Role == OfferteWeb.Models.Role.ADMIN;
     }
 
+    protected override bool ShouldRender() => _shouldRender;
 }

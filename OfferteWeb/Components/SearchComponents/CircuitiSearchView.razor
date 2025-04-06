@@ -56,7 +56,6 @@
     </DialogActions>
 </MudDialog>
 @code {
-    @code {
         [CascadingParameter] MudDialogInstance MudDialog { get; set; }
         public string? CodiceInterno { get; set; } = null;
         IEnumerable<CirCom>? circuiti;
@@ -133,7 +132,4 @@
         }
 
         void Cancel() => MudDialog.Cancel();
-
-
-    }
 }

@@ -1,7 +1,7 @@
 ﻿@using OfferteWeb.Dto;
 @using OfferteWeb.Models;
 @using OfferteWeb.Services;
-@inject IClienteService clienteService
+@inject ICliComService clienteService
 @inject ISnackbar snackBar
 @inject IJSRuntime jsRuntime
 
@@ -65,7 +65,7 @@
 
         private void LoadData()
         {
-            ClienteSearchModel model = new();
+            CliComSearchModel model = new();
             model.RagioneSociale = searchString;
             var righe = clienteService.SearchPaged(model, false);
             totalItems = righe.Item2;
