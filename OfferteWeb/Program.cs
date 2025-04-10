@@ -108,6 +108,7 @@ builder.Services.AddScoped<ICirComService, CirComService>();
 builder.Services.AddScoped<IGenericEntityService, GenericEntityService>();
 builder.Services.AddScoped<ITipoProdottoService, TipoProdottoService>();
 builder.Services.AddScoped<IGrafiteService, GrafiteService>();
+builder.Services.AddScoped<IValutaService, ValutaService>();
 
 builder.Services.AddMudServices(config =>
 {

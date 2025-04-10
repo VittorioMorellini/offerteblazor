@@ -22,7 +22,7 @@
     </MudNavGroup>
     <MudNavGroup Title="Tabelle" Expanded="true">
         <MudNavLink Href="/tipoprodotto" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Equalizer">Tipologia prodotto</MudNavLink>
-        @* The next one makes full submit, all page is rerendered*@
+        @* The next one makes full submit, all page is rerendered. Bad ways, the menu clicked is not saved*@
         <MudNavLink OnClick="(() => MethodForNavigationCheck.Invoke(grafite))" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Face">Grafite</MudNavLink>
     </MudNavGroup>
 </MudNavMenu>

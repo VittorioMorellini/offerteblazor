@@ -16,6 +16,7 @@ namespace OfferteWeb.Services
         string DescriptionName { get; set; }
         Tuple<IEnumerable<GenericEntity>, int> SearchPaged(GenericEntitySearchModel model, bool includeDeleted);
         Task<GenericEntity> FindAsync(long id, int? idLingua = null);
+        IEnumerable<GenericEntity> Search(GenericEntitySearchModel model);
     }
 
     public class GenericEntityService : BaseService<GenericEntity, long, OfferteDbContext>, IGenericEntityService
@@ -28,7 +29,7 @@ namespace OfferteWeb.Services
         {
         }
 
-        internal IEnumerable<GenericEntity> Search(GenericEntitySearchModel model)
+        public IEnumerable<GenericEntity> Search(GenericEntitySearchModel model)
         {
             return _search(model).Item1;
         }
