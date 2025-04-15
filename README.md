@@ -107,7 +107,7 @@ Vittorio Morellini - [@Vittorio Morellini](https://twitter.com/vittomorellini) -
 
 LinkedIn - [Vittorio Morellini](https://linkedin.com/in/vittorio-morellini-0325b620/)
 
-Person portfolio - [Vittorio Morellini](http://portfolio-vittoriomorellini.vercel.app)
+Personal portfolio - [Vittorio Morellini](http://portfolio-vittoriomorellini.vercel.app)
 
 Github - [Vittorio Morellini](http://github.com/vittoriomorellini)
 
