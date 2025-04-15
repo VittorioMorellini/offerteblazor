@@ -29,7 +29,7 @@ This project is built to manage printed circuits offers. There are two workloads
 
 Engineering circuit phase
 
-Financial offer to curstomer preparation
+Financial offer to customer preparation
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
