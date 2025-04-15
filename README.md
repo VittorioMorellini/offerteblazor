@@ -29,8 +29,10 @@
 ## About The Project
 
 This project is built to manage printed circuits offers. There are two workloads in the application:
+
 Engineering circuit phase
-Financial offer preparation
+
+Financial offer to curstomer preparation
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
