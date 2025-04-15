@@ -55,8 +55,6 @@ The prerequisites in to have installed net 9 framework.
 
 ### Installation
 
-_Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
-
 1. The project is written in blazor server, dotnet 9
 2. Clone the repo
    ```sh
@@ -67,6 +65,7 @@ _Below is an example of how you can instruct your audience on installing and set
    git remote set-url origin vittoriomorellini/offerteblazor
    git remote -v # confirm the changes
    ```
+You just net framework dotnet 9 in any operating system.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
