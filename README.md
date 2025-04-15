@@ -74,7 +74,9 @@ You just net framework dotnet 9 in any operating system.
 
 To run the projet from the command line type: dotnet run from the root of OfferteWeb directory.
 
-In Visual Studio run the web project OfferteWeb in http.
+In Visual Studio run the web project OfferteWeb in http. This is a Web application.
+
+You need local SqlServer
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
