@@ -72,9 +72,9 @@ You just net framework dotnet 9 in any operating system.
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+To run the projet from the command line type: dotnet run from the root of OfferteWeb directory.
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+In Visual Studio run the web project OfferteWeb in http.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -96,7 +96,7 @@ See the [open issues](https://github.com/othneildrew/Best-README-Template/issues
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE.txt` for more information.
+Distributed under the MIT License.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
