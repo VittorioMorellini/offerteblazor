@@ -105,6 +105,8 @@ Distributed under the MIT License.
 
 Vittorio Morellini - [@Vittorio Morellini](https://twitter.com/vittomorellini) - vmorellini@alice.it
 
+Vittorio Morellini LinkedIn - [@Vittorio Morellini](https://linkedin.com/in/vittorio-morellini-0325b620/)
+
 Project Link: [https://github.com/vittoriomorellini/offerteblazor](https://github.com/vittoriomorellini/offerteblazor)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
