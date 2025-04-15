@@ -19,11 +19,8 @@
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
-
-
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
@@ -38,9 +35,8 @@ Financial offer to curstomer preparation
 
 ### Built With
 
-The api are written in dotnet. The Ui is written in React.js.
+The project is written in dotnet. The version on the framework is dotnet 9.
 
-* [![React][React.js]][React-url]
 * [![dotnet][.Net6]][dotnet-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -53,17 +49,13 @@ To get a local copy up and running follow these simple example steps.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* Use yarn in the Ui project
-  ```sh
-  yarn install
-  ```
+The prerequisites in to have installed net 9 framework.
 
 ### Installation
 
 _Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
 
-1. Get a free API Key at [https://example.com](https://example.com)
+1. The project is written in blazor server, dotnet 9
 2. Clone the repo
    ```sh
    git clone https://github.com/vittoriomorellini/offerteblazor.git
@@ -89,8 +81,6 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
 <!-- ROADMAP -->
 ## Roadmap
 
@@ -113,7 +103,6 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
 <!-- CONTACT -->
 ## Contact
 
@@ -122,26 +111,6 @@ Your Name - [@your_twitter](https://twitter.com/vittomorellini) - vmorellini@ali
 Project Link: [https://github.com/your_username/repo_name](https://github.com/vittoriomorellini/offerteblazor)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
-
-Use this space to list resources you find helpful and would like to give credit to. I've included a few of my favorites to kick things off!
-
-* [Choose an Open Source License](https://choosealicense.com)
-* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-* [Malven's Flexbox Cheatsheet](https://flexbox.malven.co/)
-* [Malven's Grid Cheatsheet](https://grid.malven.co/)
-* [Img Shields](https://shields.io)
-* [GitHub Pages](https://pages.github.com)
-* [Font Awesome](https://fontawesome.com)
-* [React Icons](https://react-icons.github.io/react-icons/search)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
