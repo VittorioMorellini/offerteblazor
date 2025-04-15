@@ -41,7 +41,7 @@ Financial offer to curstomer preparation
 The api are written in dotnet. The Ui is written in React.js.
 
 * [![React][React.js]][React-url]
-* [![dotnet][.Net6]][.Net-url]
+* [![dotnet][.Net6]][dotnet-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
