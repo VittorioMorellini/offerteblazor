@@ -37,7 +37,7 @@ Financial offer to curstomer preparation
 
 The project is written in dotnet. The version on the framework is dotnet 9.
 
-* [![dotnet][.Net6]][dotnet-url]
+* [![dotnet][.Net9]][dotnet-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -60,11 +60,7 @@ _Below is an example of how you can instruct your audience on installing and set
    ```sh
    git clone https://github.com/vittoriomorellini/offerteblazor.git
    ```
-3. Install YARN packages
-   ```sh
-   yarn install
-   ```
-4. Change git remote url to avoid accidental pushes to base project
+3. Change git remote url to avoid accidental pushes to base project
    ```sh
    git remote set-url origin vittoriomorellini/offerteblazor
    git remote -v # confirm the changes
@@ -114,7 +110,5 @@ Project Link: [https://github.com/your_username/repo_name](https://github.com/vi
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
-[React-url]: https://reactjs.org/
 [dotnet]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
 [dotnet-url]: https://learn.microsoft.com/en-us/dotnet/core/introduction
