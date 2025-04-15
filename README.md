@@ -51,7 +51,7 @@ To get a local copy up and running follow these simple example steps.
 
 ### Prerequisites
 
-The prerequisites in to have installed net 9 framework.
+The prerequisites is to have installed net 9 framework.
 
 ### Installation
 
