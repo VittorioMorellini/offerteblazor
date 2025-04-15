@@ -103,9 +103,9 @@ Distributed under the MIT License.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@your_twitter](https://twitter.com/vittomorellini) - vmorellini@alice.it
+Vittorio Morellini - [@Vittorio Morellini](https://twitter.com/vittomorellini) - vmorellini@alice.it
 
-Project Link: [https://github.com/your_username/repo_name](https://github.com/vittoriomorellini/offerteblazor)
+Project Link: [https://github.com/vittoriomorellini/offerteblazor](https://github.com/vittoriomorellini/offerteblazor)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
