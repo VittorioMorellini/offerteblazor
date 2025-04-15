@@ -105,9 +105,11 @@ Distributed under the MIT License.
 
 Vittorio Morellini - [@Vittorio Morellini](https://twitter.com/vittomorellini) - vmorellini@alice.it
 
-Vittorio Morellini LinkedIn - [Vittorio Morellini](https://linkedin.com/in/vittorio-morellini-0325b620/)
+LinkedIn - [Vittorio Morellini](https://linkedin.com/in/vittorio-morellini-0325b620/)
 
 Person portfolio - [Vittorio Morellini](http://portfolio-vittoriomorellini.vercel.app)
+
+Github - [Vittorio Morellini](http://github.com/vittoriomorellini)
 
 Project Link: [https://github.com/vittoriomorellini/offerteblazor](https://github.com/vittoriomorellini/offerteblazor)
 
